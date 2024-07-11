@@ -108,7 +108,8 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     import CFMP from './src/routes/controlProcesos/encabezados/CFMP.routes.js'
     import CernidoDetalle from './src/routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './src/routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
-// Carga las variables de entorno desde el archivo .env
+  import {postSendEmail} from './Email/Email.router.js'
+  // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
     const Origen =  process.env.ALLOWED_ORIGIN;
@@ -324,8 +325,12 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(DMPHM)
     app.use(DMPM)
 
-  
+  app.use(postSendEmail)
     app.listen(process.env.PORT || 3001)
 
 
     console.log('puerto escuchando en el puerto 3001')
+
+
+
+

@@ -1,8 +1,15 @@
+console.log("Script iniciado");
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
-import { pool } from "../../src/db.js";
+import { pool } from "../src/db.js";
 import { formatFecha } from './FormatearFecta.js';
 dotenv.config();
+
+console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
+console.log("AWS_REGION:", process.env.AWS_REGION);
+console.log("AWS_SOURCE_EMAIL:", process.env.AWS_SOURCE_EMAIL);
+
 
 // Verificar que las variables de entorno se carguen correctamente
 console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
@@ -29,17 +36,17 @@ export const postSendEmail = async (registro) => {
     idEncargado, NombreEncargado, FirmaEncargado
   } = registro;
 
-  const subject = `Reporte Control de Calidad: ${Horno} Fecha de Horneado:  ${formatFecha(fechaHorneado)}`;
+  const subject = `Reporte Control de Calidad: ${Horno} Fecha de Horneado: ${formatFecha(fechaHorneado)}`;
   const text = `
     Detalles del registro:
-    - Fecha:  ${formatFecha(fechaHorneado)}
+    - Fecha: ${formatFecha(fechaHorneado)}
     - Modelo: ${ModeloEco}
     - Turno: ${turnoHorneado}
     - Horno: ${Horno}
     - Hornero: ${Hornero}
     - Horneado: ${horneado}
     - Aprobado: ${aprobados}
-    - Rajados CC:${rajadosCC}
+    - Rajados CC: ${rajadosCC}
     - Crudos CC: ${crudoCC}
     - Altos: ${altos}
     - Bajos: ${bajos}
@@ -50,7 +57,7 @@ export const postSendEmail = async (registro) => {
     Source: process.env.AWS_SOURCE_EMAIL,
     Destination: {
       ToAddresses: [process.env.AWS_SOURCE_EMAIL], // El correo del remitente
-      BccAddresses: ['jumul@ecofiltro.com', 'codigos@ecofiltro.com','ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
+      BccAddresses: ['jumul@ecofiltro.com', 'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
     },
     Message: {
       Subject: {
@@ -75,6 +82,8 @@ export const postSendEmail = async (registro) => {
 };
 
 setInterval(async () => {
+  console.log('Ejecutando el cronómetro...'); // Mensaje de depuración
+
   try {
     const [rows] = await pool.query(`
       SELECT 
@@ -136,24 +145,33 @@ setInterval(async () => {
       LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
       LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
       LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
+      
       WHERE dtcc.enviado = 0
     `);
     
+    console.log('Registros obtenidos:', rows.length); // Mensaje de depuración
+
+
+    if (rows.length === 0) {
+      console.log('No hay registros nuevos para procesar.');
+    }
+
+
     for (const registro of rows) {
-        try {
-          const result = await postSendEmail(registro); // Llamar a la función con el registro completo
+      try {
+        const result = await postSendEmail(registro); // Llamar a la función con el registro completo
       
-          if (result.success) {
-            // Marcar el registro como enviado usando el ID del registro que se envió
-            await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
-            console.log(`Registro con ID ${registro.id} marcado como enviado.`);
-          }
-        } catch (error) {
-          console.error(`Error al enviar correo para el registro con ID ${registro.id}:`, error);
+        if (result.success) {
+          // Marcar el registro como enviado usando el ID del registro que se envió
+          await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
+          console.log(`Registro con ID ${registro.id} marcado como enviado.`);
         }
+      } catch (error) {
+        console.error(`Error al enviar correo para el registro con ID ${registro.id}:`, error);
       }
-      
+    }
+    
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 60000); // 60000ms = 1 minuto
+}, 30000);

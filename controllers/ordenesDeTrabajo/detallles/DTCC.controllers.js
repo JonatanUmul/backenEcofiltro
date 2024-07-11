@@ -4,7 +4,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDTCC = async(req, res)=>{
     const estado= 2;
-    
+    const enviado=0;
     const {
       id_dthh,
         horneados,
@@ -56,7 +56,8 @@ export const postDTCC = async(req, res)=>{
                 crudoCC,
                 quemados,
                 ahumados,
-                id_creador)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?)`;
+                id_creador,
+                enviado)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[  
           id_dthh,
             horneados,
@@ -78,7 +79,8 @@ export const postDTCC = async(req, res)=>{
             crudoCC,
             quemados,
             ahumados,
-            id_creador])
+            id_creador,
+          enviado])
         res.send({rows});
         }
         
