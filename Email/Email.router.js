@@ -171,4 +171,4 @@ setInterval(async () => {
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 60000);
+}, 800000);
