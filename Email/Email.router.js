@@ -5,12 +5,6 @@ import { pool } from "../src/db.js";
 import { formatFecha } from './FormatearFecta.js';
 dotenv.config();
 
-console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
-console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
-console.log("AWS_REGION:", process.env.AWS_REGION);
-console.log("AWS_SOURCE_EMAIL:", process.env.AWS_SOURCE_EMAIL);
-
-
 // Verificar que las variables de entorno se carguen correctamente
 console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
 console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
@@ -155,23 +149,26 @@ setInterval(async () => {
     if (rows.length === 0) {
       console.log('No hay registros nuevos para procesar.');
     }
-
-
-    for (const registro of rows) {
-      try {
-        const result = await postSendEmail(registro); // Llamar a la función con el registro completo
-      
-        if (result.success) {
-          // Marcar el registro como enviado usando el ID del registro que se envió
-          await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
-          console.log(`Registro con ID ${registro.id} marcado como enviado.`);
+      console.log('Entro a esta parte')
+      for (const registro of rows) {
+        try {
+          const result = await postSendEmail(registro); // Llamar a la función con el registro completo
+        
+          if (result.success) {
+            // Marcar el registro como enviado usando el ID del registro que se envió
+            await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
+            console.log(`Registro con ID ${registro.id} marcado como enviado.`);
+          }
+        } catch (error) {
+          console.error(`Error al enviar correo para el registro con ID ${registro.id}:`, error);
         }
-      } catch (error) {
-        console.error(`Error al enviar correo para el registro con ID ${registro.id}:`, error);
       }
-    }
+    
+
+
+ 
     
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 10000000);
+}, 60000);
