@@ -108,7 +108,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     import CFMP from './src/routes/controlProcesos/encabezados/CFMP.routes.js'
     import CernidoDetalle from './src/routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './src/routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
-  // import {postSendEmail} from './Email/Email.router.js'
+  import {postSendEmail} from './Email/Email.router.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -325,7 +325,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(DMPHM)
     app.use(DMPM)
 
-  // app.use(postSendEmail)
+  app.use(postSendEmail)
     app.listen(process.env.PORT || 3001)
 
 
