@@ -22,34 +22,43 @@ let id= req.params.id;
 
 try {
   let consulta= `
-  SELECT 	
-    d.id,
-    d.fecha_creacion,
-    d.fecha_real,
-    d.hora_creacion,
-     TIMEDIFF(d.hora_creacion, LAG(d.hora_creacion) OVER (ORDER BY hora_creacion)) AS tiempo_transcurrido,
-    d.tempCabezaIZ,
-    d.tempCentroIZ,
-    d.tempPieIZ,
-    d.tempCabezaDR,
-    d.tempCentroDR,
-    d.tempPieDR,
-    ROUND(((d.tempCabezaIZ + d.tempPieIZ + d.tempCabezaDR + d.tempPieDR) / 4)) AS promedio,
-    cth.id AS id_cth,
-    ufmodelo.nombre_modelo AS modelo,
-    enc_maq.nombre_maq AS horno,
-    turno.turno AS turno 
-FROM 
-    dth d
-LEFT JOIN 
-    cth ON d.id_cth = cth.id
-LEFT JOIN 
-    ufmodelo ON d.id_modelo = ufmodelo.id_mod
-LEFT JOIN 
-    enc_maq ON d.id_horno = enc_maq.id_maq
-LEFT JOIN 
-    turno ON d.id_turno = turno.id
-   
+   SELECT 	
+        d.id,
+        d.fecha_creacion,
+        d.fecha_real,
+        d.id_creador,
+        d.hora_creacion,
+        d.tempCabezaIZ,
+        d.tempCentroIZ,
+        d.tempPieIZ,
+        d.tempCabezaDR,
+        d.tempCentroDR,
+        d.tempPieDR,
+        TIMEDIFF(d.hora_creacion, LAG(d.hora_creacion) OVER (ORDER BY hora_creacion)) AS tiempo_transcurrido,
+        ROUND(((d.tempCabezaIZ + d.tempPieIZ + d.tempCabezaDR + d.tempPieDR) / 4)) AS promedio,
+        cth.id AS id_cth,
+        ufmodelo.nombre_modelo AS modelo,
+        enc_maq.nombre_maq AS horno,
+        turno.turno AS turno,
+        user.nombre AS id_encargado,
+        operarios.Nombre AS hornero,
+        userF.firmaUsr AS firmaHornero
+      FROM 
+        dth d
+      LEFT JOIN 
+        cth ON d.id_cth = cth.id
+      LEFT JOIN 
+        ufmodelo ON d.id_modelo = ufmodelo.id_mod
+      LEFT JOIN 
+        enc_maq ON d.id_horno = enc_maq.id_maq
+      LEFT JOIN 
+        turno ON d.id_turno = turno.id
+      LEFT join
+      	user ON d.id_creador = user.id
+      LEFT JOIN 
+      	operarios ON  user.nombre = operarios.id
+		LEFT Join
+			user AS userF ON  d.id_creador= userF.id 
 where d.id_cth=?
 
 `
@@ -68,24 +77,27 @@ export const getSDTH = async (req, res) => {
   const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno } = req.params;
 console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin, modeloUF )
   try {
-    let consulta = `
-      SELECT 	
+    let consulta = ` SELECT 	
         d.id,
         d.fecha_creacion,
         d.fecha_real,
+        d.id_creador,
         d.hora_creacion,
-        TIMEDIFF(d.hora_creacion, LAG(d.hora_creacion) OVER (ORDER BY hora_creacion)) AS tiempo_transcurrido,
         d.tempCabezaIZ,
         d.tempCentroIZ,
         d.tempPieIZ,
         d.tempCabezaDR,
         d.tempCentroDR,
         d.tempPieDR,
+        TIMEDIFF(d.hora_creacion, LAG(d.hora_creacion) OVER (ORDER BY hora_creacion)) AS tiempo_transcurrido,
         ROUND(((d.tempCabezaIZ + d.tempPieIZ + d.tempCabezaDR + d.tempPieDR) / 4)) AS promedio,
         cth.id AS id_cth,
         ufmodelo.nombre_modelo AS modelo,
         enc_maq.nombre_maq AS horno,
-        turno.turno AS turno 
+        turno.turno AS turno,
+        user.nombre AS id_encargado,
+        operarios.Nombre AS hornero,
+        userF.firmaUsr AS firmaHornero
       FROM 
         dth d
       LEFT JOIN 
@@ -96,6 +108,12 @@ console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_
         enc_maq ON d.id_horno = enc_maq.id_maq
       LEFT JOIN 
         turno ON d.id_turno = turno.id
+      LEFT join
+      	user ON d.id_creador = user.id
+      LEFT JOIN 
+      	operarios ON  user.nombre = operarios.id
+		LEFT Join
+			user AS userF ON  d.id_creador= userF.id
       WHERE 1 = 1`;
 
     let params = [];

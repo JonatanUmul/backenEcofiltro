@@ -9,7 +9,7 @@
     router.post('/DTIP', postDTIP);
     router.get('/DTIP/:id', getDTIP);
     // router.get('/DTHP/:fecha', getDTH);
-    router.get('/DTIP/:fecha_creacion/:id_asrd/:id_patio/:id_enc', getSDTIP);
+    router.get('/DTIP/:fecha_creacion_inicio/:fecha_creacion_fin', getSDTIP);
 
 
     export default router;
