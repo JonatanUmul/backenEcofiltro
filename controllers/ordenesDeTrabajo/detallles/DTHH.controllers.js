@@ -99,7 +99,7 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
 
 export const getSSDTH = async(req, res)=>{
 
-    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est}= req.params
+    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est, fecha_CC}= req.params
     try {
     let consulta = 
     `SELECT 
@@ -196,6 +196,17 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
         } else if (fecha_creacion_fin !== 'null') {
           consulta += ' AND d.fecha_creacion <= ?';
           params.push(fecha_creacion_fin);
+        }
+
+        if (fecha_CC !== 'null' && fecha_CC !== 'null') {
+          consulta += ' AND (dtcc.fecha_creacion BETWEEN ? AND ?)';
+          params.push(fecha_CC, fecha_CC);
+        } else if (fecha_CC !== 'null') {
+          consulta += ' AND dtcc.fecha_creacion >= ?';
+          params.push(fecha_CC);
+        } else if (fecha_CC !== 'null') {
+          consulta += ' AND dtcc.fecha_creacion <= ?';
+          params.push(fecha_CC);
         }
     
 
