@@ -108,15 +108,20 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     import CFMP from './src/routes/controlProcesos/encabezados/CFMP.routes.js'
     import CernidoDetalle from './src/routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './src/routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
-  // import {postSendEmail} from './Email/Email.router.js'
+  import {postSendEmail} from './Email/Email.router.js'
+  import OTDMP from './src/routes/laboratorio/encabezado/OTDMP.routes.js'
+  import TablaLab from './src/routes/tablaLab/TablaLab.js'
+  import granulometria from './src/routes/mantenimientos/granulometria/Granulometria.routes.js'
+  import DOTDMP from './src/routes/laboratorio/detallado/DOTDMP.routes.js'
+  import OTDMPB from './src/routes/laboratorio/encabezado/OTDMPB.routes.js'
+  import DOTDMPB from './src/routes/laboratorio/detallado/DOTDMPB.routes.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
     const Origen =  process.env.ALLOWED_ORIGIN;
 
-
     const app = express()
-   
+    
     // app.use(cors);
     
     app.use(cors({
@@ -206,6 +211,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(TablaOT)
     app.use(TablaCp)
     app.use(TablaMaquinaria)
+    app.use(TablaLab)
 
     //Modelos UF
     app.use(ModelosUF)
@@ -300,7 +306,6 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(DCKPM)
     app.use(DCKTA)
 
-
     //Encabezados mantenimento Maquinaria
     app.use(MantenimientoMaq)
     app.use(MTA)
@@ -313,6 +318,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(MPH2)
     app.use(MPHM)
     app.use(MPM)
+
     //Detalle mantenimento Maquinaria
     app.use(DMTA)
     app.use(DMEXT)
@@ -325,7 +331,17 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(DMPHM)
     app.use(DMPM)
 
-  // app.use(postSendEmail)
+    //Ot informacion materia prima
+    app.use(OTDMP)
+    app.use(DOTDMP)
+    app.use(OTDMPB)
+    app.use(DOTDMPB)
+    //Granulometria
+    app.use(granulometria)
+
+
+
+  app.use(postSendEmail)
     app.listen(process.env.PORT || 3001)
 
 
