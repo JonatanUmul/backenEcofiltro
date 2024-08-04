@@ -5,16 +5,33 @@ export const getTablaLab = async (req, res) => {
         // Consulta SQL para seleccionar los estados
         const consulta = `
        
-        SELECT 'otdmp' AS encabezado, 'Formulacion Aserrín' AS EncName, id, fecha_creacion, id_creador
-        FROM otdmp 
-        WHERE id_est = 2
+        SELECT 
+    'otdmp' AS encabezado,
+   'Producciòn' AS EncName,
+	d.id,
+	d.fecha_creacion, 
+	d.producido,
+	d.codigoInicio,
+	d.codigoFinal, 
+	d.librasBarro,
+	d.LibrasAserrin,
+	d.librasAserrin2,
+	aserradero.nombre_aserradero as nombre_aserradero,
+	aserradero2.nombre_aserradero as nombre_aserradero2,
+	tipocernido.tipoCernido AS tipocernido1,
+	tipocernido2.tipoCernido AS tipocernido2,
+	ufmodelo.nombre_modelo AS modelo
+   FROM dtp d 
+   
+   left JOIN aserradero ON d.id_Aserradero=aserradero.id
+   left JOIN aserradero AS aserradero2 ON d.id_Aserradero2=aserradero2.id
+   left JOIN tipocernido ON d.id_cernidodetalle= tipocernido.id
+   left JOIN tipocernido AS tipocernido2 ON  d.id_cernidodetalle2= tipocernido2.id
+   LEFT JOIN ufmodelo ON  d.id_ufmodelo=ufmodelo.id_mod
+   WHERE d.id_est = 2
 
-        union all
-     
-        
-        SELECT 'otdmpb' AS encabezado, 'Formulacion Barro' AS EncName, id, fecha_creacion, id_creador
-        FROM otdmpb 
-        WHERE id_est = 2
+
+    
 
         `;
 

@@ -5,7 +5,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDOTDMP = async(req, res)=>{
   const {
-    id_OTDMP,
+    id_dtp,
     id_creador,
     id_aserradero,
     id_aserradero2,
@@ -19,7 +19,7 @@ export const postDOTDMP = async(req, res)=>{
     try{
     
        const consulta=`INSERT INTO dotdmp(
-        id_OTDMP,
+       id_dtp,
     id_creador,
     id_aserradero,
     id_aserradero2,
@@ -28,7 +28,7 @@ export const postDOTDMP = async(req, res)=>{
     lbaserrin,
     lbaserrin2) Values(?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
-          id_OTDMP,
+          id_dtp,
           id_creador,
           id_aserradero,
           id_aserradero2,
@@ -53,9 +53,9 @@ export const getDOTDMP= async(req, res)=>{
   
   try {
     const consulta= `
-    
+       
 SELECT
-dotdmp as encabezado,
+"dotdmp" as encabezado,
 d.id_OTDMP,
 d.lbaserrin,
 d.lbaserrin2,
@@ -64,8 +64,15 @@ operarios.Nombre AS creador,
 aserradero.nombre_aserradero AS aserradero1,
 aserradero2.nombre_aserradero AS aserradero2,
 tipocernido.tipoCernido AS tipocernido1,
-tipocernido2.tipoCernido AS tipocernido1,
-d.fecha_creacion
+tipocernido2.tipoCernido AS tipocernido2,
+d.fecha_creacion,
+dotdmpb.lbbarro,
+dotdmpb.carcilla,
+dotdmpb.climo,
+dotdmpb.carena,
+dotdmpb.hbarro,
+dotdmpb.iplastico
+
 FROM dotdmp d
 
 LEFT JOIN 
@@ -75,13 +82,14 @@ operarios ON user.nombre =operarios.id
 LEFT JOIN 
 aserradero ON d.id_aserradero =aserradero.id
 LEFT JOIN 
-aserradero AS aserradero2 ON d.id_aserradero= aserradero2.id
+aserradero AS aserradero2 ON d.id_aserradero2= aserradero2.id
 LEFT JOIN 
 tipocernido ON d.id_cernidodetalle=tipocernido.id
 LEFT JOIN
 tipocernido AS tipocernido2 ON d.id_cernidodetalle2=tipocernido2.id
-
-    where d.id_OTDMP=?;
+LEFT JOIN 
+dotdmpb ON d.id_dtp =dotdmpb.id_dtp
+WHERE d.id_dtp=?;
     
     `
     const [rows]= await pool.query(consulta, [id])

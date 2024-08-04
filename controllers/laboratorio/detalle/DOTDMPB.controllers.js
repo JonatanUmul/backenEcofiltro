@@ -5,7 +5,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDOTDMPB = async(req, res)=>{
   const {
-    id_otdmpb,
+    id_dtp,
     id_creador,
     lbbarro,
     carcilla,
@@ -19,7 +19,7 @@ export const postDOTDMPB = async(req, res)=>{
     try{
     
        const consulta=`INSERT INTO dotdmpb(
-        id_otdmpb,
+        id_dtp,
     id_creador,
     lbbarro,
     carcilla,
@@ -28,7 +28,7 @@ export const postDOTDMPB = async(req, res)=>{
     hbarro,
     iplastico) Values(?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
-          id_otdmpb,
+          id_dtp,
     id_creador,
     lbbarro,
     carcilla,
@@ -66,7 +66,7 @@ export const getDOTDMPB= async(req, res)=>{
     fecha_creacion
     
     FROM dotdmpb
-    WHERE id_otdmpb=?
+    WHERE id_dtp=?
  
     
     `

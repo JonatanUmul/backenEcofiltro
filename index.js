@@ -109,12 +109,13 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     import CernidoDetalle from './src/routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './src/routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
   // import {postSendEmail} from './Email/Email.router.js'
-  import OTDMP from './src/routes/laboratorio/encabezado/OTDMP.routes.js'
+  // import OTDMP from './src/routes/laboratorio/encabezado/OTDMP.routes.js'
   import TablaLab from './src/routes/tablaLab/TablaLab.js'
   import granulometria from './src/routes/mantenimientos/granulometria/Granulometria.routes.js'
   import DOTDMP from './src/routes/laboratorio/detallado/DOTDMP.routes.js'
-  import OTDMPB from './src/routes/laboratorio/encabezado/OTDMPB.routes.js'
+  // import OTDMPB from './src/routes/laboratorio/encabezado/OTDMPB.routes.js'
   import DOTDMPB from './src/routes/laboratorio/detallado/DOTDMPB.routes.js'
+  import TablaPorCodigos from './src/routes/tablaLab/TablaLab.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -330,13 +331,15 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     app.use(DMPHM)
     app.use(DMPM)
 
-    //Ot informacion materia prima
-    app.use(OTDMP)
+    //Ot informacion materia prima Laboratorio
+    // app.use(OTDMP)
     app.use(DOTDMP)
-    app.use(OTDMPB)
+    // app.use(OTDMPB)
     app.use(DOTDMPB)
     //Granulometria
     app.use(granulometria)
+    //TablaPorCodigos
+    app.use(TablaPorCodigos)
 
 
 
