@@ -50,3 +50,21 @@ export const getTablaLab = async (req, res) => {
         res.status(500).send("Error del servidor");
     }
 };
+
+export const putTablaLab=async(req,res)=>{
+    try{
+    const id_est=req.body.id_est
+    const id=req.body.id 
+    console.log('datos recibidos',id_est,id)
+    const consulta='UPDATE dtp set id_est=? WHERE id=?'
+
+    const [rows]=await pool.query(consulta, [id_est,id])
+    res.send({ rows });
+ 
+} catch (error) {
+console.error("Error al ejecutar la consulta:", error);
+res.status(500).send("Error del servidor");
+}
+    
+    
+}

@@ -6,7 +6,7 @@ export const getTablaPorCodigos = async (req, res) => {
     try {
         // Consulta SQL para seleccionar los estados
         let consulta = `
-           WITH MaxTemperaturas AS (
+        WITH MaxTemperaturas AS (
     SELECT
         dth.fecha_real,
         dth.id_horno,
@@ -26,20 +26,22 @@ export const getTablaPorCodigos = async (req, res) => {
 )
 SELECT 
     CASE
-        WHEN LEFT(ufcrudos.codigo, 7) BETWEEN LEFT(d.codigoInicio, 7) AND LEFT(d.codigoFinal, 7)
+        WHEN ufcrudos.codigo BETWEEN d.codigoInicio AND d.codigoFinal
         THEN ufcrudos.codigo
         ELSE 'Sin codigo'
     END AS codigos,
     ufcrudos.estadouf AS estadoCrudo,
     STR_TO_DATE(RIGHT(ufcrudos.codigo, 6), '%d%m%y') AS fecha_produccion,
     d.librasBarro,
-    CONCAT(d.librasAserrin, '/', d.librasAserrin2) AS formulaC,
-    (d.librasAserrin + d.librasAserrin2) AS formulatotal,
-    CONCAT(aserradero.nombre_aserradero, '/', aserradero2.nombre_aserradero) AS Aserraderos,
-    CONCAT(tipocernido.tipoCernido, '/', tipocernido2.tipoCernido) AS aserrintip,
+    d.librasAserrin,
+	 d.librasAserrin2,
+   (COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0)) AS formulatotal,
+    aserradero.nombre_aserradero AS aserradero1,
+	 aserradero2.nombre_aserradero AS aserradero2,
+    tipocernido.tipoCernido,
+	tipocernido2.tipoCernido,
     codigosHornos.fecha_creacion AS fechaCC,
     codigosHornos.fecha_horneado AS fechaHorneado,
-    codigosHornos.horno AS Horno,
     codigosHornos.posicionHorno AS posicionHorno,
     codigosHornos.reduccionColor AS reduccionColor,
     codigosHornos.posicionHorno AS posicionHorno,
@@ -49,32 +51,28 @@ SELECT
     turno1.turno AS turnoCC,
     enc_maq.nombre_maq AS horno,
     ufmodelo.nombre_modelo AS ufmodelo,
-    mt.max_tempCabezaIZ,
-    mt.max_tempPieIZ,
-    mt.max_tempCabezaDR,
-    mt.max_tempPieDR,
     ROUND((mt.max_tempCabezaIZ + mt.max_tempPieIZ + mt.max_tempCabezaDR + mt.max_tempPieDR) / 4) AS promedio,
     impregnados.estado,
     insumos.insumo
 FROM 
     dtp d
-    LEFT JOIN ufcrudos ON LEFT(ufcrudos.codigo, 7) BETWEEN LEFT(d.codigoInicio, 7) AND LEFT(d.codigoFinal, 7)
-    INNER JOIN aserradero ON d.id_Aserradero = aserradero.id
-    INNER JOIN aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
-    INNER JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
-    INNER JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
-    INNER JOIN codigosHornos ON ufcrudos.codigo = codigosHornos.codigo
-    INNER JOIN enc_maq ON codigosHornos.horno = enc_maq.id_maq
-    INNER JOIN ufmodelo ON codigosHornos.modelo = ufmodelo.id_mod
-    INNER JOIN turno ON codigosHornos.turnohorneado = turno.id
-    INNER JOIN turno AS turno1 ON codigosHornos.turnocc = turno1.id
+    LEFT JOIN ufcrudos ON ufcrudos.codigo BETWEEN d.codigoInicio AND d.codigoFinal
+    LEFT JOIN aserradero ON d.id_Aserradero = aserradero.id
+    LEFT JOIN aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
+    LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
+    LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
+    LEFT JOIN codigosHornos ON ufcrudos.codigo = codigosHornos.codigo
+    LEFT JOIN enc_maq ON codigosHornos.horno = enc_maq.id_maq
+    LEFT JOIN ufmodelo ON codigosHornos.modelo = ufmodelo.id_mod
+    LEFT JOIN turno ON codigosHornos.turnohorneado = turno.id
+    LEFT JOIN turno AS turno1 ON codigosHornos.turnocc = turno1.id
     LEFT JOIN MaxTemperaturas mt 
         ON codigosHornos.fecha_horneado = mt.fecha_real
         AND codigosHornos.horno = mt.id_horno
         AND codigosHornos.modelo = mt.id_modelo
         AND codigosHornos.turnohorneado = mt.id_turno
-   LEFT JOIN impregnados ON codigosHornos.codigo=impregnados.codigo
-   LEFT JOIN insumos ON impregnados.tipodeplata=insumos.id
+    LEFT JOIN impregnados ON codigosHornos.codigo = impregnados.codigo
+    LEFT JOIN insumos ON impregnados.tipodeplata = insumos.id
 
             WHERE 1=1`;
 

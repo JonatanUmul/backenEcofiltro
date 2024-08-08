@@ -2,7 +2,7 @@
 import { pool } from "../../../src/db.js";
 
 export const postDTP = async (req, res) => {
-   
+   const id_est=2;
   const {
     id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion, id_creador} = req.body;
 
@@ -13,7 +13,7 @@ console.log(id_grupoproduccion)
     { console.log('Uno o varios datos están vacíos');
     return res.status(400).json({ error: 'Uno o varios datos están vacíos' });
   }else{
-      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador) VALUES (?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?,?)";
+      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador, id_est) VALUES (?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?,?,?)";
       const [rows] = await pool.query(consulta, [
         id_OTP,
         fecha_real,
@@ -31,7 +31,8 @@ console.log(id_grupoproduccion)
     librasAserrin,
     librasAserrin2,
     observacion, 
-    id_creador
+    id_creador,
+    id_est
       ]);
       res.send({ rows });
     }
