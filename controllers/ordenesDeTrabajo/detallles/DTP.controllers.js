@@ -1,10 +1,14 @@
 
 import { pool } from "../../../src/db.js";
 
+export const updateDTP=async(req,res)=>{
+
+}
+
 export const postDTP = async (req, res) => {
    const id_est=2;
   const {
-    id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion, id_creador} = req.body;
+    id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion, id_creador,id_mezcladora} = req.body;
 
 
 console.log(id_grupoproduccion)
@@ -13,7 +17,7 @@ console.log(id_grupoproduccion)
     { console.log('Uno o varios datos están vacíos');
     return res.status(400).json({ error: 'Uno o varios datos están vacíos' });
   }else{
-      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador, id_est) VALUES (?, ?, ?, ?,?, ?, ?, ?,?, ?,?,?,?,?,?,?,?,?)";
+      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador, id_est, id_mezcladora) VALUES (?, ?, ?, ?,?,?,?, ?, ?,?, ?,?,?,?,?,?,?,?,?)";
       const [rows] = await pool.query(consulta, [
         id_OTP,
         fecha_real,
@@ -32,7 +36,8 @@ console.log(id_grupoproduccion)
     librasAserrin2,
     observacion, 
     id_creador,
-    id_est
+    id_est,
+    id_mezcladora
       ]);
       res.send({ rows });
     }
@@ -218,3 +223,5 @@ export const getDTPPS = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
   }
 };
+
+
