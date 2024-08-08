@@ -5,11 +5,11 @@ import { pool } from "../src/db.js";
 import { formatFecha } from './FormatearFecta.js';
 dotenv.config();
 
-// Verificar que las variables de entorno se carguen correctamente
-console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
-console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
-console.log("AWS_REGION:", process.env.AWS_REGION);
-console.log("AWS_SOURCE_EMAIL:", process.env.AWS_SOURCE_EMAIL);
+// // Verificar que las variables de entorno se carguen correctamente
+// console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+// console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
+// console.log("AWS_REGION:", process.env.AWS_REGION);
+// console.log("AWS_SOURCE_EMAIL:", process.env.AWS_SOURCE_EMAIL);
 
 // Configuración de AWS SDK
 AWS.config.update({
@@ -32,7 +32,7 @@ export const postSendEmail = async (registro) => {
 
   // Validación de los campos requeridos
   if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados  || !EncargadoCC) {
-    console.error(`Registro con ID ${id} tiene datos faltantes o nulos. Omitiendo el envío.`);
+    // console.error(`Registro con ID ${id} tiene datos faltantes o nulos. Omitiendo el envío.`);
     return { success: false, error: 'Datos faltantes o nulos' };
   }
 
@@ -169,7 +169,7 @@ setInterval(async () => {
     }
 
     for (const registro of rows) {
-      console.log('Intentando enviar correo para el registro:', registro);
+      // console.log('Intentando enviar correo para el registro:', registro);
 
       try {
         const result = await postSendEmail(registro); // Llamar a la función con el registro completo
