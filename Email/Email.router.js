@@ -27,7 +27,7 @@ export const postSendEmail = async (registro) => {
     fechaHorneado, fechaCC, turnoHorneado, aserradero, tipocernido1, tipocernido2, librasAserrin2,
     ModeloEco, formula, Horno, Hornero, aprobados, altos, bajos, rajadosCC, crudoCC, quemados,
     ahumados, mermas_hornos, total, EncargadoCC, porcentaje, idjefe, idJefe, NobreJefe, firmaJefe,
-    idEncargado, NombreEncargado, FirmaEncargado
+    idEncargado, NombreEncargado, CabezaIz, PieIZ, cabezaDr,PieDr,promedioTMP
   } = registro;
 
   // Validación de los campos requeridos
@@ -51,6 +51,14 @@ export const postSendEmail = async (registro) => {
     - Hornero: ${Hornero}
     - Horneado: ${horneado}
     
+    Datos de Temperatura:
+    
+    -Temperatura Cabeza Derecha: ${cabezaDr}
+    -Temperatura Pie Derecho: ${PieDr}
+    -Temperatura Cabeza Izquierda: ${CabezaIz}
+    -Temperatura Pie Izquierdo: ${PieIZ}
+    -Promedio Temperatura: ${promedioTMP}
+
     Resultados:
     - Aprobados: ${aprobados}
     - Rajados CC: ${rajadosCC}
@@ -99,9 +107,29 @@ setInterval(async () => {
 
   try {
     const [rows] = await pool.query(`
-      SELECT 
+       WITH MaxTemperaturas AS (
+    SELECT
+        dth.fecha_real,
+        dth.id_horno,
+        dth.id_modelo,
+        dth.id_turno,
+        MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
+        MAX(dth.tempPieIZ) AS max_tempPieIZ,
+        MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
+        MAX(dth.tempPieDR) AS max_tempPieDR
+    FROM
+        dth
+    GROUP BY
+        dth.fecha_real,
+        dth.id_horno,
+        dth.id_modelo,
+        dth.id_turno
+)
+SELECT 
+
         'dtcc' as tabla,
         d.id,
+        dtcc.id_dthh,
         d.id_modelo,
         d.id_turno,
         d.id_horno,
@@ -137,10 +165,13 @@ setInterval(async () => {
         othh.id_creador AS idjefe,
         user.nombre AS idJefe,
         operarios2.Nombre AS NobreJefe,
-        userFirma.firmaUsr AS firmaJefe,
         userFEncargado.nombre AS idEncargado,
         operariosFencargado.Nombre AS NombreEncargado,
-        userEfirma.firmaUsr AS FirmaEncargado
+        tm.max_tempCabezaIZ AS CabezaIz,
+        tm.max_tempPieIZ AS PieIZ,
+        tm.max_tempCabezaDR  AS cabezaDr,
+         tm.max_tempPieDR AS PieDr,
+             ROUND((tm.max_tempCabezaIZ + tm.max_tempPieIZ + tm.max_tempCabezaDR + tm.max_tempPieDR) / 4) AS promedioTMP
       FROM dthh d
       LEFT JOIN turno ON d.id_turno = turno.id
       LEFT JOIN aserradero ON d.id_aserradero = aserradero.id
@@ -158,7 +189,7 @@ setInterval(async () => {
       LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
       LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
       LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
-      
+      LEFT JOIN MaxTemperaturas tm ON tm.id_turno=d.id_turno and tm.id_modelo=d.id_modelo AND tm.id_horno=d.id_horno AND tm.fecha_real=d.fecha_creacion
       WHERE dtcc.enviado = 0
     `);
 
