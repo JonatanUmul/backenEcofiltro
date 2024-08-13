@@ -16,6 +16,7 @@ export const getTablaLab = async (req, res) => {
 	d.librasBarro,
 	d.LibrasAserrin,
 	d.librasAserrin2,
+   COALESCE(d.LibrasAserrin, 0) + COALESCE(d.librasAserrin2, 0) AS formulaTot,
 	aserradero.nombre_aserradero as nombre_aserradero,
 	aserradero2.nombre_aserradero as nombre_aserradero2,
 	tipocernido.tipoCernido AS tipocernido1,
