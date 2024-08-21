@@ -5,6 +5,6 @@ import { getTablaPorCodigos } from "../../../controllers/tablaLab/TablaPorCodigo
 const router = Router();
 
 router.get('/TablaLab', getTablaLab );
-router.get('/TablaPorCodigos/:fecha_creacion_inicio/:fecha_creacion_fin', getTablaPorCodigos );
+router.get('/TablaPorCodigos/:fecha_creacion_inicio/:fecha_creacion_fin/:codigo', getTablaPorCodigos );
 router.put('/TablaLab', putTablaLab)
 export default router;
