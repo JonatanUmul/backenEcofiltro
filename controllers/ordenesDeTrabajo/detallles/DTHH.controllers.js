@@ -10,7 +10,13 @@ export const postDTHH = async(req, res)=>{
     
 
     try{
-       
+      if (!id_OTHH || !id_turno || !id_aserradero || !id_cernidodetalle || !id_modelo || !id_horno || !id_hornero || !horneado || !mermasCrudas || !codigoInicio || !codigoFin || !librasBarro || !librasAserrin) {
+        return res.status(400).json({
+            errors: {
+                form: "Todos los campos son obligatorios"
+            }
+        });
+    }
             const consulta='INSERT INTO dthh(id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador, id_est)Values(?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?)';
         const [rows]= await pool.query(consulta,[  id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador, id_est])
         res.send({rows});
