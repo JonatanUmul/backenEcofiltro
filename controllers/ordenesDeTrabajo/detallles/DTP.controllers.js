@@ -209,6 +209,10 @@ export const getDTPPS = async (req, res) => {
       params.push(id_ufmodelo);
     }
 
+    consulta += 'AND otp.id_est=3 OR otp.id_est=2' ;
+   
+
+
     if (id_grupoproduccion !== 'null') {
       consulta += ' AND d.id_grupoproduccion = ?';
       params.push(id_grupoproduccion);
