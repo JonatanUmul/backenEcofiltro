@@ -12,7 +12,8 @@ export const postDOTDMP = async(req, res)=>{
     id_cernidodetalle,
     id_cernidodetalle2,
     lbaserrin,
-    lbaserrin2
+    lbaserrin2,
+    id_granulometria
     }= req.body
    
    
@@ -26,7 +27,9 @@ export const postDOTDMP = async(req, res)=>{
     id_cernidodetalle,
     id_cernidodetalle2,
     lbaserrin,
-    lbaserrin2) Values(?,?,?,?,?,?,?,?)`;
+    lbaserrin2,
+    id_granulometria
+    ) Values(?,?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
           id_dtp,
           id_creador,
@@ -35,7 +38,8 @@ export const postDOTDMP = async(req, res)=>{
           id_cernidodetalle,
           id_cernidodetalle2,
           lbaserrin,
-          lbaserrin2
+          lbaserrin2,
+          id_granulometria
         ])
         res.send({rows});
         
@@ -71,7 +75,8 @@ dotdmpb.carcilla,
 dotdmpb.climo,
 dotdmpb.carena,
 dotdmpb.hbarro,
-dotdmpb.iplastico
+dotdmpb.iplastico,
+tamañoAserrin.granulometria
 
 FROM dotdmp d
 
@@ -89,6 +94,11 @@ LEFT JOIN
 tipocernido AS tipocernido2 ON d.id_cernidodetalle2=tipocernido2.id
 LEFT JOIN 
 dotdmpb ON d.id_dtp =dotdmpb.id_dtp
+lEFT JOIN
+tamañoAserrin ON d.id_granulometria = tamañoAserrin.id
+
+
+
 WHERE d.id_dtp=?;
     
     `
