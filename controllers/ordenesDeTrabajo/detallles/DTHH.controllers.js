@@ -32,83 +32,25 @@ export const getDTHH = async(req, res)=>{
     const id= req.params.id
     try {
     const consulta = 
-    `SELECT 
-    d.id,
-    'cthh' as tabla,
-    d.codigoInicio,
-    d.id_OTHH,
-    d.codigoFin,
-    d.horneado,
-    d.mermasCrudas,
-    d.librasBarro,
-    d.librasAserrin,
-    d.fecha_creacion AS fechaHorneado,
-    turno.turno AS turnoHorneado,
-    aserradero.nombre_aserradero AS aserradero,
-    tipocernido.tipoCernido AS tipocernido1,
-    tipocernido2.tipoCernido AS tipocernido2,
-    d.librasAserrin2,
-    ufmodelo.nombre_modelo AS ModeloEco,
-    COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) AS formula,
-    enc_maq.nombre_maq AS Horno,
-    operarios.Nombre AS Hornero,
-    dtcc.aprobados,
-    dtcc.altos,
-    dtcc.bajos,
-    dtcc.rajadosCC,
-    dtcc.crudoCC,
-    dtcc.quemados,
-    dtcc.ahumados,
-    dtcc.mermas_hornos,
-     dtcc.fecha_creacion AS fechaCC,
-    COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
-    operarios1.Nombre AS EncargadoCC,
-     CONCAT(ROUND((dtcc.aprobados / d.horneado * 100), 0), '%') AS porcentaje,
-   othh.id_creador AS idjefe,
-   user.nombre AS idJefe,
-   operarios2.Nombre AS NobreJefe,
-   userFirma.firmaUsr AS firmaJefe,
-	userFEncargado.nombre AS idEncargado,
-	operariosFencargado.Nombre AS NombreEncargado,
-	userEfirma.firmaUsr AS FirmaEncargado
-    
-FROM dthh d
-LEFT JOIN turno ON d.id_turno = turno.id
-LEFT JOIN aserradero ON d.id_aserradero = aserradero.id
-LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
-LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
-LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
-LEFT JOIN enc_maq ON d.id_horno = enc_maq.id_maq
-LEFT JOIN operarios ON d.id_hornero = operarios.id
-LEFT JOIN dtcc ON d.id = dtcc.id_dthh
-LEFT JOIN operarios as operarios1 ON dtcc.id_operarioCC=operarios1.id
-LEFT JOIN othh ON d.id_OTHH= othh.id
-LEFT JOIN user ON othh.id_creador=user.id
-LEFT JOIN operarios AS operarios2 ON user.nombre =operarios2.id
-LEFT JOIN user AS userFirma ON othh.id_creador=userFirma.id
-LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
-LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
-LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
-
-
-    where d.id_OTHH = ?`
-    const [rows]= await pool.query(consulta, [id])
-    // Enviar los datos obtenidos al cliente
-    res.status(200).json({ data: rows });
-
-    } catch (error) {
-        console.error("Error al obtener los datos de la tabla dtp:", error);
-      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
-    }
-    
-}
-
-export const getSSDTH = async(req, res)=>{
-
-    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est, fecha_CC}= req.params
-    try {
-    let consulta = 
-    `SELECT 
+    ` WITH MaxTemperaturas AS (
+    SELECT
+        dth.fecha_real,
+        dth.id_horno,
+        dth.id_modelo,
+        dth.id_turno,
+        MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
+        MAX(dth.tempPieIZ) AS max_tempPieIZ,
+        MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
+        MAX(dth.tempPieDR) AS max_tempPieDR
+    FROM
+        dth
+    GROUP BY
+        dth.fecha_real,
+        dth.id_horno,
+        dth.id_modelo,
+        dth.id_turno
+)
+SELECT 
     'cthh' as tabla,
     d.id,
     d.id_modelo,
@@ -149,7 +91,9 @@ export const getSSDTH = async(req, res)=>{
    userFirma.firmaUsr AS firmaJefe,
 	userFEncargado.nombre AS idEncargado,
 	operariosFencargado.Nombre AS NombreEncargado,
-	userEfirma.firmaUsr AS FirmaEncargado
+	userEfirma.firmaUsr AS FirmaEncargado,
+	    ROUND((mt.max_tempCabezaIZ + mt.max_tempPieIZ + mt.max_tempCabezaDR + mt.max_tempPieDR) / 4) AS promedio
+
     
 FROM dthh d
 LEFT JOIN turno ON d.id_turno = turno.id
@@ -168,7 +112,114 @@ LEFT JOIN user AS userFirma ON othh.id_creador=userFirma.id
 LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
 LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
 LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
+ LEFT JOIN MaxTemperaturas mt 
+        ON d.fecha_creacion = mt.fecha_real
+        AND d.id_horno = mt.id_horno
+        AND d.id_modelo= mt.id_modelo
+        AND d.id_turno=mt.id_turno
 
+    where d.id_OTHH = ?`
+    const [rows]= await pool.query(consulta, [id])
+    // Enviar los datos obtenidos al cliente
+    res.status(200).json({ data: rows });
+
+    } catch (error) {
+        console.error("Error al obtener los datos de la tabla dtp:", error);
+      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
+    }
+    
+}
+
+export const getSSDTH = async(req, res)=>{
+
+    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est, fecha_CC}= req.params
+    try {
+    let consulta = 
+    ` WITH MaxTemperaturas AS (
+    SELECT
+        dth.fecha_real,
+        dth.id_horno,
+        dth.id_modelo,
+        dth.id_turno,
+        MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
+        MAX(dth.tempPieIZ) AS max_tempPieIZ,
+        MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
+        MAX(dth.tempPieDR) AS max_tempPieDR
+    FROM
+        dth
+    GROUP BY
+        dth.fecha_real,
+        dth.id_horno,
+        dth.id_modelo,
+        dth.id_turno
+)
+SELECT 
+    'cthh' as tabla,
+    d.id,
+    d.id_modelo,
+    d.id_turno,
+    d.id_horno,
+    d.codigoInicio,
+    d.id_OTHH,
+    d.codigoFin,
+    d.horneado,
+    d.mermasCrudas,
+    d.librasBarro,
+    d.librasAserrin,
+    d.fecha_creacion AS fechaHorneado,
+     dtcc.fecha_creacion AS fechaCC,
+    turno.turno AS turnoHorneado,
+    aserradero.nombre_aserradero AS aserradero,
+    tipocernido.tipoCernido AS tipocernido1,
+    tipocernido2.tipoCernido AS tipocernido2,
+    d.librasAserrin2,
+    ufmodelo.nombre_modelo AS ModeloEco,
+    COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) AS formula,
+    enc_maq.nombre_maq AS Horno,
+    operarios.Nombre AS Hornero,
+    dtcc.aprobados,
+    dtcc.altos,
+    dtcc.bajos,
+    dtcc.rajadosCC,
+    dtcc.crudoCC,
+    dtcc.quemados,
+    dtcc.ahumados,
+    dtcc.mermas_hornos,
+    COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
+    operarios1.Nombre AS EncargadoCC,
+     CONCAT(ROUND((dtcc.aprobados / d.horneado * 100), 0), '%') AS porcentaje,
+   othh.id_creador AS idjefe,
+   user.nombre AS idJefe,
+   operarios2.Nombre AS NobreJefe,
+   userFirma.firmaUsr AS firmaJefe,
+	userFEncargado.nombre AS idEncargado,
+	operariosFencargado.Nombre AS NombreEncargado,
+	userEfirma.firmaUsr AS FirmaEncargado,
+	    ROUND((mt.max_tempCabezaIZ + mt.max_tempPieIZ + mt.max_tempCabezaDR + mt.max_tempPieDR) / 4) AS promedio
+
+    
+FROM dthh d
+LEFT JOIN turno ON d.id_turno = turno.id
+LEFT JOIN aserradero ON d.id_aserradero = aserradero.id
+LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
+LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
+LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
+LEFT JOIN enc_maq ON d.id_horno = enc_maq.id_maq
+LEFT JOIN operarios ON d.id_hornero = operarios.id
+LEFT JOIN dtcc ON d.id = dtcc.id_dthh
+LEFT JOIN operarios as operarios1 ON dtcc.id_operarioCC=operarios1.id
+LEFT JOIN othh ON d.id_OTHH= othh.id
+LEFT JOIN user ON othh.id_creador=user.id
+LEFT JOIN operarios AS operarios2 ON user.nombre =operarios2.id
+LEFT JOIN user AS userFirma ON othh.id_creador=userFirma.id
+LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
+LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
+LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
+ LEFT JOIN MaxTemperaturas mt 
+        ON d.fecha_creacion = mt.fecha_real
+        AND d.id_horno = mt.id_horno
+        AND d.id_modelo= mt.id_modelo
+        AND d.id_turno=mt.id_turno
 
     WHERE 1= 1`;
     

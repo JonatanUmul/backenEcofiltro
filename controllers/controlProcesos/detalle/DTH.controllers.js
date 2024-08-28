@@ -77,7 +77,8 @@ export const getSDTH = async (req, res) => {
   const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno } = req.params;
 console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin, modeloUF )
   try {
-    let consulta = ` SELECT 	
+    let consulta = ` 
+    SELECT 	
         d.id,
         d.fecha_creacion,
         d.fecha_real,
