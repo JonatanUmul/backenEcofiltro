@@ -32,9 +32,9 @@ export const getDTHH = async(req, res)=>{
     const id= req.params.id
     try {
     const consulta = 
-    ` WITH MaxTemperaturas AS (
+    `WITH MaxTemperaturas AS (
     SELECT
-        dth.fecha_creacion,
+        dth.fecha_real,
         dth.id_horno,
         dth.id_modelo,
         dth.id_turno,
@@ -45,7 +45,7 @@ export const getDTHH = async(req, res)=>{
     FROM
         dth
     GROUP BY
-        dth.fecha_creacion,
+        dth.fecha_real,
         dth.id_horno,
         dth.id_modelo,
         dth.id_turno
@@ -113,10 +113,10 @@ LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
 LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
 LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
  LEFT JOIN MaxTemperaturas mt 
-        ON d.fecha_creacion = mt.fecha_creacion
+        ON d.fecha_creacion = mt.fecha_real
         AND d.id_horno = mt.id_horno
         AND d.id_modelo= mt.id_modelo
-        AND d.id_turno=mt.id_turno
+        AND d.id_turno= mt.id_turno
 
     where d.id_OTHH = ?`
     const [rows]= await pool.query(consulta, [id])
@@ -137,7 +137,7 @@ export const getSSDTH = async(req, res)=>{
     let consulta = 
     ` WITH MaxTemperaturas AS (
     SELECT
-        dth.fecha_creacion,
+        dth.fecha_real,
         dth.id_horno,
         dth.id_modelo,
         dth.id_turno,
@@ -148,7 +148,7 @@ export const getSSDTH = async(req, res)=>{
     FROM
         dth
     GROUP BY
-        dth.fecha_creacion,
+        dth.fecha_real,
         dth.id_horno,
         dth.id_modelo,
         dth.id_turno
@@ -216,10 +216,10 @@ LEFT JOIN user as userFEncargado ON d.id_creador= userFEncargado.id
 LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre= operariosFencargado.id
 LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
  LEFT JOIN MaxTemperaturas mt 
-        ON d.fecha_creacion = mt.fecha_creacion
+        ON d.fecha_creacion = mt.fecha_real
         AND d.id_horno = mt.id_horno
         AND d.id_modelo= mt.id_modelo
-        AND d.id_turno=mt.id_turno
+        AND d.id_turno= mt.id_turno
 
     WHERE 1= 1`;
     
