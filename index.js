@@ -41,6 +41,7 @@
     import Operarios from './src/routes/mantenimientos/operarios/OperariosAreas.routes.js'
     import DCPCD from './src/routes/controlProcesos/detallados/DCPCD.routes.js'
     import DTHH from './src/routes/ordenesDeTrabajo/detallados/DTHH.routes.js'
+    import DTHHprueba from './src/routes/ordenesDeTrabajo/detallados/DTHHPrueba.routes.js'
     import CPS from './src/routes/controlProcesos/encabezados/CPS.routes.js'
     import CPB from './src/routes/controlProcesos/encabezados/CPB.routes.js'
     import CRM from './src/routes/controlProcesos/encabezados/CRM.routes.js'
@@ -256,6 +257,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     //Hornos
     app.use(OTHH)
     app.use(DTHH)
+    app.use(DTHHprueba)
 
     //Impregnados
     app.use(OTIP)

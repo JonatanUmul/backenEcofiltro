@@ -243,6 +243,8 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
         consulta += ' AND ( d.id_est = ?)';
         params.push(id_est);
       }
+
+      consulta += 'ORDER BY d.id ASC'
     
      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
           consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
