@@ -221,7 +221,7 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
         AND d.id_modelo= mt.id_modelo
         AND d.id_turno= mt.id_turno
 
-    WHERE 1= 1`;
+    WHERE 1= 1 `;
     
     const params=[]
 
@@ -244,8 +244,7 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
         params.push(id_est);
       }
 
-      consulta += 'ORDER BY d.id ASC'
-    
+        
      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
           consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
           params.push(fecha_creacion_inicio, fecha_creacion_fin);
@@ -267,7 +266,7 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
           consulta += ' AND dtcc.fecha_creacion <= ?';
           params.push(fecha_CC);
         }
-    
+     consulta+=' ORDER BY d.id ASC'
 
     const [rows]= await pool.query(consulta, params)
     // Enviar los datos obtenidos al cliente
