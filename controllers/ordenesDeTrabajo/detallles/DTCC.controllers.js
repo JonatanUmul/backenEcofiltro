@@ -1,6 +1,5 @@
 import { pool } from "../../../src/db.js";
 
-console.log('Total Horneados',horneados)
 
 export const postDTCC = async(req, res)=>{
     const estado= 2;
