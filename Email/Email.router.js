@@ -74,11 +74,12 @@ export const postSendEmail = async (registro) => {
     -----------------------------------------
     Este es un mensaje automático, por favor no responder.
   `;
+  // ,  'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com','jfelipe@ecofiltro.com','smunoz@ecofiltro.com'
   const params = {
     Source: process.env.AWS_SOURCE_EMAIL,
     Destination: {
       ToAddresses: [process.env.AWS_SOURCE_EMAIL], // El correo del remitente
-      BccAddresses: ['jumul@ecofiltro.com',  'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com','jfelipe@ecofiltro.com','smunoz@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
+      BccAddresses: ['jumul@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
     },
     Message: {
       Subject: {
