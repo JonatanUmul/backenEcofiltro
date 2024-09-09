@@ -1,12 +1,11 @@
 import { Router } from "express";
-import {  postDTHH, getDTHH, getSSDTH, putDTHH } from "../../../../controllers/ordenesDeTrabajo/detallles/DTHH.controllers.js";
+import { getSSDTH } from "../../../../controllers/ordenesDeTrabajo/detallles/DTHHPruebas.controllers";
 
 
 
 const router = Router();
 
-router.post('/DTHH', postDTHH);
-router.get('/DTHH/:id', getDTHH);
-router.get('/DTHH/:fecha_creacion_inicio/:fecha_creacion_fin/:modeloUF/:turn/:horno/:id_est/:fecha_CC', getSSDTH);
-router.put('/DTHH', putDTHH)
+
+router.get('/DTHHprueba/:fecha_creacion_inicio/:fecha_creacion_fin/:modeloUF/:turn/:horno/:id_est/:fecha_CC', getSSDTH);
+
 export default router;

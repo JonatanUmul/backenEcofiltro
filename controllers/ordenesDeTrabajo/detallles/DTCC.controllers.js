@@ -1,13 +1,13 @@
 import { pool } from "../../../src/db.js";
 
-
+console.log('Total Horneados',horneados)
 
 export const postDTCC = async(req, res)=>{
     const estado= 2;
     const enviado=0;
     const {
       id_dthh,
-        horneados,
+        horneado,
         fecha_real,
         codigoInicio,
         codigoFin,
@@ -31,8 +31,10 @@ export const postDTCC = async(req, res)=>{
     
 
     try{
-        if(estado===''){
-            console.log('Uno o varios datos estan vacios')
+      var sumaDatos= aprobados+altos+bajos+mermas_hornos+rajadosCC+crudoCC+quemados+ahumados;
+        if(sumaDatos!=horneado){
+          return res.status(400).json({message: 'Los datos no coinciden'})
+          
         }
         else{
             const consulta=`INSERT INTO dtcc(  
@@ -57,10 +59,11 @@ export const postDTCC = async(req, res)=>{
                 quemados,
                 ahumados,
                 id_creador,
-                enviado)Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?,?)`;
+                enviado
+                )Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[  
           id_dthh,
-            horneados,
+            horneado,
             fecha_real,
             codigoInicio,
             codigoFin,
