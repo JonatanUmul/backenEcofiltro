@@ -1,11 +1,60 @@
 import { pool } from "../../../src/db.js";
 
+export const postDTCC = async (req, res) => {
+  const estado = 2;
+  const enviado = 0;
+  const {
+    id_dthh,
+    horneado,
+    fecha_real,
+    codigoInicio,
+    codigoFin,
+    id_operarioCC,
+    id_auditor,
+    modelo,
+    id_horno,
+    turnoCC,
+    fechaHorneado,
+    turnoHorneado,
+    aprobados,
+    altos,
+    bajos,
+    mermas_hornos,
+    rajadosCC,
+    crudoCC,
+    quemados,
+    ahumados,
+    id_creador,
+  } = req.body;
+console.log('horneado', horneado)
+  try {
+    // Verifica que todos los campos necesarios existan y sean números válidos.
+    let sumaNumeros = [aprobados, altos, bajos, mermas_hornos, rajadosCC, crudoCC, quemados, ahumados].map(Number);
 
-export const postDTCC = async(req, res)=>{
-    const estado= 2;
-    const enviado=0;
-    const {
-      id_dthh,
+    if (sumaNumeros.some(isNaN)) {
+      return res.status(400).json({ error: "Datos inválidos o faltantes" });
+    }
+
+    // Sumar los valores
+    let suma = sumaNumeros.reduce((acumulador, valorActual) => acumulador + valorActual, 0);
+    console.log(`Suma de los valores: ${suma}`);
+
+    // Validación: La suma debe ser igual a 'horneado'
+    if (suma !== horneado) {
+      return res.status(400).json({ error: "Los datos no coinciden" });
+    } else {
+      // Inserción de datos en la base de datos
+      const consulta = `
+        INSERT INTO dtcc (
+          id_dthh, horneados, fecha_real, codigoInicio, codigoFin, id_operarioCC, 
+          id_auditor, modelo, id_horno, turnoCC, fechaHorneado, turnoHorneado, 
+          aprobados, altos, bajos, mermas_hornos, rajadosCC, crudoCC, quemados, 
+          ahumados, id_creador, enviado
+        ) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
+      const [rows] = await pool.query(consulta, [
+        id_dthh,
         horneado,
         fecha_real,
         codigoInicio,
@@ -25,71 +74,18 @@ export const postDTCC = async(req, res)=>{
         crudoCC,
         quemados,
         ahumados,
-        id_creador
-        } = req.body;
-    
+        id_creador,
+        enviado,
+      ]);
 
-    try{
-      var sumaDatos= aprobados+altos+bajos+mermas_hornos+rajadosCC+crudoCC+quemados+ahumados;
-        if(sumaDatos!=horneado){
-          return res.status(400).json({message: 'Los datos no coinciden'})
-          
-        }
-        else{
-            const consulta=`INSERT INTO dtcc(  
-                id_dthh,
-                horneados,
-                fecha_real,
-                codigoInicio,
-                codigoFin,
-                id_operarioCC,
-                id_auditor,
-                modelo,
-                id_horno,
-                turnoCC,
-                fechaHorneado,
-                turnoHorneado,
-                aprobados,
-                altos,
-                bajos,
-                mermas_hornos,
-                rajadosCC,
-                crudoCC,
-                quemados,
-                ahumados,
-                id_creador,
-                enviado
-                )Values(?,?, ?,?, ?,?,?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?,?,?)`;
-        const [rows]= await pool.query(consulta,[  
-          id_dthh,
-            horneado,
-            fecha_real,
-            codigoInicio,
-            codigoFin,
-            id_operarioCC,
-            id_auditor,
-            modelo,
-            id_horno,
-            turnoCC,
-            fechaHorneado,
-            turnoHorneado,
-            aprobados,
-            altos,
-            bajos,
-            mermas_hornos,
-            rajadosCC,
-            crudoCC,
-            quemados,
-            ahumados,
-            id_creador,
-          enviado])
-        res.send({rows});
-        }
-        
-    }catch(err){
-        console.log('Error al guardar los datos', err)
+      res.send({ rows });
     }
-}
+  } catch (err) {
+    console.log("Error al guardar los datos", err);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+};
+
 
 export const getDTCC = async(req, res)=>{
 
