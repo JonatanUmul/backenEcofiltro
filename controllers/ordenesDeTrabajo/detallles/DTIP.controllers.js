@@ -3,14 +3,14 @@ import { pool } from "../../../src/db.js";
 
 export const postDTIP = async (req, res) => {
 
-    const { id_OTIP,TipoPlata,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador } = req.body;
-   
+    const { id_OTIP, TipoPlata, TipoPlata2, fecha_real, id_modelo, codigoInicio, codigoFinal, impregnados, mermas, id_creador } = req.body;
+   console.log('Tipo de plata 2',TipoPlata2)
     try {
-        if (id_OTIP === '' ||TipoPlata===''|| id_modelo === '', codigoInicio==='' || codigoFinal === '' || impregnados === '' || mermas === '' ) {
+        if (id_OTIP<0  && TipoPlata===null && TipoPlata2===null && id_modelo<=0 && codigoInicio===null && codigoFinal===null && impregnados<0 && mermas === '' ) {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dtip (id_OTIP,TipoPlata,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            const [rows] = await pool.query(consulta, [id_OTIP, TipoPlata, fecha_real,id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador]);
+            const consulta = 'INSERT INTO dtip (id_OTIP,TipoPlata,TipoPlata2,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const [rows] = await pool.query(consulta, [id_OTIP, TipoPlata, TipoPlata2, fecha_real,id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador]);
             res.send({ rows });
         }
     } catch (err) {
@@ -34,6 +34,7 @@ export const getDTIP = async (req, res) => {
       d.fechaCreacion,
       d.horaCreacion,
       insumos.insumo as TipoPlata,
+      insumos2.insumo as TipoPlata2,
       ufmodelo.nombre_modelo as modelo,
       d.id_creador,
       user.nombre AS id_encargado,
@@ -41,13 +42,15 @@ export const getDTIP = async (req, res) => {
   FROM 
       dtip d
 
-  LEFT JOIN 
+   LEFT JOIN 
       ufmodelo ON d.id_modelo = ufmodelo.id_mod
-LEFT JOIN 
+   LEFT JOIN 
       insumos ON d.TipoPlata = insumos.id
+   LEFT JOIN
+      insumos AS insumos2 on d.TipoPLata2= insumos2.id
    LEFT JOIN 
    	user ON d.id_creador= user.id
-   	LEFT JOIN 
+   LEFT JOIN 
    	operarios ON  user.nombre = operarios.id
       WHERE d.id_otip= ?
   `;
