@@ -46,16 +46,15 @@ console.log('horneado', horneado)
       // Inserción de datos en la base de datos
       const consulta = `
         INSERT INTO dtcc (
-          id_dthh, horneados, fecha_real, codigoInicio, codigoFin, id_operarioCC, 
+          id_dthh, fecha_real, codigoInicio, codigoFin, id_operarioCC, 
           id_auditor, modelo, id_horno, turnoCC, fechaHorneado, turnoHorneado, 
           aprobados, altos, bajos, mermas_hornos, rajadosCC, crudoCC, quemados, 
           ahumados, id_creador, enviado
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const [rows] = await pool.query(consulta, [
         id_dthh,
-        horneado,
         fecha_real,
         codigoInicio,
         codigoFin,
