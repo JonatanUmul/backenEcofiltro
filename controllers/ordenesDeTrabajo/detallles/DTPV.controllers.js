@@ -23,20 +23,27 @@ export const getDTPV = async (req, res) => {
     try {
       // Consulta SQL para obtener todos los registros de la tabla dtp
       const consulta = `
-      SELECT 
-      d.id,
-      d.cantidad,
-      d.humedad,
-      d.fecha_creacion,
-      d.hora_creacion,
-      otpv.id AS id_otpv,
-      enc_matprima.nom_matPrima AS descripcion_matprima
-  FROM 
-      dtpv d
-  LEFT JOIN
-      otpv ON d.id_OTPV = otpv.id
-  LEFT JOIN
-      enc_matprima ON d.id_MP = enc_matprima.id_enc
+        SELECT 
+        d.id,
+        d.cantidad,
+        d.humedad,
+        d.fecha_creacion,
+        d.hora_creacion,
+        otpv.id AS id_otpv,
+        enc_matprima.nom_matPrima AS descripcion_matprima,
+        user.firmaUsr AS FirmaEncargado,
+        user2.firmaUsr AS FirmaJefe
+        
+    FROM 
+        dtpv d
+    LEFT JOIN
+        otpv ON d.id_OTPV = otpv.id
+    LEFT JOIN
+        enc_matprima ON d.id_MP = enc_matprima.id_enc
+   LEFT JOIN 
+   		user ON d.id_creador= user.id
+   LEFT JOIN 
+   		user AS user2 ON otpv.id_creador= user2.id
 
     where otpv.id=?
   
@@ -61,20 +68,27 @@ export const getDTPV = async (req, res) => {
   
     try {
         let consulta = `
-        SELECT 
+           SELECT 
         d.id,
         d.cantidad,
         d.humedad,
         d.fecha_creacion,
         d.hora_creacion,
         otpv.id AS id_otpv,
-        enc_matprima.nom_matPrima AS descripcion_matprima
+        enc_matprima.nom_matPrima AS descripcion_matprima,
+        user.firmaUsr AS FirmaEncargado,
+        user2.firmaUsr AS FirmaJefe
+        
     FROM 
         dtpv d
     LEFT JOIN
         otpv ON d.id_OTPV = otpv.id
     LEFT JOIN
         enc_matprima ON d.id_MP = enc_matprima.id_enc
+   LEFT JOIN 
+   		user ON d.id_creador= user.id
+   LEFT JOIN 
+   		user AS user2 ON otpv.id_creador= user2.id
     WHERE 1=1`;
   
         const params = [];

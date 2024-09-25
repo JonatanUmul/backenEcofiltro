@@ -6,13 +6,10 @@ export const postDTIP = async (req, res) => {
     const { id_OTIP, TipoPlata, TipoPlata2, fecha_real, id_modelo, codigoInicio, codigoFinal, impregnados, mermas, id_creador } = req.body;
    console.log('Tipo de plata 2',TipoPlata2)
     try {
-        if (id_OTIP<0  && TipoPlata===null && TipoPlata2===null && id_modelo<=0 && codigoInicio===null && codigoFinal===null && impregnados<0 && mermas === '' ) {
-            console.log('Uno o varios datos están vacíos');
-        } else {
             const consulta = 'INSERT INTO dtip (id_OTIP,TipoPlata,TipoPlata2,fecha_real, id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             const [rows] = await pool.query(consulta, [id_OTIP, TipoPlata, TipoPlata2, fecha_real,id_modelo,  codigoInicio, codigoFinal, impregnados, mermas, id_creador]);
             res.send({ rows });
-        }
+    
     } catch (err) {
         console.log('Error al guardar los datos', err);
     }

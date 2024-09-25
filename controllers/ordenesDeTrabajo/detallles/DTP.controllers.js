@@ -56,62 +56,60 @@ export const getDTP = async (req, res) => {
   try {
     // Consulta SQL para obtener todos los registros de la tabla dtp
     const consulta = `
-     SELECT 
-    d.id,
-    d.producido,
-    d.codigoInicio,
-    d.codigoFinal,
-    d.librasBarro,
-    d.librasAserrin,
-    d.librasAserrin2,
-    COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
-    ROUND(d.producido/6) AS formulas,
-  d.fecha_creacion,
-    d.fecha_real,
-    d.hora_creacion,
-    otp.id AS id_OTP,
-    turno.turno AS nombre_turno,
-    grupodetrabajo.grupos AS grupoProd,
-    ufmodelo.nombre_modelo AS nombre_ufmodelo,
-    aserradero.nombre_aserradero AS aserradero1,
-    aserradero2.nombre_aserradero AS aserradero2,
-    d.observacion,
-    cernidodetalle.detalle AS cernidodetalle,
-    cernidodetalle2.detalle AS cernidodetalle2,
-   user.firmaUsr AS firmaJefe,
-   operarios.Nombre AS NombreJefe,
-  operarios1.Nombre AS NombreEncargadoP,
-  
-  user1.firmaUsr AS firmaEncargado
-  FROM 
-    dtp d
-  LEFT JOIN 
-    otp ON d.id_OTP = otp.id
-  LEFT JOIN 
-    turno ON d.id_turno = turno.id
-  LEFT JOIN 
-    aserradero ON d.id_Aserradero = aserradero.id
-  LEFT JOIN 
-    aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
-  LEFT JOIN
-    grupodetrabajo on d.id_grupoproduccion=grupodetrabajo.id
-  LEFT JOIN 
-    ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
-  LEFT JOIN
-    cernidodetalle  ON d.id_cernidodetalle=cernidodetalle.id
-  LEFT JOIN
-    cernidodetalle as cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
-   LEFT JOIN 
-    user ON  otp.id_creador = user.id
-    LEFT JOIN 
-    operarios ON user.nombre= operarios.id
-LEFT JOIN 
-user as user2 ON d.id_creador= user2.id
-LEFT JOIN 
-operarios AS operarios1 ON user2.nombre = operarios1.id
-LEFT JOIN 
-user AS user1 ON d.id_creador= user1.id
-
+      SELECT 
+        d.id,
+        d.producido,
+        d.codigoInicio,
+        d.codigoFinal,
+        d.librasBarro,
+        d.librasAserrin,
+        d.librasAserrin2,
+        COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
+        ROUND(d.producido / 6) AS formulas,
+        d.fecha_creacion,
+        d.fecha_real,
+        d.hora_creacion,
+        otp.id AS id_OTP,
+        turno.turno AS nombre_turno,
+        grupodetrabajo.grupos AS grupoProd,
+        ufmodelo.nombre_modelo AS nombre_ufmodelo,
+        aserradero.nombre_aserradero AS aserradero1,
+        aserradero2.nombre_aserradero AS aserradero2,
+        d.observacion,
+        cernidodetalle.detalle AS cernidodetalle,
+        cernidodetalle2.detalle AS cernidodetalle2,
+        user.firmaUsr AS firmaJefe,
+        operarios.Nombre AS NombreJefe,
+        operarios1.Nombre AS NombreEncargadoP,
+        user1.firmaUsr AS firmaEncargado
+      FROM 
+        dtp d
+      LEFT JOIN 
+        otp ON d.id_OTP = otp.id
+      LEFT JOIN 
+        turno ON d.id_turno = turno.id
+      LEFT JOIN 
+        aserradero ON d.id_Aserradero = aserradero.id
+      LEFT JOIN 
+        aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
+      LEFT JOIN
+        grupodetrabajo ON d.id_grupoproduccion = grupodetrabajo.id
+      LEFT JOIN 
+        ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
+      LEFT JOIN
+        cernidodetalle ON d.id_cernidodetalle = cernidodetalle.id
+      LEFT JOIN
+        cernidodetalle AS cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
+      LEFT JOIN 
+        user ON otp.id_creador = user.id
+      LEFT JOIN 
+        operarios ON user.nombre = operarios.id
+      LEFT JOIN 
+        user AS user2 ON d.id_creador = user2.id
+      LEFT JOIN 
+        operarios AS operarios1 ON user2.nombre = operarios1.id
+      LEFT JOIN 
+        user AS user1 ON d.id_creador = user1.id
 
     where otp.id=?
 
