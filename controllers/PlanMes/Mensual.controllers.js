@@ -122,46 +122,29 @@ export const postPlanMes = async (req, res) => {
                 console.log(hoy);
             
                 const consulta = `
-             SELECT 
-                        pland.fecha,
+               SELECT 
+                       
+                      COALESCE(Aserrin_seco, 0) AS Aserrin_seco,
+                        COALESCE(CernidoAserrin, 0) AS CernidoAserrin,
+                        COALESCE(Barropulverizado, 0) AS Barropulverizado,
+                        COALESCE(Produccion20lts, 0) AS Produccion20lts,
+                        COALESCE(Produccion18lts, 0) AS Produccion18lts,
+                        COALESCE(ProduccionMini, 0) AS ProduccionMini,
+                        COALESCE(pulidoBase, 0) AS pulidoBase,
+                        COALESCE(LlenadoCarros, 0) AS LlenadoCarros,
+                        COALESCE(Horneado20LTS, 0) AS  Horneado20LTS,
+                        COALESCE(Horneado18LTS, 0) AS Horneado18LTS,
+                        COALESCE(HorneadoMini, 0) AS HorneadoMini,
+                        COALESCE(Cc20Lts, 0) AS Cc20Lts,
+                        COALESCE(Cc18Lts, 0) AS Cc18Lts,
+                        COALESCE(CcMini, 0) AS CcMini,
+                        COALESCE(Impregnados20LTS, 0) AS Impregnados20LTS,
+                        COALESCE(Impregnados18LTS, 0) AS Impregnados18LTS,
+                        COALESCE(ImpregnadosMini, 0) AS ImpregnadosMini,
+                         pland.fecha,
                         pland.cantidad_planificada,
                         procesos.proceso,
-                        operarios.Nombre AS CreadordePlan,
-                        COALESCE(Aserrin_seco, 0) AS Aserrin_seco,
-                      	(Aserrin_seco / NULLIF(cantidad_planificada, 0)*100) AS "PromedioASerrinSeco",
-                        COALESCE(CernidoAserrin, 0) AS CernidoAserrin,
-                        (CernidoAserrin / NULLIF(cantidad_planificada, 0)*100) AS "PromedioCernido",
-                        COALESCE(Barropulverizado, 0) AS Barropulverizado,
-                        (Barropulverizado / NULLIF(cantidad_planificada, 0)*100) AS "PromedioBarropulverizado",
-                        COALESCE(Produccion20lts, 0) AS Produccion20lts,
-                        (Produccion20lts / NULLIF(cantidad_planificada, 0)*100) AS "PromedioProduccion20lts",
-                        COALESCE(Produccion18lts, 0) AS Produccion18lts,
-                        (Produccion18lts / NULLIF(cantidad_planificada, 0)*100) AS "PromedioProduccion18lts",
-                        COALESCE(ProduccionMini, 0) AS ProduccionMini,
-                        (ProduccionMini / NULLIF(cantidad_planificada, 0)*100) AS "PromedioProduccionMini",
-                        COALESCE(pulidoBase, 0) AS pulidoBase,
-                        (pulidoBase / NULLIF(cantidad_planificada, 0)*100) AS "PromediopulidoBase",
-                        COALESCE(LlenadoCarros, 0) AS LlenadoCarros,
-                        (LlenadoCarros / NULLIF(cantidad_planificada, 0)*100) AS "PromedioLlenadoCarros",
-                        COALESCE(Horneado20LTS, 0) AS  Horneado20LTS,
-                        (Horneado20LTS / NULLIF(cantidad_planificada, 0)*100) AS "PromedioHorneado20LTS",
-                        COALESCE(Horneado18LTS, 0) AS Horneado18LTS,
-                        (Horneado18LTS / NULLIF(cantidad_planificada, 0)*100) AS "PromedioHorneado18LTS",
-                        COALESCE(HorneadoMini, 0) AS HorneadoMini,
-                        (HorneadoMini / NULLIF(cantidad_planificada, 0)*100) AS "PromedioHorneadoMini",
-                        COALESCE(Cc20Lts, 0) AS Cc20Lts,
-                        (Cc20Lts / NULLIF(cantidad_planificada, 0)*100) AS "PromedioCc20Lts",
-                        COALESCE(Cc18Lts, 0) AS Cc18Lts,
-                        (Cc18Lts / NULLIF(cantidad_planificada, 0)*100) AS "PromedioCc18Lts",
-                        COALESCE(CcMini, 0) AS CcMini,
-                        (CcMini / NULLIF(cantidad_planificada, 0)*100) AS "PromedioCcMini",
-                        COALESCE(Impregnados20LTS, 0) AS Impregnados20LTS,
-                        (Impregnados20LTS / NULLIF(cantidad_planificada, 0)*100) AS "PromedioImpregnados20LTS",
-                        COALESCE(Impregnados18LTS, 0) AS Impregnados18LTS,
-                        (Impregnados18LTS / NULLIF(cantidad_planificada, 0)*100) AS "PromedioImpregnados18LTS",
-                        COALESCE(ImpregnadosMini, 0) AS ImpregnadosMini,
-                        (ImpregnadosMini / NULLIF(cantidad_planificada, 0)*100) AS "PromedioImpregnadosMini"
-                        
+                        operarios.Nombre AS CreadordePlan
                         
                     FROM planificaciones_diarias pland
                     JOIN procesos ON pland.proceso_id = procesos.id
