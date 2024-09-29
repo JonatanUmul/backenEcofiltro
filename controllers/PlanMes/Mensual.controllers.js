@@ -25,32 +25,32 @@ export const postPlanMes = async (req, res) => {
 
 
 
-    export const getPlanMes = async (req, res) => {
+    // export const getPlanMes = async (req, res) => {
 
-        // const {fecha_inicio,fecha_fin , planificado, proceso_id,id_creador   }=req.body;
+    //     // const {fecha_inicio,fecha_fin , planificado, proceso_id,id_creador   }=req.body;
     
-          const consulta =
-            `SELECT 
-                planM.fecha_inicio,
-                planM.fecha_fin,
-                planM.cantidad_planificada,
-                procesos.proceso,
-                operarios.Nombre AS CreadordePlan
+    //       const consulta =
+    //         `SELECT 
+    //             planM.fecha_inicio,
+    //             planM.fecha_fin,
+    //             planM.cantidad_planificada,
+    //             procesos.proceso,
+    //             operarios.Nombre AS CreadordePlan
 
-                FROM planificaciones_mensuales planM
+    //             FROM planificaciones_mensuales planM
 
-                left JOIN procesos ON planM.proceso_id= procesos.id
-                left JOIN user ON planM.id_creador=user.id
-                left JOIN operarios ON user.Nombre = operarios.id`          
-          try {
-            const [rows] = await pool.query(consulta);
-              res.send({ rows });
-          } catch (error) {
+    //             left JOIN procesos ON planM.proceso_id= procesos.id
+    //             left JOIN user ON planM.id_creador=user.id
+    //             left JOIN operarios ON user.Nombre = operarios.id`          
+    //       try {
+    //         const [rows] = await pool.query(consulta);
+    //           res.send({ rows });
+    //       } catch (error) {
             
-            console.error(error)
-          }
+    //         console.error(error)
+    //       }
            
-        }
+    //     }
     
     
 
@@ -121,145 +121,80 @@ export const postPlanMes = async (req, res) => {
             
                 console.log(hoy);
             
-                const consulta = `
-               SELECT 
-                       
-                      COALESCE(Aserrin_seco, 0) AS Aserrin_seco,
-                        COALESCE(CernidoAserrin, 0) AS CernidoAserrin,
-                        COALESCE(Barropulverizado, 0) AS Barropulverizado,
-                        COALESCE(Produccion20lts, 0) AS Produccion20lts,
-                        COALESCE(Produccion18lts, 0) AS Produccion18lts,
-                        COALESCE(ProduccionMini, 0) AS ProduccionMini,
-                        COALESCE(pulidoBase, 0) AS pulidoBase,
-                        COALESCE(LlenadoCarros, 0) AS LlenadoCarros,
-                        COALESCE(Horneado20LTS, 0) AS  Horneado20LTS,
-                        COALESCE(Horneado18LTS, 0) AS Horneado18LTS,
-                        COALESCE(HorneadoMini, 0) AS HorneadoMini,
-                        COALESCE(Cc20Lts, 0) AS Cc20Lts,
-                        COALESCE(Cc18Lts, 0) AS Cc18Lts,
-                        COALESCE(CcMini, 0) AS CcMini,
-                        COALESCE(Impregnados20LTS, 0) AS Impregnados20LTS,
-                        COALESCE(Impregnados18LTS, 0) AS Impregnados18LTS,
-                        COALESCE(ImpregnadosMini, 0) AS ImpregnadosMini,
-                         pland.fecha,
-                        pland.cantidad_planificada,
-                        procesos.proceso,
-                        operarios.Nombre AS CreadordePlan
-                        
-                    FROM planificaciones_diarias pland
-                    JOIN procesos ON pland.proceso_id = procesos.id
-                    JOIN user ON pland.id_creador = user.id
-                    JOIN operarios ON user.Nombre = operarios.id 
-                    LEFT JOIN (
-                        SELECT fecha_creacion, SUM(cantidad_final) AS Aserrin_seco
-                        FROM daserrin 
-                        GROUP BY fecha_creacion
-                    ) AS daserrin ON daserrin.fecha_creacion = pland.fecha AND procesos.proceso = 'Aserrin Seco' /*---------- ya*/
-                    LEFT JOIN (
-                        SELECT fecha_creacion, SUM(CantidadFinal) AS CernidoAserrin
-                        FROM dtca1 
-                        GROUP BY fecha_creacion
-                    ) AS dtca1 ON dtca1.fecha_creacion = pland.fecha AND procesos.proceso = 'Cernido Aserrin'  /*---------- ya*/
-                    LEFT JOIN (
-                        SELECT fecha_creacion, SUM(cantidad) AS Barropulverizado
-                        FROM dtpv 
-                        GROUP BY fecha_creacion
-                    ) AS dtpv ON dtpv.fecha_creacion = pland.fecha AND procesos.proceso = 'Barro pulverizado'
-                    LEFT JOIN (
-                        SELECT fecha_real, SUM(producido) AS Produccion20lts
-                        FROM dtp
-                        WHERE id_ufmodelo = 1
-                        GROUP BY fecha_real
-                    ) AS dtp20 ON dtp20.fecha_real = pland.fecha AND procesos.proceso = 'Produccion 20lts'
-                    LEFT JOIN (
-                        SELECT fecha_real, SUM(producido) AS Produccion18lts
-                        FROM dtp
-                        WHERE id_ufmodelo = 2
-                        GROUP BY fecha_real
-                    ) AS dtp18 ON dtp18.fecha_real = pland.fecha AND procesos.proceso = 'Produccion 18lts'
-                    LEFT JOIN (
-                        SELECT fecha_real, SUM(producido) AS ProduccionMini
-                        FROM dtp
-                        WHERE id_ufmodelo = 3
-                        GROUP BY fecha_real
-                    ) AS dtpMini ON dtpMini.fecha_real = pland.fecha AND procesos.proceso = 'Produccion Mini'
-                    LEFT JOIN (
-                        SELECT fecha_creacion, SUM(pulido) AS pulidoBase
-                        FROM dcpb
-                        GROUP BY fecha_creacion
-                    ) AS dcpb ON dcpb.fecha_creacion = pland.fecha AND procesos.proceso = 'Pulido Base'
-                    LEFT JOIN (
-                        SELECT fecha_creacion, SUM(cantidad) AS LlenadoCarros
-                        FROM ctt
-                        GROUP BY fecha_creacion
-                    ) AS ctt ON ctt.fecha_creacion = pland.fecha AND procesos.proceso = 'Llenado Carros UF Crudos'
-                   
-						  LEFT JOIN (
-                        SELECT fecha_creacion, SUM(horneado) AS Horneado20LTS
-                        FROM dthh
-                        WHERE id_modelo = 1
-                        GROUP BY fecha_creacion
-                    ) AS dthh20 ON dthh20.fecha_creacion = pland.fecha  AND procesos.proceso = 'Horneados 20lts'
-                    LEFT JOIN (
-                        SELECT fecha_creacion, id_modelo, SUM(horneado) AS Horneado18LTS
-                        FROM dthh
-                        WHERE id_modelo = 2
-                        GROUP BY fecha_creacion, id_modelo
-                    ) AS dthh18 ON dthh18.fecha_creacion = pland.fecha AND procesos.proceso = 'Horneado 18lts'
-                
-                    LEFT JOIN (
-                        SELECT fecha_creacion, id_modelo, SUM(horneado) AS HorneadoMini
-                        FROM dthh
-                        WHERE id_modelo = 3
-                        GROUP BY fecha_creacion, id_modelo
-                    ) AS dthhMini ON dthhMini.fecha_creacion = pland.fecha AND procesos.proceso = 'Horneados Mini'
-                    LEFT JOIN (
-                        SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
-                        FROM dtcc Cc
-                        LEFT JOIN dthh ON Cc.id_dthh = dthh.id
-                        WHERE dthh.id_modelo = 1
-                        GROUP BY Cc.fecha_creacion, dthh.id_modelo
-                    ) AS Cc20 ON Cc20.fecha_creacion = pland.fecha AND procesos.proceso = 'CC 20 litros'
-                    LEFT JOIN (
-                        SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
-                        FROM dtcc Cc
-                        LEFT JOIN dthh ON Cc.id_dthh = dthh.id
-                        WHERE dthh.id_modelo = 2
-                        GROUP BY Cc.fecha_creacion, dthh.id_modelo
-                    ) AS Cc18 ON Cc18.fecha_creacion = pland.fecha AND procesos.proceso = 'CC 18 litros'
-                    LEFT JOIN (
-                        SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
-                        FROM dtcc Cc
-                        LEFT JOIN dthh ON Cc.id_dthh = dthh.id
-                        WHERE dthh.id_modelo = 3
-                        GROUP BY Cc.fecha_creacion, dthh.id_modelo
-                    ) AS CcMini ON CcMini.fecha_creacion = pland.fecha AND procesos.proceso = 'CC Mini'
-                    LEFT JOIN (
-                        SELECT fechaCreacion, id_modelo, SUM(impregnados) AS Impregnados20LTS
-                        FROM dtip
-                        WHERE id_modelo = 1
-                        GROUP BY fechaCreacion, id_modelo
-                    ) AS dtip20 ON dtip20.fechaCreacion = pland.fecha AND procesos.proceso = 'Impregnados 20lts'
-                    LEFT JOIN (
-                        SELECT fechaCreacion, id_modelo, SUM(impregnados) AS Impregnados18LTS
-                        FROM dtip
-                        WHERE id_modelo = 2 
-                        GROUP BY fechaCreacion, id_modelo
-                    ) AS dtip18 ON dtip18.fechaCreacion = pland.fecha AND procesos.proceso = 'Impregnados 18lts'
-                    LEFT JOIN (
-                        SELECT fechaCreacion, id_modelo, SUM(impregnados) AS ImpregnadosMini
-                        FROM dtip
-                        WHERE id_modelo = 3
-                        GROUP BY fechaCreacion, id_modelo
-                    ) AS dtipMini ON dtipMini.fechaCreacion = pland.fecha AND procesos.proceso = 'Impregnados Mini'
-                    WHERE pland.fecha = '${hoy}'
-                    ORDER BY pland.id ASC
-                `;
+                const consulta =
+                 `SELECT
+    pld.fecha,
+    procesos.proceso AS procesosBuscar,
+    pld.cantidad_planificada,
+    operarios.Nombre,
+    SUM(DISTINCT CASE 
+        WHEN procesos.proceso = 'Aserrin Seco' THEN daserrin.cantidad_inicial 
+        WHEN procesos.proceso = 'Aserrin Cernido' THEN dtca1.CantidadInicial 
+        WHEN procesos.proceso = 'Produccion Mini' THEN dtp.producido
+        WHEN procesos.proceso = 'Produccion 20lts' THEN dtp20lt.producido
+        WHEN procesos.proceso = 'Produccion 18lts' THEN dtp18lt.producido
+        WHEN procesos.proceso = 'Barro pulverizado' THEN dtpv.cantidad
+        WHEN procesos.proceso = 'Pulido Base' THEN dcpb.pulido
+    	  WHEN procesos.proceso = 'Horneados 20lts' THEN dthh.horneado
+        WHEN procesos.proceso = 'Horneados 18lts' THEN dthh18lts.horneado
+        WHEN procesos.proceso = 'Horneados Mini' THEN dthhMini.horneado
+        WHEN procesos.proceso = 'CC 20 litros' THEN Cc20.Cc20Lts
+        WHEN procesos.proceso = 'CC 20 litros' THEN Cc18.Cc18Lts
+        WHEN procesos.proceso = 'CC 20 litros' THEN CcMini.CcMini
+        WHEN procesos.proceso = 'Impregnados 20lts' THEN dtip.impregnados
+        WHEN procesos.proceso = 'Impregnados 18lts' THEN dtip18Lts.impregnados
+        WHEN procesos.proceso = 'Impregnados Mini' THEN dtipMini.impregnados
+       
+        ELSE 0 
+    END) AS producido
+FROM planificaciones_diarias pld
+LEFT JOIN user ON pld.id_creador = user.id
+LEFT JOIN operarios ON user.nombre = operarios.id
+LEFT JOIN procesos ON pld.proceso_id = procesos.id
+LEFT JOIN daserrin ON pld.fecha = daserrin.fecha_creacion
+LEFT JOIN dtca1 ON pld.fecha = dtca1.fecha_creacion
+LEFT JOIN dtp ON pld.fecha = dtp.fecha_real AND dtp.id_ufmodelo=3
+LEFT JOIN dtp AS dtp20lt ON pld.fecha = dtp20lt.fecha_real AND dtp20lt.id_ufmodelo=1
+LEFT JOIN dtp AS dtp18lt ON pld.fecha = dtp18lt.fecha_real AND dtp20lt.id_ufmodelo=2
+LEFT JOIN dcpb ON pld.fecha = dcpb.fecha_creacion= dcpb.id
+LEFT JOIN dthh ON pld.fecha = dthh.fecha_creacion AND dthh.id_modelo=1
+LEFT JOIN dthh AS dthh18lts ON pld.fecha = dthh18lts.fecha_creacion AND dthh18lts.id_modelo=2
+LEFT JOIN dthh AS dthhMini ON pld.fecha = dthhMini.fecha_creacion AND dthhMini.id_modelo=3
+LEFT JOIN (
+    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
+    FROM dtcc Cc
+    LEFT JOIN dthh ON Cc.id_dthh = dthh.id
+    WHERE dthh.id_modelo = 1
+    GROUP BY Cc.fecha_creacion, dthh.id_modelo
+) AS Cc20 ON Cc20.fecha_creacion = pld.fecha
+LEFT JOIN (
+    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
+    FROM dtcc Cc
+    LEFT JOIN dthh ON Cc.id_dthh = dthh.id
+    WHERE dthh.id_modelo = 2
+    GROUP BY Cc.fecha_creacion, dthh.id_modelo
+) AS Cc18 ON Cc18.fecha_creacion = pld.fecha
+LEFT JOIN (
+    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
+    FROM dtcc Cc
+    LEFT JOIN dthh ON Cc.id_dthh = dthh.id
+    WHERE dthh.id_modelo = 3
+    GROUP BY Cc.fecha_creacion, dthh.id_modelo
+) AS CcMini ON CcMini.fecha_creacion = pld.fecha
+LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion AND dtip.id_modelo=1
+LEFT JOIN dtip AS dtip18Lts ON pld.fecha = dtip18Lts.fechaCreacion AND dtip18Lts.id_modelo=2
+LEFT JOIN dtip AS dtipMini ON pld.fecha = dtipMini.fechaCreacion AND dtipMini.id_modelo=3
+LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
+WHERE pld.fecha = '${hoy}'
+GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
+ORDER BY pld.fecha
+
+`;
             
                 try {
                     const [rows] = await pool.query(consulta);
                       res.send({ rows });
-                      console.log(rows)
+                     
                   } catch (error) {
                     
                     console.error(error)
@@ -267,3 +202,93 @@ export const postPlanMes = async (req, res) => {
                    
                 }
     
+
+                export const getPlanMes = async (req, res) => {
+                    const fechaInicial = req.params.fechaInicial;
+                    const fechaFin = req.params.fechaFin;
+                    
+                    console.log('Fechas recibidas:', fechaInicial, fechaFin);
+                
+                    // Validar las fechas recibidas
+                    if (!fechaInicial || !fechaFin) {
+                        return res.status(400).send({ error: 'Ambas fechas son requeridas.' });
+                    }
+                
+                    const consulta = `
+                        SELECT
+                            pld.fecha,
+                            procesos.proceso AS procesosBuscar,
+                            pld.cantidad_planificada,
+                            operarios.Nombre,
+                            SUM(DISTINCT CASE 
+                                WHEN procesos.proceso = 'Aserrin Seco' THEN daserrin.cantidad_inicial 
+                                WHEN procesos.proceso = 'Aserrin Cernido' THEN dtca1.CantidadInicial 
+                                WHEN procesos.proceso = 'Produccion Mini' THEN dtp.producido
+                                WHEN procesos.proceso = 'Produccion 20lts' THEN dtp20lt.producido
+                                WHEN procesos.proceso = 'Produccion 18lts' THEN dtp18lt.producido
+                                WHEN procesos.proceso = 'Barro pulverizado' THEN dtpv.cantidad
+                                WHEN procesos.proceso = 'Pulido Base' THEN dcpb.pulido
+                                WHEN procesos.proceso = 'Horneados 20lts' THEN dthh.horneado
+                                WHEN procesos.proceso = 'Horneados 18lts' THEN dthh18lts.horneado
+                                WHEN procesos.proceso = 'Horneados Mini' THEN dthhMini.horneado
+                                WHEN procesos.proceso = 'CC 20 litros' THEN Cc20.Cc20Lts
+                                WHEN procesos.proceso = 'CC 20 litros' THEN Cc18.Cc18Lts
+                                WHEN procesos.proceso = 'CC 20 litros' THEN CcMini.CcMini
+                                WHEN procesos.proceso = 'Impregnados 20lts' THEN dtip.impregnados
+                                WHEN procesos.proceso = 'Impregnados 18lts' THEN dtip18Lts.impregnados
+                                WHEN procesos.proceso = 'Impregnados Mini' THEN dtipMini.impregnados
+                                ELSE 0 
+                            END) AS producido
+                        FROM planificaciones_diarias pld
+                        LEFT JOIN user ON pld.id_creador = user.id
+                        LEFT JOIN operarios ON user.nombre = operarios.id
+                        LEFT JOIN procesos ON pld.proceso_id = procesos.id
+                        LEFT JOIN daserrin ON pld.fecha = daserrin.fecha_creacion
+                        LEFT JOIN dtca1 ON pld.fecha = dtca1.fecha_creacion
+                        LEFT JOIN dtp ON pld.fecha = dtp.fecha_real AND dtp.id_ufmodelo=3
+                        LEFT JOIN dtp AS dtp20lt ON pld.fecha = dtp20lt.fecha_real AND dtp20lt.id_ufmodelo=1
+                        LEFT JOIN dtp AS dtp18lt ON pld.fecha = dtp18lt.fecha_real AND dtp20lt.id_ufmodelo=2
+                        LEFT JOIN dcpb ON pld.fecha = dcpb.fecha_creacion= dcpb.id
+                        LEFT JOIN dthh ON pld.fecha = dthh.fecha_creacion AND dthh.id_modelo=1
+                        LEFT JOIN dthh AS dthh18lts ON pld.fecha = dthh18lts.fecha_creacion AND dthh18lts.id_modelo=2
+                        LEFT JOIN dthh AS dthhMini ON pld.fecha = dthhMini.fecha_creacion AND dthhMini.id_modelo=3
+                        LEFT JOIN (
+                            SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
+                            FROM dtcc Cc
+                            LEFT JOIN dthh ON Cc.id_dthh = dthh.id
+                            WHERE dthh.id_modelo = 1
+                            GROUP BY Cc.fecha_creacion, dthh.id_modelo
+                        ) AS Cc20 ON Cc20.fecha_creacion = pld.fecha
+                        LEFT JOIN (
+                            SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
+                            FROM dtcc Cc
+                            LEFT JOIN dthh ON Cc.id_dthh = dthh.id
+                            WHERE dthh.id_modelo = 2
+                            GROUP BY Cc.fecha_creacion, dthh.id_modelo
+                        ) AS Cc18 ON Cc18.fecha_creacion = pld.fecha
+                        LEFT JOIN (
+                            SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
+                            FROM dtcc Cc
+                            LEFT JOIN dthh ON Cc.id_dthh = dthh.id
+                            WHERE dthh.id_modelo = 3
+                            GROUP BY Cc.fecha_creacion, dthh.id_modelo
+                        ) AS CcMini ON CcMini.fecha_creacion = pld.fecha
+                        LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion AND dtip.id_modelo=1
+                        LEFT JOIN dtip AS dtip18Lts ON pld.fecha = dtip18Lts.fechaCreacion AND dtip18Lts.id_modelo=2
+                        LEFT JOIN dtip AS dtipMini ON pld.fecha = dtipMini.fechaCreacion AND dtipMini.id_modelo=3
+                        LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
+                        WHERE pld.fecha BETWEEN '${fechaInicial}' AND '${fechaFin}'
+                        GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
+                        ORDER BY pld.fecha
+                    `;
+                
+                    try {
+                        const [rows] = await pool.query(consulta);
+                        res.send({ rows });
+                        console.log('Plan Mes', rows);
+                    } catch (error) {
+                        console.error(error);
+                        res.status(500).send({ error: 'Error en la consulta a la base de datos.' });
+                    }
+                };
+                

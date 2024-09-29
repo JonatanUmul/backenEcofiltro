@@ -7,10 +7,11 @@ const router = Router();
 
 
 router.post('/PlanMes', postPlanMes);
-router.get('/PlanMes', getPlanMes);
+// router.get('/PlanMes', getPlanMes);
 router.post('/PlanDay', postPlanDay);
 router.get('/PlanDay', getPlanDay);
 router.get('/PlanCumplido/:hoy', getPlanCumplido)
+router.get('/PlanCumplido/:fechaInicial/:fechaFin', getPlanMes);
 
 
 export default router;

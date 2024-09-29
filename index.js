@@ -118,7 +118,10 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
   import DOTDMPB from './src/routes/laboratorio/detallado/DOTDMPB.routes.js'
   import TablaPorCodigos from './src/routes/tablaLab/TablaLab.js'
   import Procesos from './src/routes/mantenimientos/procesos/procesos.js'
-  import PlanMes from './src/routes/PlanMes/Mensual.routes.js'
+  // import PlanCumplido from './src/routes/PlanMes/Mensual.routes.js'
+  import PlanDay from './src/routes/PlanMes/Mensual.routes.js'
+  import PlanCumplido from './src/routes/PlanMes/Mensual.routes.js'
+
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -348,8 +351,9 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     //TablaPorCodigos
     app.use(TablaPorCodigos)
 
-    app.use(PlanMes)
-
+    // app.use(PlanMes)
+    app.use(PlanDay)
+    app.use(PlanCumplido)
   app.use(postSendEmail)
     app.listen(process.env.PORT || 3001)
 
