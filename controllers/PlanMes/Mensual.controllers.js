@@ -122,7 +122,7 @@ export const postPlanMes = async (req, res) => {
                 console.log(hoy);
             
                 const consulta =
-                 `SELECT
+              `SELECT
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
@@ -146,6 +146,7 @@ export const postPlanMes = async (req, res) => {
         WHEN procesos.proceso = 'Impregnados 20lts' THEN  'Impregnación'
         WHEN procesos.proceso = 'Impregnados 18lts' THEN  'Impregnación'
         WHEN procesos.proceso = 'Impregnados Mini' THEN 'Impregnación'
+        WHEN procesos.proceso = 'Empaque' THEN 'Empaque'
         ELSE 0 
     END) AS Area,
     SUM(DISTINCT CASE 
@@ -165,7 +166,7 @@ export const postPlanMes = async (req, res) => {
         WHEN procesos.proceso = 'Impregnados 20lts' THEN dtip.impregnados
         WHEN procesos.proceso = 'Impregnados 18lts' THEN dtip18Lts.impregnados
         WHEN procesos.proceso = 'Impregnados Mini' THEN dtipMini.impregnados
-       
+        WHEN procesos.proceso = 'Empaque' THEN empaqueproducido.empacado
         ELSE 0 
     END) AS producido
 FROM planificaciones_diarias pld
@@ -208,10 +209,10 @@ LEFT JOIN dtip AS dtipMini ON pld.fecha = dtipMini.fechaCreacion AND dtipMini.id
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
+LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
 WHERE pld.fecha = '${hoy}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
-ORDER BY pld.fecha
-`;
+ORDER BY pld.fecha`
             
                 try {
                     const [rows] = await pool.query(consulta);
@@ -236,8 +237,8 @@ ORDER BY pld.fecha
                         return res.status(400).send({ error: 'Ambas fechas son requeridas.' });
                     }
                 
-                    const consulta = `
-                       SELECT
+                    const consulta = 
+                    `SELECT
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
@@ -261,6 +262,7 @@ ORDER BY pld.fecha
         WHEN procesos.proceso = 'Impregnados 20lts' THEN  'Impregnación'
         WHEN procesos.proceso = 'Impregnados 18lts' THEN  'Impregnación'
         WHEN procesos.proceso = 'Impregnados Mini' THEN 'Impregnación'
+        WHEN procesos.proceso = 'Empaque' THEN 'Empaque'
         ELSE 0 
     END) AS Area,
     SUM(DISTINCT CASE 
@@ -280,7 +282,7 @@ ORDER BY pld.fecha
         WHEN procesos.proceso = 'Impregnados 20lts' THEN dtip.impregnados
         WHEN procesos.proceso = 'Impregnados 18lts' THEN dtip18Lts.impregnados
         WHEN procesos.proceso = 'Impregnados Mini' THEN dtipMini.impregnados
-       
+        WHEN procesos.proceso = 'Empaque' THEN empaqueproducido.empacado
         ELSE 0 
     END) AS producido
 FROM planificaciones_diarias pld
@@ -323,9 +325,10 @@ LEFT JOIN dtip AS dtipMini ON pld.fecha = dtipMini.fechaCreacion AND dtipMini.id
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
-   WHERE pld.fecha BETWEEN '${fechaInicial}' AND '${fechaFin}'
+LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
+WHERE pld.fecha BETWEEN '${fechaInicial}' AND '${fechaFin}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
-ORDER BY pld.fecha`;
+ORDER BY pld.fecha`
                 
                     try {
                         const [rows] = await pool.query(consulta);

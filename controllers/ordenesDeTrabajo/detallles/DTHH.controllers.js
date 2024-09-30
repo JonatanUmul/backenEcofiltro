@@ -240,10 +240,10 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
     }
 
     if (id_est !== 'null') {
-        consulta += ' AND ( d.id_est = ?)';
-        params.push(id_est);
-      }
-
+      consulta += 'AND d.id_est=?';
+      params.push(id_est);
+  }
+  
         
      if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
           consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
