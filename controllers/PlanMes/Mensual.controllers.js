@@ -122,7 +122,8 @@ export const postPlanMes = async (req, res) => {
                 console.log(hoy);
             
                 const consulta =
-              `SELECT
+              `
+              SELECT
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
@@ -131,7 +132,8 @@ export const postPlanMes = async (req, res) => {
     operariosResponsable.Nombre,
     (CASE
         WHEN procesos.proceso = 'Aserrin Seco' THEN  'Materia Prima'
-        WHEN procesos.proceso = 'Aserrin Cernido' THEN 'Materia Prima'
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN 'Materia Prima'
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN 'Materia Prima'
         WHEN procesos.proceso = 'Produccion Mini' THEN  'Producción'
         WHEN procesos.proceso = 'Produccion 20lts' THEN  'Producción'
         WHEN procesos.proceso = 'Produccion 18lts' THEN  'Producción'
@@ -151,7 +153,8 @@ export const postPlanMes = async (req, res) => {
     END) AS Area,
     SUM(DISTINCT CASE 
         WHEN procesos.proceso = 'Aserrin Seco' THEN daserrin.cantidad_inicial 
-        WHEN procesos.proceso = 'Aserrin Cernido' THEN dtca1.CantidadInicial 
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN dtca1.CantidadInicial 
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN dtca2.cantidad_inicial 
         WHEN procesos.proceso = 'Produccion Mini' THEN dtp.producido
         WHEN procesos.proceso = 'Produccion 20lts' THEN dtp20lt.producido
         WHEN procesos.proceso = 'Produccion 18lts' THEN dtp18lt.producido
@@ -175,6 +178,7 @@ LEFT JOIN operarios ON user.nombre = operarios.id
 LEFT JOIN procesos ON pld.proceso_id = procesos.id
 LEFT JOIN daserrin ON pld.fecha = daserrin.fecha_creacion
 LEFT JOIN dtca1 ON pld.fecha = dtca1.fecha_creacion
+LEFT JOIN dtca2 ON pld.fecha = dtca2.fecha_creacion
 LEFT JOIN dtp ON pld.fecha = dtp.fecha_real AND dtp.id_ufmodelo=3
 LEFT JOIN dtp AS dtp20lt ON pld.fecha = dtp20lt.fecha_real AND dtp20lt.id_ufmodelo=1
 LEFT JOIN dtp AS dtp18lt ON pld.fecha = dtp18lt.fecha_real AND dtp20lt.id_ufmodelo=2
@@ -212,7 +216,8 @@ LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_resp
 LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
 WHERE pld.fecha = '${hoy}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
-ORDER BY pld.fecha`
+ORDER BY pld.fecha
+              `
             
                 try {
                     const [rows] = await pool.query(consulta);
@@ -238,7 +243,7 @@ ORDER BY pld.fecha`
                     }
                 
                     const consulta = 
-                    `SELECT
+                   `SELECT
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
@@ -247,7 +252,8 @@ ORDER BY pld.fecha`
     operariosResponsable.Nombre,
     (CASE
         WHEN procesos.proceso = 'Aserrin Seco' THEN  'Materia Prima'
-        WHEN procesos.proceso = 'Aserrin Cernido' THEN 'Materia Prima'
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN 'Materia Prima'
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN 'Materia Prima'
         WHEN procesos.proceso = 'Produccion Mini' THEN  'Producción'
         WHEN procesos.proceso = 'Produccion 20lts' THEN  'Producción'
         WHEN procesos.proceso = 'Produccion 18lts' THEN  'Producción'
@@ -267,7 +273,8 @@ ORDER BY pld.fecha`
     END) AS Area,
     SUM(DISTINCT CASE 
         WHEN procesos.proceso = 'Aserrin Seco' THEN daserrin.cantidad_inicial 
-        WHEN procesos.proceso = 'Aserrin Cernido' THEN dtca1.CantidadInicial 
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN dtca1.CantidadInicial 
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN dtca2.cantidad_inicial 
         WHEN procesos.proceso = 'Produccion Mini' THEN dtp.producido
         WHEN procesos.proceso = 'Produccion 20lts' THEN dtp20lt.producido
         WHEN procesos.proceso = 'Produccion 18lts' THEN dtp18lt.producido
@@ -291,6 +298,7 @@ LEFT JOIN operarios ON user.nombre = operarios.id
 LEFT JOIN procesos ON pld.proceso_id = procesos.id
 LEFT JOIN daserrin ON pld.fecha = daserrin.fecha_creacion
 LEFT JOIN dtca1 ON pld.fecha = dtca1.fecha_creacion
+LEFT JOIN dtca2 ON pld.fecha = dtca2.fecha_creacion
 LEFT JOIN dtp ON pld.fecha = dtp.fecha_real AND dtp.id_ufmodelo=3
 LEFT JOIN dtp AS dtp20lt ON pld.fecha = dtp20lt.fecha_real AND dtp20lt.id_ufmodelo=1
 LEFT JOIN dtp AS dtp18lt ON pld.fecha = dtp18lt.fecha_real AND dtp20lt.id_ufmodelo=2
@@ -328,7 +336,9 @@ LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_resp
 LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
 WHERE pld.fecha BETWEEN '${fechaInicial}' AND '${fechaFin}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
-ORDER BY pld.fecha`
+ORDER BY pld.fecha
+
+`
                 
                     try {
                         const [rows] = await pool.query(consulta);
