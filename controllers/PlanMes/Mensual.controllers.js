@@ -143,35 +143,50 @@ export const postPlanMes = async (req, res) => {
         WHEN procesos.proceso = 'Horneados 18lts' THEN 'Hornos'
         WHEN procesos.proceso = 'Horneados Mini' THEN 'Hornos'
         WHEN procesos.proceso = 'CC 20 litros' THEN 'Control de Calidad'
-        WHEN procesos.proceso = 'CC 20 litros' THEN  'Control de Calidad'
-        WHEN procesos.proceso = 'CC 20 litros' THEN 'Control de Calidad'
-        WHEN procesos.proceso = 'Impregnados 20lts' THEN  'Impregnación'
-        WHEN procesos.proceso = 'Impregnados 18lts' THEN  'Impregnación'
-        WHEN procesos.proceso = 'Impregnados Mini' THEN 'Impregnación'
+        WHEN procesos.proceso = 'CC 18 litros' THEN  'Control de Calidad'
+        WHEN procesos.proceso = 'CC Mini' THEN 'Control de Calidad'
+        WHEN procesos.proceso = 'Impregnados' THEN  'Impregnación'
         WHEN procesos.proceso = 'Empaque' THEN 'Empaque'
-        ELSE 0 
+        ELSE ''
     END) AS Area,
     SUM(DISTINCT CASE 
-        WHEN procesos.proceso = 'Aserrin Seco' THEN daserrin.cantidad_inicial 
-        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN dtca1.CantidadInicial 
-        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN dtca2.cantidad_inicial 
-        WHEN procesos.proceso = 'Produccion Mini' THEN dtp.producido
-        WHEN procesos.proceso = 'Produccion 20lts' THEN dtp20lt.producido
-        WHEN procesos.proceso = 'Produccion 18lts' THEN dtp18lt.producido
-        WHEN procesos.proceso = 'Barro pulverizado' THEN dtpv.cantidad
-        WHEN procesos.proceso = 'Pulido Base' THEN dcpb.pulido
-    	  WHEN procesos.proceso = 'Horneados 20lts' THEN dthh.horneado
-        WHEN procesos.proceso = 'Horneados 18lts' THEN dthh18lts.horneado
-        WHEN procesos.proceso = 'Horneados Mini' THEN dthhMini.horneado
-        WHEN procesos.proceso = 'CC 20 litros' THEN Cc20.Cc20Lts
-        WHEN procesos.proceso = 'CC 20 litros' THEN Cc18.Cc18Lts
-        WHEN procesos.proceso = 'CC 20 litros' THEN CcMini.CcMini
-        WHEN procesos.proceso = 'Impregnados 20lts' THEN dtip.impregnados
-        WHEN procesos.proceso = 'Impregnados 18lts' THEN dtip18Lts.impregnados
-        WHEN procesos.proceso = 'Impregnados Mini' THEN dtipMini.impregnados
-        WHEN procesos.proceso = 'Empaque' THEN empaqueproducido.empacado
+   WHEN procesos.proceso = 'Aserrin Seco' THEN COALESCE(daserrin.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN COALESCE(dtca1.CantidadInicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN COALESCE(dtca2.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Produccion Mini' THEN COALESCE(dtp.producido, 0)
+        WHEN procesos.proceso = 'Produccion 20lts' THEN COALESCE(dtp20lt.producido, 0)
+        WHEN procesos.proceso = 'Produccion 18lts' THEN COALESCE(dtp18lt.producido, 0)
+        WHEN procesos.proceso = 'Barro pulverizado' THEN COALESCE(dtpv.cantidad, 0)
+        WHEN procesos.proceso = 'Pulido Base' THEN COALESCE(dcpb.pulido, 0)
+        WHEN procesos.proceso = 'Horneados 20lts' THEN COALESCE(dthh.horneado, 0)
+        WHEN procesos.proceso = 'Horneados 18lts' THEN COALESCE(dthh18lts.horneado, 0)
+        WHEN procesos.proceso = 'Horneados Mini' THEN COALESCE(dthhMini.horneado, 0)
+        WHEN procesos.proceso = 'CC 20 litros' THEN COALESCE(Cc20.Cc20Lts, 0)  
+        WHEN procesos.proceso = 'CC 18 litros' THEN COALESCE(Cc18.Cc18Lts, 0)    
+        WHEN procesos.proceso = 'CC Mini' THEN COALESCE(CcMini.CcMini, 0)
+        WHEN procesos.proceso = 'Impregnados' THEN COALESCE(dtip.impregnados,0)  
+        WHEN procesos.proceso = 'Empaque' THEN COALESCE(empaqueproducido.empacado, 0)
         ELSE 0 
-    END) AS producido
+    END) AS producido,
+        SUM(DISTINCT CASE 
+        WHEN procesos.proceso = 'Aserrin Seco' THEN COALESCE(daserrin.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN COALESCE(dtca1.CantidadInicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN COALESCE(dtca2.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Produccion Mini' THEN COALESCE(dtp.producido, 0)
+        WHEN procesos.proceso = 'Produccion 20lts' THEN COALESCE(dtp20lt.producido, 0)
+        WHEN procesos.proceso = 'Produccion 18lts' THEN COALESCE(dtp18lt.producido, 0)
+        WHEN procesos.proceso = 'Barro pulverizado' THEN COALESCE(dtpv.cantidad, 0)
+        WHEN procesos.proceso = 'Pulido Base' THEN COALESCE(dcpb.pulido, 0)
+        WHEN procesos.proceso = 'Horneados 20lts' THEN COALESCE(dthh.horneado, 0)
+        WHEN procesos.proceso = 'Horneados 18lts' THEN COALESCE(dthh18lts.horneado, 0)
+        WHEN procesos.proceso = 'Horneados Mini' THEN COALESCE(dthhMini.horneado, 0)
+        WHEN procesos.proceso = 'CC 20 litros' THEN COALESCE(Cc20.Cc20Lts, 0)
+        WHEN procesos.proceso = 'CC 18 litros' THEN COALESCE(Cc18.Cc18Lts, 0)
+        WHEN procesos.proceso = 'CC Mini' THEN COALESCE(CcMini.CcMini, 0)
+        WHEN procesos.proceso = 'Impregnados' THEN COALESCE(dtip.impregnados,0)
+        WHEN procesos.proceso = 'Empaque' THEN COALESCE(empaqueproducido.empacado, 0)
+        ELSE 0 
+    END) -pld.cantidad_planificada AS residuo
 FROM planificaciones_diarias pld
 LEFT JOIN user ON pld.id_creador = user.id
 LEFT JOIN operarios ON user.nombre = operarios.id
@@ -207,9 +222,7 @@ LEFT JOIN (
     WHERE dthh.id_modelo = 3
     GROUP BY Cc.fecha_creacion, dthh.id_modelo
 ) AS CcMini ON CcMini.fecha_creacion = pld.fecha
-LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion AND dtip.id_modelo=1
-LEFT JOIN dtip AS dtip18Lts ON pld.fecha = dtip18Lts.fechaCreacion AND dtip18Lts.id_modelo=2
-LEFT JOIN dtip AS dtipMini ON pld.fecha = dtipMini.fechaCreacion AND dtipMini.id_modelo=3
+LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
@@ -263,35 +276,50 @@ ORDER BY pld.fecha
         WHEN procesos.proceso = 'Horneados 18lts' THEN 'Hornos'
         WHEN procesos.proceso = 'Horneados Mini' THEN 'Hornos'
         WHEN procesos.proceso = 'CC 20 litros' THEN 'Control de Calidad'
-        WHEN procesos.proceso = 'CC 20 litros' THEN  'Control de Calidad'
-        WHEN procesos.proceso = 'CC 20 litros' THEN 'Control de Calidad'
-        WHEN procesos.proceso = 'Impregnados 20lts' THEN  'Impregnación'
-        WHEN procesos.proceso = 'Impregnados 18lts' THEN  'Impregnación'
-        WHEN procesos.proceso = 'Impregnados Mini' THEN 'Impregnación'
+        WHEN procesos.proceso = 'CC 18 litros' THEN  'Control de Calidad'
+        WHEN procesos.proceso = 'CC Mini' THEN 'Control de Calidad'
+        WHEN procesos.proceso = 'Impregnados' THEN  'Impregnación'
         WHEN procesos.proceso = 'Empaque' THEN 'Empaque'
-        ELSE 0 
+        ELSE ''
     END) AS Area,
     SUM(DISTINCT CASE 
-        WHEN procesos.proceso = 'Aserrin Seco' THEN daserrin.cantidad_inicial 
-        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN dtca1.CantidadInicial 
-        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN dtca2.cantidad_inicial 
-        WHEN procesos.proceso = 'Produccion Mini' THEN dtp.producido
-        WHEN procesos.proceso = 'Produccion 20lts' THEN dtp20lt.producido
-        WHEN procesos.proceso = 'Produccion 18lts' THEN dtp18lt.producido
-        WHEN procesos.proceso = 'Barro pulverizado' THEN dtpv.cantidad
-        WHEN procesos.proceso = 'Pulido Base' THEN dcpb.pulido
-    	  WHEN procesos.proceso = 'Horneados 20lts' THEN dthh.horneado
-        WHEN procesos.proceso = 'Horneados 18lts' THEN dthh18lts.horneado
-        WHEN procesos.proceso = 'Horneados Mini' THEN dthhMini.horneado
-        WHEN procesos.proceso = 'CC 20 litros' THEN Cc20.Cc20Lts
-        WHEN procesos.proceso = 'CC 20 litros' THEN Cc18.Cc18Lts
-        WHEN procesos.proceso = 'CC 20 litros' THEN CcMini.CcMini
-        WHEN procesos.proceso = 'Impregnados 20lts' THEN dtip.impregnados
-        WHEN procesos.proceso = 'Impregnados 18lts' THEN dtip18Lts.impregnados
-        WHEN procesos.proceso = 'Impregnados Mini' THEN dtipMini.impregnados
-        WHEN procesos.proceso = 'Empaque' THEN empaqueproducido.empacado
+   WHEN procesos.proceso = 'Aserrin Seco' THEN COALESCE(daserrin.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN COALESCE(dtca1.CantidadInicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN COALESCE(dtca2.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Produccion Mini' THEN COALESCE(dtp.producido, 0)
+        WHEN procesos.proceso = 'Produccion 20lts' THEN COALESCE(dtp20lt.producido, 0)
+        WHEN procesos.proceso = 'Produccion 18lts' THEN COALESCE(dtp18lt.producido, 0)
+        WHEN procesos.proceso = 'Barro pulverizado' THEN COALESCE(dtpv.cantidad, 0)
+        WHEN procesos.proceso = 'Pulido Base' THEN COALESCE(dcpb.pulido, 0)
+        WHEN procesos.proceso = 'Horneados 20lts' THEN COALESCE(dthh.horneado, 0)
+        WHEN procesos.proceso = 'Horneados 18lts' THEN COALESCE(dthh18lts.horneado, 0)
+        WHEN procesos.proceso = 'Horneados Mini' THEN COALESCE(dthhMini.horneado, 0)
+        WHEN procesos.proceso = 'CC 20 litros' THEN COALESCE(Cc20.Cc20Lts, 0)  
+        WHEN procesos.proceso = 'CC 18 litros' THEN COALESCE(Cc18.Cc18Lts, 0)    
+        WHEN procesos.proceso = 'CC Mini' THEN COALESCE(CcMini.CcMini, 0)
+        WHEN procesos.proceso = 'Impregnados' THEN COALESCE(dtip.impregnados,0)  
+        WHEN procesos.proceso = 'Empaque' THEN COALESCE(empaqueproducido.empacado, 0)
         ELSE 0 
-    END) AS producido
+    END) AS producido,
+        SUM(DISTINCT CASE 
+        WHEN procesos.proceso = 'Aserrin Seco' THEN COALESCE(daserrin.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 1' THEN COALESCE(dtca1.CantidadInicial, 0)
+        WHEN procesos.proceso = 'Aserrin Cernido 2' THEN COALESCE(dtca2.cantidad_inicial, 0)
+        WHEN procesos.proceso = 'Produccion Mini' THEN COALESCE(dtp.producido, 0)
+        WHEN procesos.proceso = 'Produccion 20lts' THEN COALESCE(dtp20lt.producido, 0)
+        WHEN procesos.proceso = 'Produccion 18lts' THEN COALESCE(dtp18lt.producido, 0)
+        WHEN procesos.proceso = 'Barro pulverizado' THEN COALESCE(dtpv.cantidad, 0)
+        WHEN procesos.proceso = 'Pulido Base' THEN COALESCE(dcpb.pulido, 0)
+        WHEN procesos.proceso = 'Horneados 20lts' THEN COALESCE(dthh.horneado, 0)
+        WHEN procesos.proceso = 'Horneados 18lts' THEN COALESCE(dthh18lts.horneado, 0)
+        WHEN procesos.proceso = 'Horneados Mini' THEN COALESCE(dthhMini.horneado, 0)
+        WHEN procesos.proceso = 'CC 20 litros' THEN COALESCE(Cc20.Cc20Lts, 0)
+        WHEN procesos.proceso = 'CC 18 litros' THEN COALESCE(Cc18.Cc18Lts, 0)
+        WHEN procesos.proceso = 'CC Mini' THEN COALESCE(CcMini.CcMini, 0)
+        WHEN procesos.proceso = 'Impregnados' THEN COALESCE(dtip.impregnados,0)
+        WHEN procesos.proceso = 'Empaque' THEN COALESCE(empaqueproducido.empacado, 0)
+        ELSE 0 
+    END) -pld.cantidad_planificada AS residuo
 FROM planificaciones_diarias pld
 LEFT JOIN user ON pld.id_creador = user.id
 LEFT JOIN operarios ON user.nombre = operarios.id
@@ -327,9 +355,7 @@ LEFT JOIN (
     WHERE dthh.id_modelo = 3
     GROUP BY Cc.fecha_creacion, dthh.id_modelo
 ) AS CcMini ON CcMini.fecha_creacion = pld.fecha
-LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion AND dtip.id_modelo=1
-LEFT JOIN dtip AS dtip18Lts ON pld.fecha = dtip18Lts.fechaCreacion AND dtip18Lts.id_modelo=2
-LEFT JOIN dtip AS dtipMini ON pld.fecha = dtipMini.fechaCreacion AND dtipMini.id_modelo=3
+LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
@@ -337,7 +363,6 @@ LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
 WHERE pld.fecha BETWEEN '${fechaInicial}' AND '${fechaFin}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
 ORDER BY pld.fecha
-
 `
                 
                     try {
