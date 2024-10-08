@@ -121,6 +121,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
   // import PlanCumplido from './src/routes/PlanMes/Mensual.routes.js'
   import PlanDay from './src/routes/PlanMes/Mensual.routes.js'
   import PlanCumplido from './src/routes/PlanMes/Mensual.routes.js'
+  import Creacionissues from './src/routes/Creacionissues/Creacionissues.routes.js'
 
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
@@ -354,7 +355,9 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     // app.use(PlanMes)
     app.use(PlanDay)
     app.use(PlanCumplido)
-  app.use(postSendEmail)
+
+    //Registro de Isuues
+    app.use(Creacionissues)
     app.listen(process.env.PORT || 3001)
 
 

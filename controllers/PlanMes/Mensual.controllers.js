@@ -123,7 +123,8 @@ export const postPlanMes = async (req, res) => {
             
                 const consulta =
               `
-              SELECT
+               SELECT
+              pld.id,
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
@@ -186,7 +187,9 @@ export const postPlanMes = async (req, res) => {
         WHEN procesos.proceso = 'Impregnados' THEN COALESCE(dtip.impregnados,0)
         WHEN procesos.proceso = 'Empaque' THEN COALESCE(empaqueproducido.empacado, 0)
         ELSE 0 
-    END) -pld.cantidad_planificada AS residuo
+    END) -pld.cantidad_planificada AS residuo,
+    issues.id_planDiario,
+    issuesTxt.issue
 FROM planificaciones_diarias pld
 LEFT JOIN user ON pld.id_creador = user.id
 LEFT JOIN operarios ON user.nombre = operarios.id
@@ -227,9 +230,13 @@ LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
 LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
+LEFT JOIN issues ON pld.id = issues.id_planDiario
+LEFT JOIN issues AS issuesTxt ON pld.id = issuesTxt.id_planDiario
 WHERE pld.fecha = '${hoy}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
 ORDER BY pld.fecha
+
+
               `
             
                 try {
@@ -257,6 +264,7 @@ ORDER BY pld.fecha
                 
                     const consulta = 
                    `SELECT
+                   pld.id,
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
