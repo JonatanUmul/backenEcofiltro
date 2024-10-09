@@ -79,7 +79,7 @@ export const postSendEmail = async (registro) => {
     Source: process.env.AWS_SOURCE_EMAIL,
     Destination: {
       ToAddresses: [process.env.AWS_SOURCE_EMAIL], // El correo del remitente
-      BccAddresses: ['jumul@ecofiltro.com',  'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com','jfelipe@ecofiltro.com','smunoz@ecofiltro.com', 'gestion@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
+      BccAddresses: ['jumul@ecofiltro.com',  'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com','smunoz@ecofiltro.com', 'gestion@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
     },
     Message: {
       Subject: {
