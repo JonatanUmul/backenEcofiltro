@@ -200,7 +200,7 @@ LEFT JOIN dtca2 ON pld.fecha = dtca2.fecha_creacion
 LEFT JOIN dtp ON pld.fecha = dtp.fecha_real AND dtp.id_ufmodelo=3
 LEFT JOIN dtp AS dtp20lt ON pld.fecha = dtp20lt.fecha_real AND dtp20lt.id_ufmodelo=1
 LEFT JOIN dtp AS dtp18lt ON pld.fecha = dtp18lt.fecha_real AND dtp20lt.id_ufmodelo=2
-LEFT JOIN dcpb ON pld.fecha = dcpb.fecha_creacion= dcpb.id
+LEFT JOIN dcpb ON pld.fecha = dcpb.fecha_creacion
 LEFT JOIN dthh ON pld.fecha = dthh.fecha_creacion AND dthh.id_modelo=1
 LEFT JOIN dthh AS dthh18lts ON pld.fecha = dthh18lts.fecha_creacion AND dthh18lts.id_modelo=2
 LEFT JOIN dthh AS dthhMini ON pld.fecha = dthhMini.fecha_creacion AND dthhMini.id_modelo=3
@@ -338,7 +338,7 @@ LEFT JOIN dtca2 ON pld.fecha = dtca2.fecha_creacion
 LEFT JOIN dtp ON pld.fecha = dtp.fecha_real AND dtp.id_ufmodelo=3
 LEFT JOIN dtp AS dtp20lt ON pld.fecha = dtp20lt.fecha_real AND dtp20lt.id_ufmodelo=1
 LEFT JOIN dtp AS dtp18lt ON pld.fecha = dtp18lt.fecha_real AND dtp20lt.id_ufmodelo=2
-LEFT JOIN dcpb ON pld.fecha = dcpb.fecha_creacion= dcpb.id
+LEFT JOIN dcpb ON pld.fecha = dcpb.fecha_creacion
 LEFT JOIN dthh ON pld.fecha = dthh.fecha_creacion AND dthh.id_modelo=1
 LEFT JOIN dthh AS dthh18lts ON pld.fecha = dthh18lts.fecha_creacion AND dthh18lts.id_modelo=2
 LEFT JOIN dthh AS dthhMini ON pld.fecha = dthhMini.fecha_creacion AND dthhMini.id_modelo=3

@@ -358,10 +358,10 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
 
     //Registro de Isuues
     app.use(Creacionissues)
-    app.listen(process.env.PORT || 3001)
+    app.listen(process.env.PORT || 3002)
 
 
-    console.log('puerto escuchando en el puerto 3001')
+    console.log('puerto escuchando en el puerto 3002')
 
 
 
