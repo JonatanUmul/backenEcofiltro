@@ -18,6 +18,7 @@ d.nombre,
 d.password,
 d.telefono,
 d.firmaUsr,
+d.id_rol,
 operarios.Nombre AS nombres,
 roles.rol AS rol
 
