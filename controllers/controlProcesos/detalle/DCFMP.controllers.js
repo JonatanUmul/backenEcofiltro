@@ -49,24 +49,28 @@ const id= req.params.id;
 try {
   const consulta= `
   
-SELECT 
-d.fecha_produccion,
-d.hora_creacion,
-d.barroLB,
-d.aserrinLB,
-d.humedadBarro,
-d.humedadAserrin,
-d.id_aserradero,
-aserradero.nombre_aserradero AS aserradero,
-turno.turno AS turnoProduccion,
-operarios.Nombre AS formulador,
-ufmodelo.nombre_modelo AS modelo
-FROM dcfmp d
 
-LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
-LEFT JOIN turno ON d.id_turno= turno.id
-LEFT JOIN operarios ON d.id_formulador = operarios.id
-LEFT JOIN ufmodelo ON d.id_ufmodelo= ufmodelo.id_mod
+  SELECT 
+  d.fecha_produccion,
+  d.hora_creacion,
+  d.barroLB,
+  d.aserrinLB,
+  d.aserrinLB2,
+  d.humedadBarro,
+  d.humedadAserrin,
+  d.id_aserradero,
+  aserradero.nombre_aserradero AS aserradero,
+  aserradero2.nombre_aserradero AS aserradero2,
+  turno.turno AS turnoProduccion,
+  operarios.Nombre AS formulador,
+  ufmodelo.nombre_modelo AS modelo
+  FROM dcfmp d
+  
+  LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
+  LEFT JOIN aserradero as aserradero2 ON d.id_aserradero2= aserradero2.id
+  LEFT JOIN turno ON d.id_turno= turno.id
+  LEFT JOIN operarios ON d.id_formulador = operarios.id
+  LEFT JOIN ufmodelo ON d.id_ufmodelo= ufmodelo.id_mod
   where d.id_cfmp=?
   `
   const [rows]= await pool.query(consulta, [id])
@@ -90,24 +94,28 @@ export const getDCFMPP= async(req, res)=>{
   try {
     let consulta= `
     
-SELECT 
-d.fecha_produccion,
-d.hora_creacion,
-d.barroLB,
-d.aserrinLB,
-d.humedadBarro,
-d.humedadAserrin,
-d.id_aserradero,
-aserradero.nombre_aserradero AS aserradero,
-turno.turno AS turnoProduccion,
-operarios.Nombre AS formulador,
-ufmodelo.nombre_modelo AS modelo
-FROM dcfmp d
 
-LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
-LEFT JOIN turno ON d.id_turno= turno.id
-LEFT JOIN operarios ON d.id_formulador = operarios.id
-LEFT JOIN ufmodelo ON d.id_ufmodelo= ufmodelo.id_mod
+    SELECT 
+    d.fecha_produccion,
+    d.hora_creacion,
+    d.barroLB,
+    d.aserrinLB,
+    d.aserrinLB2,
+    d.humedadBarro,
+    d.humedadAserrin,
+    d.id_aserradero,
+    aserradero.nombre_aserradero AS aserradero,
+    aserradero2.nombre_aserradero AS aserradero2,
+    turno.turno AS turnoProduccion,
+    operarios.Nombre AS formulador,
+    ufmodelo.nombre_modelo AS modelo
+    FROM dcfmp d
+    
+    LEFT JOIN aserradero ON d.id_aserradero= aserradero.id
+    LEFT JOIN aserradero as aserradero2 ON d.id_aserradero2= aserradero2.id
+    LEFT JOIN turno ON d.id_turno= turno.id
+    LEFT JOIN operarios ON d.id_formulador = operarios.id
+    LEFT JOIN ufmodelo ON d.id_ufmodelo= ufmodelo.id_mod
   
     WHERE 1=1`;
   
