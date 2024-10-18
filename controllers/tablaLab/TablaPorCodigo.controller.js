@@ -32,7 +32,7 @@ SELECT
         THEN ufcrudos.codigo
         ELSE 'Sin codigo'
     END AS codigos,
-    left(codigosHornos.codigo,7) AS cods,
+ 
     ufcrudos.estadouf AS estadoCrudo,
     STR_TO_DATE(RIGHT(ufcrudos.codigo, 6), '%d%m%y') AS fecha_produccion,
     d.librasBarro,
@@ -44,18 +44,17 @@ SELECT
     aserradero2.nombre_aserradero AS aserradero2,
     tipocernido.tipoCernido AS tipocernido1,
     tipocernido2.tipoCernido AS tipocernido2,
-    dotdmp.id_aserradero,
-    dotdmp.id_aserradero2,
-    dotdmp.id_cernidodetalle,
-    dotdmp.id_cernidodetalle2,
     dotdmp.lbaserrin,
     dotdmp.lbaserrin2,
+    tamañoAserrin.granulometria AS TamañoAserrin1,
+    tamañoAserrin2.granulometria AS TamañoAserrin2,
     dotdmpb.iplastico,
     dotdmpb.lbbarro,
     dotdmpb.carcilla,
     dotdmpb.climo,
     dotdmpb.carena,
     dotdmpb.hbarro,
+    enc_maq1.nombre_maq AS Mezcladora,
     codigosHornos.fecha_horneado AS fechaHorneado,
     codigosHornos.posicionHorno AS posicionHorno,
     codigosHornos.reduccionColor AS reduccionColor,
@@ -82,8 +81,10 @@ FROM
     LEFT JOIN turno ON codigosHornos.turnohorneado = turno.id
     LEFT JOIN turno AS turno1 ON codigosHornos.turnocc = turno1.id
     LEFT JOIN dotdmp ON d.id =dotdmp.id_dtp
+    LEFT JOIN tamañoAserrin ON dotdmp.id_granulometria=tamañoAserrin.id
+    LEFT JOIN tamañoAserrin as tamañoAserrin2 ON  dotdmp.id_granulometria2=tamañoAserrin.id
     LEFT JOIN dotdmpb ON d.id=dotdmpb.id_dtp
-
+	 LEFT JOIN enc_maq AS enc_maq1 ON d.id_mezcladora=enc_maq1.id_maq
     LEFT JOIN MaxTemperaturas mt 
         ON codigosHornos.fecha_horneado = mt.fecha_real
         AND codigosHornos.horno = mt.id_horno
@@ -91,7 +92,8 @@ FROM
         AND codigosHornos.turnohorneado = mt.id_turno
     LEFT JOIN impregnados ON codigosHornos.codigo = impregnados.codigo
     LEFT JOIN insumos ON impregnados.tipodeplata = insumos.id
-
+    
+    
         WHERE 1=1`;
 
         const params = [];

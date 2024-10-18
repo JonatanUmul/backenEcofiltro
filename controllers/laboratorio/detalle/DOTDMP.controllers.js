@@ -13,7 +13,8 @@ export const postDOTDMP = async(req, res)=>{
     id_cernidodetalle2,
     lbaserrin,
     lbaserrin2,
-    id_granulometria
+    id_granulometria,
+    id_granulometria2
     }= req.body
    
    
@@ -39,7 +40,8 @@ export const postDOTDMP = async(req, res)=>{
           id_cernidodetalle2,
           lbaserrin,
           lbaserrin2,
-          id_granulometria
+          id_granulometria,
+          id_granulometria2
         ])
         res.send({rows});
         

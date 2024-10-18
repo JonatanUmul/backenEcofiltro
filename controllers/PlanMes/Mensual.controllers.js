@@ -205,26 +205,26 @@ LEFT JOIN dthh ON pld.fecha = dthh.fecha_creacion AND dthh.id_modelo=1
 LEFT JOIN dthh AS dthh18lts ON pld.fecha = dthh18lts.fecha_creacion AND dthh18lts.id_modelo=2
 LEFT JOIN dthh AS dthhMini ON pld.fecha = dthhMini.fecha_creacion AND dthhMini.id_modelo=3
 LEFT JOIN (
-    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
+    SELECT Cc.fecha_real, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
     FROM dtcc Cc
     LEFT JOIN dthh ON Cc.id_dthh = dthh.id
     WHERE dthh.id_modelo = 1
-    GROUP BY Cc.fecha_creacion, dthh.id_modelo
-) AS Cc20 ON Cc20.fecha_creacion = pld.fecha
+    GROUP BY Cc.fecha_real, dthh.id_modelo
+) AS Cc20 ON Cc20.fecha_real = pld.fecha
 LEFT JOIN (
-    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
+    SELECT Cc.fecha_real, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
     FROM dtcc Cc
     LEFT JOIN dthh ON Cc.id_dthh = dthh.id
     WHERE dthh.id_modelo = 2
-    GROUP BY Cc.fecha_creacion, dthh.id_modelo
-) AS Cc18 ON Cc18.fecha_creacion = pld.fecha
+    GROUP BY Cc.fecha_real, dthh.id_modelo
+) AS Cc18 ON Cc18.fecha_real = pld.fecha
 LEFT JOIN (
-    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
+    SELECT Cc.fecha_real, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
     FROM dtcc Cc
     LEFT JOIN dthh ON Cc.id_dthh = dthh.id
     WHERE dthh.id_modelo = 3
-    GROUP BY Cc.fecha_creacion, dthh.id_modelo
-) AS CcMini ON CcMini.fecha_creacion = pld.fecha
+    GROUP BY Cc.fecha_real, dthh.id_modelo
+) AS CcMini ON CcMini.fecha_real = pld.fecha
 LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
@@ -235,8 +235,6 @@ LEFT JOIN issues AS issuesTxt ON pld.id = issuesTxt.id_planDiario
 WHERE pld.fecha = '${hoy}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
 ORDER BY pld.fecha
-
-
               `
             
                 try {
@@ -263,8 +261,9 @@ ORDER BY pld.fecha
                     }
                 
                     const consulta = 
-                   `SELECT
-                   pld.id,
+                   `
+                   SELECT
+              pld.id,
     pld.fecha,
     procesos.proceso AS procesosBuscar,
     pld.cantidad_planificada,
@@ -327,7 +326,9 @@ ORDER BY pld.fecha
         WHEN procesos.proceso = 'Impregnados' THEN COALESCE(dtip.impregnados,0)
         WHEN procesos.proceso = 'Empaque' THEN COALESCE(empaqueproducido.empacado, 0)
         ELSE 0 
-    END) -pld.cantidad_planificada AS residuo
+    END) -pld.cantidad_planificada AS residuo,
+    issues.id_planDiario,
+    issuesTxt.issue
 FROM planificaciones_diarias pld
 LEFT JOIN user ON pld.id_creador = user.id
 LEFT JOIN operarios ON user.nombre = operarios.id
@@ -343,34 +344,37 @@ LEFT JOIN dthh ON pld.fecha = dthh.fecha_creacion AND dthh.id_modelo=1
 LEFT JOIN dthh AS dthh18lts ON pld.fecha = dthh18lts.fecha_creacion AND dthh18lts.id_modelo=2
 LEFT JOIN dthh AS dthhMini ON pld.fecha = dthhMini.fecha_creacion AND dthhMini.id_modelo=3
 LEFT JOIN (
-    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
+    SELECT Cc.fecha_real, dthh.id_modelo, SUM(dthh.horneado) AS Cc20Lts
     FROM dtcc Cc
     LEFT JOIN dthh ON Cc.id_dthh = dthh.id
     WHERE dthh.id_modelo = 1
-    GROUP BY Cc.fecha_creacion, dthh.id_modelo
-) AS Cc20 ON Cc20.fecha_creacion = pld.fecha
+    GROUP BY Cc.fecha_real, dthh.id_modelo
+) AS Cc20 ON Cc20.fecha_real = pld.fecha
 LEFT JOIN (
-    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
+    SELECT Cc.fecha_real, dthh.id_modelo, SUM(dthh.horneado) AS Cc18Lts
     FROM dtcc Cc
     LEFT JOIN dthh ON Cc.id_dthh = dthh.id
     WHERE dthh.id_modelo = 2
-    GROUP BY Cc.fecha_creacion, dthh.id_modelo
-) AS Cc18 ON Cc18.fecha_creacion = pld.fecha
+    GROUP BY Cc.fecha_real, dthh.id_modelo
+) AS Cc18 ON Cc18.fecha_real = pld.fecha
 LEFT JOIN (
-    SELECT Cc.fecha_creacion, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
+    SELECT Cc.fecha_real, dthh.id_modelo, SUM(dthh.horneado) AS CcMini
     FROM dtcc Cc
     LEFT JOIN dthh ON Cc.id_dthh = dthh.id
     WHERE dthh.id_modelo = 3
-    GROUP BY Cc.fecha_creacion, dthh.id_modelo
-) AS CcMini ON CcMini.fecha_creacion = pld.fecha
+    GROUP BY Cc.fecha_real, dthh.id_modelo
+) AS CcMini ON CcMini.fecha_real = pld.fecha
 LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
 LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
 LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
+LEFT JOIN issues ON pld.id = issues.id_planDiario
+LEFT JOIN issues AS issuesTxt ON pld.id = issuesTxt.id_planDiario
 WHERE pld.fecha BETWEEN '${fechaInicial}' AND '${fechaFin}'
 GROUP BY pld.fecha, pld.cantidad_planificada, operarios.Nombre, procesos.proceso
 ORDER BY pld.fecha
+
 `
                 
                     try {
