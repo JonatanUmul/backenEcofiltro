@@ -42,6 +42,7 @@ SELECT
     d.id,
     aserradero.nombre_aserradero AS aserradero1,
     aserradero2.nombre_aserradero AS aserradero2,
+    (aserradero1/aserradero2) as Aserraderos,
     tipocernido.tipoCernido AS tipocernido1,
     tipocernido2.tipoCernido AS tipocernido2,
     dotdmp.lbaserrin,

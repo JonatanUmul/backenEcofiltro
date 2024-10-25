@@ -29,8 +29,9 @@ export const postDOTDMP = async(req, res)=>{
     id_cernidodetalle2,
     lbaserrin,
     lbaserrin2,
-    id_granulometria
-    ) Values(?,?,?,?,?,?,?,?,?)`;
+    id_granulometria,
+    id_granulometria2
+    ) Values(?,?,?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
           id_dtp,
           id_creador,
