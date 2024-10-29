@@ -9,7 +9,6 @@ export const postCTT = async(req, res)=>{
     const codigoFinal= req.body.codigoFinal
     const cantidad=  req.body.cantidad
    
-    console.log('datos', codigoInicio,codigoFinal)
     try{
     
        const consulta='INSERT INTO ctt(id_est, codigoInicio, codigoFinal, cantidad, id_creador)Values(?,?, ?, ?, ?)';
