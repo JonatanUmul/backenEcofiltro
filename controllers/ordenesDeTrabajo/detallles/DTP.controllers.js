@@ -66,6 +66,11 @@ export const getDTP = async (req, res) => {
         d.librasAserrin2,
         COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
         ROUND(d.producido / 6) AS formulas,
+        CASE 
+    WHEN d.id_cernidodetalle = 1 AND d.id_cernidodetalle2 = 1 THEN 'B'
+    WHEN d.id_ufmodelo = 2 OR d.id_ufmodelo = 3 THEN 'Mini/18LTS'
+    ELSE 'A'
+END AS formulaTipo,
         d.fecha_creacion,
         d.fecha_real,
         d.hora_creacion,

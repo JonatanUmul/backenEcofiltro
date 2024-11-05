@@ -122,7 +122,8 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
   import PlanDay from './src/routes/PlanMes/Mensual.routes.js'
   import PlanCumplido from './src/routes/PlanMes/Mensual.routes.js'
   import Creacionissues from './src/routes/Creacionissues/Creacionissues.routes.js'
-
+  import CLP from './src/routes/controlLimiteLiquidoPlastico/encabezados/CLP.routes.js'
+  import TablaCLP from './src/routes/tablaCLP/TablaCLP.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -358,6 +359,10 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
 
     //Registro de Isuues
     app.use(Creacionissues)
+    //Tabla Calculo Limite Liquido y Limite Plastico
+    app.use(TablaCLP)
+    app.use(CLP)
+    // app.use(cliquido)
     app.listen(process.env.PORT || 3002)
 
 

@@ -21,7 +21,9 @@ export const getTablaLab = async (req, res) => {
 	aserradero2.nombre_aserradero as nombre_aserradero2,
 	tipocernido.tipoCernido AS tipocernido1,
 	tipocernido2.tipoCernido AS tipocernido2,
-	ufmodelo.nombre_modelo AS modelo
+	ufmodelo.nombre_modelo AS modelo,
+    dotdmp.id_dtp AS datosAserrin,
+	dotdmpb.id_dtp AS datosBarro
    FROM dtp d 
    
    left JOIN aserradero ON d.id_Aserradero=aserradero.id
@@ -29,6 +31,8 @@ export const getTablaLab = async (req, res) => {
    left JOIN tipocernido ON d.id_cernidodetalle= tipocernido.id
    left JOIN tipocernido AS tipocernido2 ON  d.id_cernidodetalle2= tipocernido2.id
    LEFT JOIN ufmodelo ON  d.id_ufmodelo=ufmodelo.id_mod
+     LEFT JOIN dotdmp ON d.id=dotdmp.id_dtp
+   LEFT JOIN dotdmpb ON d.id=dotdmpb.id_dtp
    WHERE d.id_est = 2
 
 

@@ -32,11 +32,7 @@ SELECT
         THEN ufcrudos.codigo
         ELSE 'Sin codigo'
     END AS codigos,
-       CASE 
-    WHEN d.id_cernidodetalle = 1 AND d.id_cernidodetalle2 = 1 THEN 'B'
-    WHEN d.id_ufmodelo = 2 OR d.id_ufmodelo = 3 THEN 'Mini/18LTS'
-    ELSE 'A'
-END AS formulaTipo,
+ 
     ufcrudos.estadouf AS estadoCrudo,
     STR_TO_DATE(RIGHT(ufcrudos.codigo, 6), '%d%m%y') AS fecha_produccion,
     d.librasBarro,
@@ -46,6 +42,7 @@ END AS formulaTipo,
     d.id,
     aserradero.nombre_aserradero AS aserradero1,
     aserradero2.nombre_aserradero AS aserradero2,
+    (aserradero1/aserradero2) as Aserraderos,
     tipocernido.tipoCernido AS tipocernido1,
     tipocernido2.tipoCernido AS tipocernido2,
     dotdmp.lbaserrin,
