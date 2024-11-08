@@ -6,7 +6,7 @@ export const getTablaPorCodigos = async (req, res) => {
     
     try {
         let consulta = `
-        WITH MaxTemperaturas AS (
+       WITH MaxTemperaturas AS (
             SELECT
                 dth.fecha_real,
                 dth.id_horno,
@@ -26,7 +26,8 @@ export const getTablaPorCodigos = async (req, res) => {
             END AS codigos,
             CASE 
                 WHEN d.id_cernidodetalle = 1 AND d.id_cernidodetalle2 = 1 THEN 'B'
-                WHEN d.id_ufmodelo = 2 OR d.id_ufmodelo = 3 THEN 'Mini/18LTS'
+                WHEN d.id_ufmodelo = 3 THEN 'A mini'
+                when d.id_ufmodelo = 2 THEN 'A 18'
                 ELSE 'A'
             END AS formulaTipo,
             ufcrudos.estadouf AS estadoCrudo,
@@ -60,21 +61,25 @@ export const getTablaPorCodigos = async (req, res) => {
             turno1.turno AS turnoCC,
             enc_maq.nombre_maq AS horno,
             ufmodelo.nombre_modelo AS ufmodelo,
-            ROUND((COALESCE(mt.max_tempCabezaIZ, 0) + COALESCE(mt.max_tempPieIZ, 0) + COALESCE(mt.max_tempCabezaDR, 0) + COALESCE(mt.max_tempPieDR, 0)) / 4, 2) AS promedio,
-            impregnados.estado,
-            insumos.insumo
+            ROUND((COALESCE(mt.max_tempCabezaIZ, 0) + COALESCE(mt.max_tempPieIZ, 0) + COALESCE(mt.max_tempCabezaDR, 0) + COALESCE(mt.max_tempPieDR, 0)) / 4) AS promedio,
+            dtip.fecha_real AS fecha_impregnacion,
+            dtip.id,
+            impregnados.estado AS estadoImpregnado,
+				insumos.insumo AS plata1,
+            insumos2.insumo AS plata2
         FROM 
             dtp d
             LEFT JOIN ufcrudos ON ufcrudos.codigo BETWEEN d.codigoInicio AND d.codigoFinal 
                 AND ufcrudos.modelo = d.id_ufmodelo 
                 AND ufcrudos.fecha_produccion = d.fecha_real
+         
             LEFT JOIN aserradero ON d.id_Aserradero = aserradero.id
             LEFT JOIN aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
             LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
             LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
             LEFT JOIN codigosHornos ON ufcrudos.codigo = codigosHornos.codigo
             LEFT JOIN enc_maq ON codigosHornos.horno = enc_maq.id_maq
-            LEFT JOIN ufmodelo ON codigosHornos.modelo = ufmodelo.id_mod
+            LEFT JOIN ufmodelo ON ufcrudos.modelo = ufmodelo.id_mod
             LEFT JOIN turno ON codigosHornos.turnohorneado = turno.id
             LEFT JOIN turno AS turno1 ON codigosHornos.turnocc = turno1.id
             LEFT JOIN dotdmp ON d.id = dotdmp.id_dtp
@@ -87,8 +92,19 @@ export const getTablaPorCodigos = async (req, res) => {
                 AND codigosHornos.horno = mt.id_horno
                 AND codigosHornos.modelo = mt.id_modelo
                 AND codigosHornos.turnohorneado = mt.id_turno
-            LEFT JOIN impregnados ON codigosHornos.codigo = impregnados.codigo
-            LEFT JOIN insumos ON impregnados.tipodeplata = insumos.id
+              LEFT JOIN impregnados ON codigosHornos.codigo = impregnados.codigo AND codigosHornos.modelo=impregnados.modelo
+          LEFT JOIN dtip ON impregnados.codigo BETWEEN dtip.codigoInicio AND dtip.codigoFinal AND impregnados.modelo=dtip.id_modelo
+          LEFT JOIN insumos ON 
+			 CASE
+                WHEN impregnados.codigo BETWEEN dtip.codigoInicio AND dtip.codigoFinal AND impregnados.modelo=dtip.id_modelo THEN dtip.TipoPlata
+                ELSE ''
+            END = insumos.id
+         LEFT JOIN insumos AS insumos2 ON 
+			 CASE
+                WHEN impregnados.codigo BETWEEN dtip.codigoInicio AND dtip.codigoFinal AND impregnados.modelo=dtip.id_modelo THEN dtip.TipoPlata2
+                ELSE ''
+            END  = insumos2.id
+            
         WHERE 1=1
         `;
 
