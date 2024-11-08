@@ -115,11 +115,11 @@ export const getTablaPorCodigos = async (req, res) => {
                 consulta += ' AND ufcrudos.fecha_produccion BETWEEN ? AND ?';
                 params.push(fecha_creacion_inicio, fecha_creacion_fin);
             }
-                // } else {
-            //     consulta += ' AND ufcrudos.fecha_produccion >= ?';
-            //     params.push(fecha_creacion_inicio);
-            // }
-        }
+                } else {
+                consulta += ' AND ufcrudos.fecha_produccion >= ?';
+                params.push(fecha_creacion_inicio);
+            }
+        
 
         if (codigo && codigo !== 'null') {
             consulta += ' AND ufcrudos.codigo = ?';
