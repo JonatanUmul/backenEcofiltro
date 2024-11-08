@@ -64,7 +64,7 @@ export const getTablaPorCodigos = async (req, res) => {
             ROUND((COALESCE(mt.max_tempCabezaIZ, 0) + COALESCE(mt.max_tempPieIZ, 0) + COALESCE(mt.max_tempCabezaDR, 0) + COALESCE(mt.max_tempPieDR, 0)) / 4) AS promedio,
             dtip.fecha_real AS fecha_impregnacion,
             dtip.id,
-            impregnados.estado AS estadoImpregnado,
+             impregnados.estado AS estadoImpregnado,
 				insumos.insumo AS plata1,
             insumos2.insumo AS plata2
         FROM 
