@@ -1,12 +1,8 @@
 import { pool } from "../../../src/db.js";
 
-// id_CLP: id.toString(),
-// id_creador:id_creador,
-// PesoDeRecipiente:formData.PesoDeRecipiente,
-// NoGolpes:formData.NoGolpes,
-// PesoDeRecipienteYMaterialHumedo:
 export const postcliquido = async (req, res) => {
-  const { id_OTSaserrin, id_MP, id_asrd, id_patio, cantidad_inicial, cantidad_final, id_creador  }=req.body;
+
+  const { id_clp, id_creador, pesoderecipiente, NoGolpes, PesoDeRecipienteYMaterialHumedo}=req.body;
   console.log(id_OTSaserrin);
   try {
     if (
