@@ -74,8 +74,8 @@ where d.id_cth=?
     
 }
 export const getSDTH = async (req, res) => {
-  const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno } = req.params;
-console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin, modeloUF,turn,horno )
+  const { fecha_creacion_inicio, fecha_creacion_fin, modeloUF, turn, horno, tiempo } = req.params;
+console.log('HORNO SELECCIONADO EN EL BCK',fecha_creacion_inicio,fecha_creacion_fin, modeloUF,turn,horno,tiempo )
   try {
     let consulta =
     //  ` 
@@ -189,7 +189,7 @@ WHERE 1 = 1
       consulta += ' AND d.fecha_solantec <= ?';
       params.push(fecha_creacion_fin);
     }
-      consulta += ' AND (MINUTE(d.hora_creacion) % 40 = 0)';
+      consulta += `AND (MINUTE(d.hora_creacion) % ${tiempo} = 0)`;
       consulta += ' ORDER BY d.id ASC';
 
     const [rows] = await pool.query(consulta, params);
