@@ -366,7 +366,7 @@ LEFT JOIN (
 ) AS CcMini ON CcMini.fecha_real = pld.fecha
 LEFT JOIN dtip ON pld.fecha = dtip.fechaCreacion
 LEFT JOIN dtpv ON pld.fecha=dtpv.fecha_creacion
-LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id
+LEFT JOIN planificaciones_mensuales ON pld.proceso_id=planificaciones_mensuales.proceso_id AND MONTH(pld.fecha)=MONTH(planificaciones_mensuales.fecha_inicio)
 LEFT JOIN operarios AS operariosResponsable ON planificaciones_mensuales.id_responsable=operariosResponsable.id
 LEFT JOIN empaqueproducido ON pld.fecha = empaqueproducido.fecha_at
 LEFT JOIN issues ON pld.id = issues.id_planDiario
