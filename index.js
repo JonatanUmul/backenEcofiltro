@@ -131,23 +131,31 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
    dotenv.config();
     
     // const Origen =  process.env.ALLOWED_ORIGIN;
-    const allowedOrigins = [
-      "http://localhost:3000",
-      "https://www.eco-aplicaciones.com",
-      "https://107.20.171.166:50013"
-    ];
-    const Origen="http://localhost:3000";
+    // const allowedOrigins = [
+    //   "http://localhost:3000",
+    //   "https://www.eco-aplicaciones.com",
+    //   "https://107.20.171.166:50013"
+    // ];
+    const Origen =  process.env.ALLOWED_ORIGIN;
 
     const app = express()
     
     // app.use(cors);
     
-    app.use(cors({
+    // app.use(cors({
       
-      origin: Origen, // Utiliza la variable de entorno correcta
-      methods: ['GET', 'POST', 'PUT'], // Métodos permitidos
-      allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
-    }));
+    //   origin: Origen, // Utiliza la variable de entorno correcta
+    //   methods: ['GET', 'POST', 'PUT'], // Métodos permitidos
+    //   allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
+    // }));
+    app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin",Origen );
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.header("Access-Control-Allow-Credentials", "true"); // Si necesitas enviar cookies
+      next();
+    });
+    
     // app.use(cors({
     //   origin: allowedOrigins,
     //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -182,221 +190,221 @@ app.use(express.json());
     app.use(express.json())   
 
     //login
-    app.use('/api',Loginroutes);
+    app.use(Loginroutes);
 
     //Estado UF
-    app.use('/api',Estadouf)
+    app.use(Estadouf)
 
     //Tipo cernido
-    app.use('/api',TipoCernido);
-    app.use('/api',CernidoDetalle);
+    app.use(TipoCernido);
+    app.use(CernidoDetalle);
 
     //login
-    app.use('/api',TipoMantenimiento);
+    app.use(TipoMantenimiento);
 
     //Estados Maquinaria
-    app.use('/api',EstadosMaq);
+    app.use(EstadosMaq);
 
     //Estados Maquinaria
-    app.use('/api',RevisionMaquinaria);
+    app.use(RevisionMaquinaria);
 
     //Turnos de Produccion
-    app.use('/api',Turnos);
+    app.use(Turnos);
 
     //Turnos de Produccion
-    app.use('/api',Turnos);
+    app.use(Turnos);
 
        //Grupos de Trabajo
-    app.use('/api',GrupodeTrabajo);
+    app.use(GrupodeTrabajo);
 
     //Hornos
-    app.use('/api',maquinaria);
+    app.use(maquinaria);
 
-    app.use('/api',modulosTarimas);
-    app.use('/api',tipoMermas);
+    app.use(modulosTarimas);
+    app.use(tipoMermas);
 
     //Aserradero
-    app.use('/api',Aserradero);
+    app.use(Aserradero);
 
     //Procesos
-    app.use('/api',Procesos);
+    app.use(Procesos);
     
     //Patios
-    app.use('/api',Patios);
+    app.use(Patios);
 
     //Estado Procesos
-    app.use('/api',EstadosProc)
+    app.use(EstadosProc)
 
     //Roles
-    app.use('/api',Rolrouter);
+    app.use(Rolrouter);
 
     //Calificaciones
-    app.use('/api',calificacion);
-    app.use('/api',respuestas);
+    app.use(calificacion);
+    app.use(respuestas);
 
     //Usuarios
-    app.use('/api',UsuariosR);
+    app.use(UsuariosR);
 
     //Tipo Proveedores
-    app.use('/api',TipoProv);
+    app.use(TipoProv);
 
     //Obtener-Crear Proveedores
-    app.use('/api',Provedores)
+    app.use(Provedores)
 
     //Obtener-Crear Materia Primas
-    app.use('/api',MateriaPrima)
+    app.use(MateriaPrima)
 
     //Tabla Ordenes de Trabajo
-    app.use('/api',TablaOT)
-    app.use('/api',TablaCp)
-    app.use('/api',TablaMaquinaria)
-    app.use('/api',TablaLab)
+    app.use(TablaOT)
+    app.use(TablaCp)
+    app.use(TablaMaquinaria)
+    app.use(TablaLab)
     
     //Modelos UF
-    app.use('/api',ModelosUF)
+    app.use(ModelosUF)
 
      //Insumos
-     app.use('/api',Insumos)
+     app.use(Insumos)
 
     //OT Secado de aserrin y detallado
-    app.use('/api',OTSA)
-    app.use('/api',DASERRIN)
+    app.use(OTSA)
+    app.use(DASERRIN)
 
     //OT Cernido de aserrin 1 y DEtalle Cernido 1
-    app.use('/api',OTCA1)
-    app.use('/api',DTCA1)
+    app.use(OTCA1)
+    app.use(DTCA1)
 
     //OT Cernido de aserrin 1 y DEtalle Cernido 1
-    app.use('/api',OTCC)
-    app.use('/api',DTCC)
+    app.use(OTCC)
+    app.use(DTCC)
 
     //Encabezado Cernido de aserrin 2 y Detalle Cernido 2
-    app.use('/api',OTCA2)
-    app.use('/api',DTCA2)
+    app.use(OTCA2)
+    app.use(DTCA2)
 
     //OT  Pulverizado MP y detyalle de pulverizado
-    app.use('/api',OTPV)
-    app.use('/api',DTPV)
+    app.use(OTPV)
+    app.use(DTPV)
 
     //OT Formulacion
-    app.use('/api',OTFM)
-    app.use('/api',DTFM)
+    app.use(OTFM)
+    app.use(DTFM)
 
     //OT Producción
-    app.use('/api',OTP)
-    app.use('/api',DTP)
+    app.use(OTP)
+    app.use(DTP)
     
     
     //Detalle Toma de Humedad Y OT Humedad en Patios
-    app.use('/api',DTHP)
-    app.use('/api',OTHP)
+    app.use(DTHP)
+    app.use(OTHP)
 
     //Hornos
-    app.use('/api',OTHH)
-    app.use('/api',DTHH)
+    app.use(OTHH)
+    app.use(DTHH)
     // app.use(DTHHprueba)
 
     //Impregnados
-    app.use('/api',OTIP)
-    app.use('/api',DTIP)
+    app.use(OTIP)
+    app.use(DTIP)
     
 
     //Personal por area
-    app.use('/api',Operarios)
+    app.use(Operarios)
 
     //Encabezados Control Procesos
-    app.use('/api',CPS)
-    app.use('/api',CPB)
-    app.use('/api',CRM)
-    app.use('/api',CTT)
-    app.use('/api',CTH)
-    app.use('/api',CPCD)
-    app.use('/api',CFMP)
+    app.use(CPS)
+    app.use(CPB)
+    app.use(CRM)
+    app.use(CTT)
+    app.use(CTH)
+    app.use(CPCD)
+    app.use(CFMP)
     //Detalles Control Procesos
-    app.use('/api',DCPS)
-    app.use('/api',DCPB)
-    app.use('/api',DRM)
-    app.use('/api',DTT)
-    app.use('/api',DTH)
-    app.use('/api',DCPFM)
-    app.use('/api',DCPCD)
+    app.use(DCPS)
+    app.use(DCPB)
+    app.use(DRM)
+    app.use(DTT)
+    app.use(DTH)
+    app.use(DCPFM)
+    app.use(DCPCD)
     
     
     //Encabezados Maquinaria
-    app.use('/api',CKTA)
-    app.use('/api',CKEXT)
-    app.use('/api',CKBT)
-    app.use('/api',CKCTA)
-    app.use('/api',CKCTAM)
-    app.use('/api',CKM2)
-    app.use('/api',CKMM)
-    app.use('/api',CKPH2)
-    app.use('/api',CKPHM)
-    app.use('/api',CKPM)
+    app.use(CKTA)
+    app.use(CKEXT)
+    app.use(CKBT)
+    app.use(CKCTA)
+    app.use(CKCTAM)
+    app.use(CKM2)
+    app.use(CKMM)
+    app.use(CKPH2)
+    app.use(CKPHM)
+    app.use(CKPM)
 
     //Detalle Maquinaria
-    app.use('/api',DCKBT)
-    app.use('/api',DCKM2)
-    app.use('/api',DCKEXT)
-    app.use('/api',DCKCTA)
-    app.use('/api',DCKCTAM)
-    app.use('/api',DCKMM)
-    app.use('/api',DCKPH2)
-    app.use('/api',DCKPHM)
-    app.use('/api',DCKPM)
-    app.use('/api',DCKTA)
+    app.use(DCKBT)
+    app.use(DCKM2)
+    app.use(DCKEXT)
+    app.use(DCKCTA)
+    app.use(DCKCTAM)
+    app.use(DCKMM)
+    app.use(DCKPH2)
+    app.use(DCKPHM)
+    app.use(DCKPM)
+    app.use(DCKTA)
 
     //Encabezados mantenimento Maquinaria
-    app.use('/api',MantenimientoMaq)
-    app.use('/api',MTA)
-    app.use('/api',MEXT)
-    app.use('/api',MBT)
-    app.use('/api',MCTA)
-    app.use('/api',MTAM)
-    app.use('/api',MM2)
-    app.use('/api',MMM)
-    app.use('/api',MPH2)
-    app.use('/api',MPHM)
-    app.use('/api',MPM)
+    app.use(MantenimientoMaq)
+    app.use(MTA)
+    app.use(MEXT)
+    app.use(MBT)
+    app.use(MCTA)
+    app.use(MTAM)
+    app.use(MM2)
+    app.use(MMM)
+    app.use(MPH2)
+    app.use(MPHM)
+    app.use(MPM)
     //Detalle mantenimento Maquinaria
-    app.use('/api',DMTA)
-    app.use('/api',DMEXT)
-    app.use('/api',DMBT)
-    app.use('/api',DMCTA)
-    app.use('/api',DMTAM)
-    app.use('/api',DMM2)
-    app.use('/api',DMMM)
-    app.use('/api',DMPH2)
-    app.use('/api',DMPHM)
-    app.use('/api',DMPM)
+    app.use(DMTA)
+    app.use(DMEXT)
+    app.use(DMBT)
+    app.use(DMCTA)
+    app.use(DMTAM)
+    app.use(DMM2)
+    app.use(DMMM)
+    app.use(DMPH2)
+    app.use(DMPHM)
+    app.use(DMPM)
 
     //Ot informacion materia prima Laboratorio
     // app.use(OTDMP)
-    app.use('/api',DOTDMP)
+    app.use(DOTDMP)
     // app.use(OTDMPB)
-    app.use('/api',DOTDMPB)
+    app.use(DOTDMPB)
     //Granulometria
-    app.use('/api',granulometria)
+    app.use(granulometria)
     //TablaPorCodigos
-    app.use('/api',TablaPorCodigos)
+    app.use(TablaPorCodigos)
 
     // app.use(PlanMes)
-    app.use('/api',PlanDay)
-    app.use('/api',PlanCumplido)
+    app.use(PlanDay)
+    app.use(PlanCumplido)
 
     //Registro de Isuues
-    app.use('/api',Creacionissues)
+    app.use(Creacionissues)
     //Tabla Calculo Limite Liquido y Limite Plastico
-    app.use('/api',TablaCLP)
-    app.use('/api',CLP)
-    app.use('/api',Cliquido)
+    app.use(TablaCLP)
+    app.use(CLP)
+    app.use(Cliquido)
     // app.use(postSendEmail)
 
     //Control de Operarios
-    app.use('/api',RegistroTrabajo)
+    app.use(RegistroTrabajo)
 
     //
-    app.use('/api', Area)
+    app.use( Area)
     app.listen(process.env.PORT || 3002)
 
 
