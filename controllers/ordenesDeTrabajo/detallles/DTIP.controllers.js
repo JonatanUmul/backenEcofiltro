@@ -117,3 +117,68 @@ LEFT JOIN
         res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
     }
 };
+
+
+export const getTIP = async (req, res) => {
+  const { fecha_creacion_inicio, fecha_creacion_fin, id_ufmodelo } = req.params; // Obtener los parámetros de la URL
+console.log('Datos en el back',fecha_creacion_inicio, fecha_creacion_fin, id_ufmodelo)
+  try {
+      let consulta = `
+      select 
+    d.id,
+    d.id_otip,
+    d.codigoInicio,
+    d.codigoFinal,
+    d.impregnados,
+    d.mermas,
+    d.fechaCreacion,
+    d.horaCreacion,
+    insumos.insumo as TipoPlata,
+    ufmodelo.nombre_modelo as modelo,
+    d.id_creador,
+    user.nombre AS id_encargado,
+    operarios.Nombre AS Encargado
+FROM 
+    dtip d
+
+LEFT JOIN 
+    ufmodelo ON d.id_modelo = ufmodelo.id_mod
+LEFT JOIN 
+    insumos ON d.TipoPlata = insumos.id
+ LEFT JOIN 
+   user ON d.id_creador= user.id
+   LEFT JOIN 
+   operarios ON  user.nombre = operarios.id
+          WHERE 1 = 1`;
+
+      const params = [];
+  
+
+     
+    if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
+      consulta += ' AND d.fecha_real BETWEEN ? AND ?';
+      params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    } else if (fecha_creacion_inicio !== 'null') {
+      consulta += ' AND d.fecha_real >= ?';
+      params.push(fecha_creacion_inicio);
+    } else if (fecha_creacion_fin !== 'null') {
+      consulta += ' AND d.fecha_real <= ?';
+      params.push(fecha_creacion_fin);
+    }
+
+    if (id_ufmodelo !== 'null') {
+      consulta += ' OR d.id_modelo = ?' ;
+  
+      params.push(id_ufmodelo);
+    }
+
+
+       
+      const [rows] = await pool.query(consulta, params);
+
+      res.status(200).json(rows);
+  } catch (error) {
+      console.error("Error al obtener los datos de la tabla dthp:", error);
+      res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
+  }
+};

@@ -14,7 +14,10 @@ export const postDOTDMP = async(req, res)=>{
     lbaserrin,
     lbaserrin2,
     id_granulometria,
-    id_granulometria2
+    id_granulometria2,
+    mayor_2mm,
+    entre_2_y_05mm,
+    menor_05mm
     }= req.body
    
    
@@ -30,8 +33,11 @@ export const postDOTDMP = async(req, res)=>{
     lbaserrin,
     lbaserrin2,
     id_granulometria,
-    id_granulometria2
-    ) Values(?,?,?,?,?,?,?,?,?,?)`;
+    id_granulometria2,
+    mayor_2mm,
+    entre_2_y_05mm,
+    menor_05mm
+    ) Values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
         const [rows]= await pool.query(consulta,[
           id_dtp,
           id_creador,
@@ -42,7 +48,10 @@ export const postDOTDMP = async(req, res)=>{
           lbaserrin,
           lbaserrin2,
           id_granulometria,
-          id_granulometria2
+          id_granulometria2,
+          mayor_2mm,
+          entre_2_y_05mm,
+          menor_05mm
         ])
         res.send({rows});
         
@@ -66,6 +75,9 @@ SELECT
 d.id_OTDMP,
 d.lbaserrin,
 d.lbaserrin2,
+d.mayor_2mm,
+d.entre_2_y_05mm,
+d.menor_05mm,
 user.nombre AS id_creador,
 operarios.Nombre AS creador,
 aserradero.nombre_aserradero AS aserradero1,

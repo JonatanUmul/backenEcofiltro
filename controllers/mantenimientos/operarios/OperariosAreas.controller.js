@@ -93,3 +93,69 @@ export const PostOperarios = async (req, res) => {
 };
 
     
+
+export const getOperarioRegistro = async (req, res) => {
+    const id_area = req.params.id_area;
+
+
+    try {
+        // Consulta SQL para seleccionar los operarios por id_area
+        const consulta=   
+        `SELECT 
+        op.Nombre,
+        etP.estado,
+        ar.Area,
+        op.id_area
+         FROM operarios op
+         LEFT JOIN est_personal AS etP ON op.id_est_perNal=etP.id
+         JOIN area ar ON op.id_area=ar.id
+         WHERE op.id_area IN (1,2,3,4,5,6,7,8,9,10)`
+         
+        const [rows] = await pool.query(
+          consulta
+        );
+        
+        // Verifica si se encontraron operarios
+        if (rows.length === 0) {
+      
+            console.log("Datos no encontrados");
+            return res.status(404).send("Datos no encontrados"); 
+        }
+
+        // Envía la respuesta con los operarios encontrados
+        res.send({ rows });
+    } catch (error) {
+        console.error("Error al ejecutar la consulta:", error);
+        res.status(500).send("Error del servidor");
+    }
+}
+
+
+export const putOperarioArea = async (req, res) => {
+    const id_area = req.params.id_area;
+    const id_operario=req.params.id
+
+
+    try {
+        // Consulta SQL para seleccionar los operarios por id_area
+        const consulta=   
+        `UPDATE operarios SET id_area=? WHERE id=?`
+         
+        const [rows] = await pool.query(
+          consulta,[id_area, id_operario]
+        );
+        
+        // Verifica si se encontraron operarios
+        if (rows.length === 0) {
+      
+            console.log("Datos no encontrados");
+            return res.status(404).send("Datos no encontrados"); 
+        }
+
+        // Envía la respuesta con los operarios encontrados
+        res.send({ rows });
+    } catch (error) {
+        console.error("Error al ejecutar la consulta:", error);
+        res.status(500).send("Error del servidor");
+    }
+}
