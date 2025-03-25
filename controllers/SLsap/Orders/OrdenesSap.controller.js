@@ -20,8 +20,8 @@ export const OrdenesSap = async (req, res) => {
   if (routeId) cookies.push(routeId);
 
   try {
-    // const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
-       const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
+    const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
+     //  const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
 
     const response = await axios.get(queryUrl, {
       httpsAgent,
@@ -31,7 +31,7 @@ export const OrdenesSap = async (req, res) => {
     });
 
     res.status(200).json(response.data);
-
+console.log(response.data)
   } catch (error) {
     console.error('Error al consultar órdenes:', error.message);
     res.status(500).json({ error: 'No se pudo consultar órdenes en SAP' });

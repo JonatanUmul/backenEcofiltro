@@ -9,6 +9,8 @@ const httpsAgent = new https.Agent({
   rejectUnauthorized: true
 });
 
+
+
 export const LoginSAP = async (req, res) => {
   const { username, password } = req.body;
 console.log('Datos obtenidos para Sap',username,password)
@@ -29,8 +31,10 @@ console.log('Datos obtenidos para Sap',username,password)
           'Content-Type': 'application/json'
         }
       }
+      
     );
-
+   
+    console.log('Intentando login SAP con:', response.data);
     const sessionId = response.data.SessionId;
     const routeCookie = response.headers['set-cookie']?.find(c => c.includes('ROUTEID'));
     const routeId = routeCookie ? routeCookie.split(';')[0] : null;
