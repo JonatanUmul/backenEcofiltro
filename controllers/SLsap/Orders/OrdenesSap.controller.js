@@ -21,7 +21,7 @@ export const OrdenesSap = async (req, res) => {
 
   try {
     // const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
-    const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
+       const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
 
     const response = await axios.get(queryUrl, {
       httpsAgent,
