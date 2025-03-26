@@ -1,18 +1,24 @@
 console.log("Script iniciado");
+import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
 import { pool } from "../src/db.js";
 import { formatFecha } from './FormatearFecta.js';
 dotenv.config();
 
-// Configuración de Nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'jumul@ecofiltro.com',
-    pass: 'pytu vtny qjpk rcfv'
-  }
+// // Verificar que las variables de entorno se carguen correctamente
+// console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+// console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
+// console.log("AWS_REGION:", process.env.AWS_REGION);
+// console.log("AWS_SOURCE_EMAIL:", process.env.AWS_SOURCE_EMAIL);
+
+// Configuración de AWS SDK
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
 });
+
+const ses = new AWS.SES();
 
 export const postSendEmail = async (registro) => {
   const {
@@ -24,7 +30,9 @@ export const postSendEmail = async (registro) => {
     idEncargado, NombreEncargado, CabezaIz, PieIZ, cabezaDr,PieDr,promedioTMP
   } = registro;
 
-  if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
+  // Validación de los campos requeridos
+  if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados  || !EncargadoCC) {
+    // console.error(`Registro con ID ${id} tiene datos faltantes o nulos. Omitiendo el envío.`);
     return { success: false, error: 'Datos faltantes o nulos' };
   }
 
@@ -48,7 +56,7 @@ export const postSendEmail = async (registro) => {
     -Temperatura Cabeza Derecha: ${cabezaDr}
     -Temperatura Pie Derecho: ${PieDr}
     -Temperatura Cabeza Izquierda: ${CabezaIz}
-    -Temperatura Pie Izquierda: ${PieIZ}
+    -Temperatura Pie Izquierdo: ${PieIZ}
     -Promedio Temperatura: ${promedioTMP}
 
     Resultados:
@@ -60,44 +68,47 @@ export const postSendEmail = async (registro) => {
     - Quemados: ${quemados}
     - Ahumados: ${ahumados}
     - Mermas Hornos: ${mermas_hornos}
-    - Encargado de CC: ${EncargadoCC}
+     - Encargado de CC: ${EncargadoCC}
     Porcentaje de Aprobación: ${porcentaje}
 
     -----------------------------------------
     Este es un mensaje automático, por favor no responder.
   `;
-
-  const mailOptions = {
-    from: 'jumul@ecofiltro.com',
-    to: 'jumul@ecofiltro.com',
-    bcc: [
-      'codigos@ecofiltro.com',
-      'ddelacruz@ecofiltro.com',
-      'soporte.produccion@ecofiltro.com',
-      'smunoz@ecofiltro.com',
-      'gestion@ecofiltro.com',
-      'yriddle@ecofiltro.com'
-    ],
-    subject,
-    text
+  // ,  'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com','jfelipe@ecofiltro.com','smunoz@ecofiltro.com'
+  const params = {
+    Source: process.env.AWS_SOURCE_EMAIL,
+    Destination: {
+      ToAddresses: [process.env.AWS_SOURCE_EMAIL], // El correo del remitente
+      BccAddresses: ['jumul@ecofiltro.com',  'codigos@ecofiltro.com', 'ddelacruz@ecofiltro.com', 'soporte.produccion@ecofiltro.com','smunoz@ecofiltro.com', 'gestion@ecofiltro.com', 'yriddle@ecofiltro.com'] // Utiliza el array de direcciones de correo en BCC
+    },
+    Message: {
+      Subject: {
+        Data: subject,
+      },
+      Body: {
+        Text: {
+          Data: text,
+        },
+      },
+    },
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente:", info.response);
-    return { success: true, id };
+    const data = await ses.sendEmail(params).promise();
+    console.log("Email sent successfully:", data);
+    return { success: true, id }; // Devuelve el ID del registro
   } catch (error) {
-    console.error('Error al enviar correo:', error);
+    console.error('Error sending email:', error);
     return { success: false, error };
   }
 };
 
 setInterval(async () => {
-  console.log('Ejecutando el cronómetro...');
+  console.log('Ejecutando el cronómetro...'); // Mensaje de depuración
 
   try {
-    const result = await pool.query(`
-        WITH MaxTemperaturas AS (
+    const [rows] = await pool.query(`
+       WITH MaxTemperaturas AS (
     SELECT
         dth.fecha_real,
         dth.id_horno,
@@ -183,18 +194,20 @@ SELECT
       WHERE dtcc.enviado = 0
     `);
 
-    const rows = result[0]; // Corrige la desestructuración
-
-    console.log('Registros obtenidos:', rows.length);
+    console.log('Registros obtenidos:', rows.length); // Mensaje de depuración
 
     if (rows.length === 0) {
       console.log('No hay registros nuevos para procesar.');
     }
 
     for (const registro of rows) {
+      // console.log('Intentando enviar correo para el registro:', registro);
+
       try {
-        const result = await postSendEmail(registro);
+        const result = await postSendEmail(registro); // Llamar a la función con el registro completo
+
         if (result.success) {
+          // Marcar el registro como enviado usando el ID del registro que se envió
           await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
           console.log(`Registro con ID ${registro.id} marcado como enviado.`);
         }
