@@ -1,16 +1,22 @@
 console.log("Script iniciado");
+
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import { pool } from "../src/db.js";
 import { formatFecha } from './FormatearFecta.js';
+
 dotenv.config();
 
-// Configuración de Nodemailer
+// Configuración de correo
+const emailsend = process.env.EMAIL_SEND;
+const passEmail = process.env.EMAIL_PASS;
+const emailFrom = process.env.EMAIL_FROM;
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'jumul@ecofiltro.com',
-    pass: 'pytu vtny qjpk rcfv'
+    user: emailsend,
+    pass: passEmail
   }
 });
 
@@ -21,7 +27,7 @@ export const postSendEmail = async (registro) => {
     fechaHorneado, fechaCC, turnoHorneado, aserradero, tipocernido1, tipocernido2, librasAserrin2,
     ModeloEco, formula, Horno, Hornero, aprobados, altos, bajos, rajadosCC, crudoCC, quemados,
     ahumados, mermas_hornos, total, EncargadoCC, porcentaje, idjefe, idJefe, NobreJefe, firmaJefe,
-    idEncargado, NombreEncargado, CabezaIz, PieIZ, cabezaDr,PieDr,promedioTMP
+    idEncargado, NombreEncargado, CabezaIz, PieIZ, cabezaDr, PieDr, promedioTMP
   } = registro;
 
   if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
@@ -68,15 +74,16 @@ export const postSendEmail = async (registro) => {
   `;
 
   const mailOptions = {
-    from: 'jumul@ecofiltro.com',
-    to: 'jumul@ecofiltro.com',
+    from: `"Ecofiltro" <${emailFrom}>`,
+    to: emailsend,
     bcc: [
       'codigos@ecofiltro.com',
       'ddelacruz@ecofiltro.com',
       'soporte.produccion@ecofiltro.com',
       'smunoz@ecofiltro.com',
       'gestion@ecofiltro.com',
-      'yriddle@ecofiltro.com'
+      'yriddle@ecofiltro.com',
+      'ngalicia@ecofiltro.com'
     ],
     subject,
     text
@@ -183,7 +190,7 @@ SELECT
       WHERE dtcc.enviado = 0
     `);
 
-    const rows = result[0]; // Corrige la desestructuración
+    const rows = result[0];
 
     console.log('Registros obtenidos:', rows.length);
 
@@ -205,4 +212,4 @@ SELECT
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 30000);
+}, 3000);
