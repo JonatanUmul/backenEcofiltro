@@ -42,7 +42,7 @@ console.log('Datos obtenidos para Sap',username,password)
     // 🔐 Guardar sesión
     setSapSession(sessionId, routeId);
 
-    res.status(200).json({ message: 'Sesión iniciada correctamente' });
+    res.status(200).json({ message: 'Sesión iniciada correctamente',sessionId });
   } catch (error) {
     console.error('Error al iniciar sesión en SAP:', error.message);
     res.status(500).json({ error: 'No se pudo iniciar sesión en SAP' });

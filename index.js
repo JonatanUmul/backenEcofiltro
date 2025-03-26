@@ -129,6 +129,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
   import Area from './src/routes/mantenimientos/areas/Areas.routes.js'
   import LoginSAP from './src/routes/SLsap/LoginSL.routes.js'
   import OrdenesSap from './src/routes/SLsap/LoginSL.routes.js'
+  import OtpSAP from './src/routes/SLsap/LoginSL.routes.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -400,7 +401,7 @@ app.use(express.json());
     app.use(TablaCLP)
     app.use(CLP)
     app.use(Cliquido)
-    // app.use(postSendEmail)
+    app.use(postSendEmail)
 
     //Control de Operarios
     app.use(RegistroTrabajo)
@@ -411,6 +412,7 @@ app.use(express.json());
     //Cconexion SAP
     app.use(LoginSAP)
     app.use(OrdenesSap)
+    app.use(OtpSAP)
     
     app.listen(process.env.PORT || 3002)
 
