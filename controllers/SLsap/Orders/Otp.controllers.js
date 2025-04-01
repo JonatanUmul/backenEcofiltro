@@ -2,7 +2,7 @@ import axios from 'axios';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { getSapSession } from './sapSession.js'; // ajustá el path si hace falta
+import { getSapSession } from './sapSession.js';
 
 const httpsAgent = new https.Agent({
   ca: fs.readFileSync(path.resolve('certs/fullchain.pem')),
@@ -12,7 +12,7 @@ const httpsAgent = new https.Agent({
 export const OtpSAP = async (req, res) => {
   const { sessionId, routeId } = getSapSession();
   const {payload} = req.body;
-
+console.log('Orden de produccion otp',payload)
   if (!sessionId) {
     return res.status(401).json({ error: 'No hay sesión activa en SAP' });
   }
@@ -24,7 +24,7 @@ export const OtpSAP = async (req, res) => {
     const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders`;
 //  const queryUrl = `https://sapsl.eco-aplicaciones.com:50000/b1s/v1/ProductionOrders?$filter=(ProductionOrderStatus eq 'boposPlanned' or ProductionOrderStatus eq 'boposReleased') and (substringof('PP500', ItemNo) or substringof('MP1000', ItemNo))`;
 
-    const response = await axios.get(queryUrl, payload,
+    const response = await axios.post(queryUrl, payload,
         {
       httpsAgent,
       headers: {

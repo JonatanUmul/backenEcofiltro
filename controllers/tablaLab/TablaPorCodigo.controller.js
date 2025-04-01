@@ -6,7 +6,7 @@ export const getTablaPorCodigos = async (req, res) => {
     
     try {
         let consulta = `
-       WITH MaxTemperaturas AS (
+        WITH MaxTemperaturas AS (
             SELECT
                 dth.fecha_real,
                 dth.id_horno,
@@ -54,6 +54,9 @@ export const getTablaPorCodigos = async (req, res) => {
             dotdmpb.climo,
             dotdmpb.carena,
             dotdmpb.hbarro,
+            limB.limite_liquido,
+            limB.limite_plastico,
+            limB.indice_plastico,
             enc_maq1.nombre_maq AS mezcladora,
             codigosHornos.fecha_horneado AS fechaHorneado,
             codigosHornos.fecha_creacion AS fechaCC,
@@ -90,6 +93,7 @@ export const getTablaPorCodigos = async (req, res) => {
             LEFT JOIN tamañoAserrin ON dotdmp.id_granulometria = tamañoAserrin.id
             LEFT JOIN tamañoAserrin AS tamañoAserrin2 ON dotdmp.id_granulometria2 = tamañoAserrin2.id
             LEFT JOIN dotdmpb ON d.id = dotdmpb.id_dtp
+            LEFT JOIN Limites_Atterberg_Barro limB ON d.fecha_real = limB.fecha_produccion
             LEFT JOIN enc_maq AS enc_maq1 ON d.id_mezcladora = enc_maq1.id_maq
             LEFT JOIN MaxTemperaturas mt 
                 ON codigosHornos.fecha_horneado = mt.fecha_real
@@ -135,7 +139,7 @@ export const getTablaPorCodigos = async (req, res) => {
             params.push(id_modelo);
         }
 
-        consulta += ' ORDER BY ufcrudos.codigo ASC';
+        consulta += ' ORDER BY d.fecha_real ASC';
         
         console.log('Parámetros:', params);
 

@@ -130,6 +130,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
   import LoginSAP from './src/routes/SLsap/LoginSL.routes.js'
   import OrdenesSap from './src/routes/SLsap/LoginSL.routes.js'
   import OtpSAP from './src/routes/SLsap/LoginSL.routes.js'
+  import indicesAtterberg from './src/routes/laboratorio/detallado/DOTDMPB.routes.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -390,6 +391,8 @@ app.use(express.json());
     app.use(granulometria)
     //TablaPorCodigos
     app.use(TablaPorCodigos)
+    //Limites de Atterberg
+    app.use(indicesAtterberg)
 
     // app.use(PlanMes)
     app.use(PlanDay)

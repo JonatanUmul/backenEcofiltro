@@ -20,10 +20,11 @@ console.log('Datos obtenidos para Sap',username,password)
     UserName: username,
     Language: "25"
   };
+const url= 'https://sapsl.eco-aplicaciones.com:50000/b1s/v1/Login'
 
   try {
     const response = await axios.post(
-      'https://sapsl.eco-aplicaciones.com:50000/b1s/v1/Login',
+      url,
       body,
       {
         httpsAgent,
@@ -33,7 +34,7 @@ console.log('Datos obtenidos para Sap',username,password)
       }
       
     );
-   
+   console.log('Body de datosxss',body)
     console.log('Intentando login SAP con:', response.data);
     const sessionId = response.data.SessionId;
     const routeCookie = response.headers['set-cookie']?.find(c => c.includes('ROUTEID'));

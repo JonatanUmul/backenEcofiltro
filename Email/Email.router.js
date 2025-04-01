@@ -212,4 +212,4 @@ SELECT
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 3000);
+}, 30000);
