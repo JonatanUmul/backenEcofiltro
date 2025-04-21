@@ -2,7 +2,7 @@ import axios from 'axios';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { setSapSession } from './Orders/sapSession.js'; // ajustá el path si es necesario
+import { setSapSession } from './Orders/sapSession.js';
 
 const httpsAgent = new https.Agent({
   ca: fs.readFileSync(path.resolve('certs/fullchain.pem')),
@@ -34,13 +34,12 @@ const url= 'https://sapsl.eco-aplicaciones.com:50000/b1s/v1/Login'
       }
       
     );
-   console.log('Body de datosxss',body)
     console.log('Intentando login SAP con:', response.data);
     const sessionId = response.data.SessionId;
     const routeCookie = response.headers['set-cookie']?.find(c => c.includes('ROUTEID'));
     const routeId = routeCookie ? routeCookie.split(';')[0] : null;
 
-    // 🔐 Guardar sesión
+  
     setSapSession(sessionId, routeId);
 
     res.status(200).json({ message: 'Sesión iniciada correctamente',sessionId });

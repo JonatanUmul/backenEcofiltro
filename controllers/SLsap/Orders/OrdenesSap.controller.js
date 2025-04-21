@@ -2,7 +2,7 @@ import axios from 'axios';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import { getSapSession } from './sapSession.js'; // ajustá el path si hace falta
+import { getSapSession } from './sapSession.js'; 
 
 const httpsAgent = new https.Agent({
   ca: fs.readFileSync(path.resolve('certs/fullchain.pem')),

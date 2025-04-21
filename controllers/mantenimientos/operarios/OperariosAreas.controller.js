@@ -134,12 +134,12 @@ export const getOperarioRegistro = async (req, res) => {
 export const putOperarioArea = async (req, res) => {
     const id_area = req.params.id_area;
     const id_operario=req.params.id
-
+console.log('Datos de aactualizacion',id_area, id_operario)
 
     try {
         // Consulta SQL para seleccionar los operarios por id_area
         const consulta=   
-        `UPDATE operarios SET id_area=? WHERE id=?`
+        `UPDATE operarios SET id_area_sap=? WHERE id=?`
          
         const [rows] = await pool.query(
           consulta,[id_area, id_operario]

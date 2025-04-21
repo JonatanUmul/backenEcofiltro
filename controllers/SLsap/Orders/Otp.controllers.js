@@ -36,6 +36,7 @@ console.log('Orden de produccion otp',payload)
 console.log(response.data)
   } catch (error) {
     console.error('Error al consultar órdenes:', error.message);
+    console.error("Detalles:", error.response?.data);
     res.status(500).json({ error: 'No se pudo consultar órdenes en SAP' });
   }
 };

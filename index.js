@@ -55,6 +55,7 @@
     import tipoMermas from './src/routes/mantenimientos/tipoMerma/TipoMerma.routes.js'
     import DRM from './src/routes/controlProcesos/detallados/DRM.routes.js'
     import DTT from './src/routes/controlProcesos/detallados/DTT.routes.js'
+    import DTHSOLANTEC from './src/routes/controlProcesos/detallados/DTH.routes.js'
     import DTH from './src/routes/controlProcesos/detallados/DTH.routes.js'
     import CKTA from './src/routes/maquinaria/encabezados/CKTA.routes.js'
     import CKEXT from './src/routes/maquinaria/encabezados/CKEXT.routes.js'
@@ -109,7 +110,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     import CFMP from './src/routes/controlProcesos/encabezados/CFMP.routes.js'
     import CernidoDetalle from './src/routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './src/routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
-  import {postSendEmail} from './Email/Email.router.js'
+  // import {postSendEmail} from './Email/Email.router.js'
   // import OTDMP from './src/routes/laboratorio/encabezado/OTDMP.routes.js'
   import TablaLab from './src/routes/tablaLab/TablaLab.js'
   import granulometria from './src/routes/mantenimientos/granulometria/Granulometria.routes.js'
@@ -128,9 +129,12 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
   import RegistroTrabajo from './src/routes/RegistroTrabajo/RegistroTrabajol.routes.js'
   import Area from './src/routes/mantenimientos/areas/Areas.routes.js'
   import LoginSAP from './src/routes/SLsap/LoginSL.routes.js'
+  import ManoDeObra from './src/routes/SLsap/LoginSL.routes.js'
   import OrdenesSap from './src/routes/SLsap/LoginSL.routes.js'
   import OtpSAP from './src/routes/SLsap/LoginSL.routes.js'
   import indicesAtterberg from './src/routes/laboratorio/detallado/DOTDMPB.routes.js'
+  import GestionHorasLaborales from './src/routes/mantenimientos/GestionHorasLaborales/GestionHorasLaborales.routes.js'
+  import GestionDiasLaborales from './src/routes/mantenimientos/GestionHorasLaborales/GestionHorasLaborales.routes.js'
   // Carga las variables de entorno desde el archivo .env
    dotenv.config();
     
@@ -306,6 +310,7 @@ app.use(express.json());
     //Hornos
     app.use(OTHH)
     app.use(DTHH)
+ 
     // app.use(DTHHprueba)
 
     //Impregnados
@@ -330,6 +335,7 @@ app.use(express.json());
     app.use(DRM)
     app.use(DTT)
     app.use(DTH)
+    app.use(DTHSOLANTEC)
     app.use(DCPFM)
     app.use(DCPCD)
     
@@ -394,7 +400,7 @@ app.use(express.json());
     //Limites de Atterberg
     app.use(indicesAtterberg)
 
-    // app.use(PlanMes)
+    // app.use(PlanMes)certmgr.msc
     app.use(PlanDay)
     app.use(PlanCumplido)
 
@@ -404,10 +410,11 @@ app.use(express.json());
     app.use(TablaCLP)
     app.use(CLP)
     app.use(Cliquido)
-    app.use(postSendEmail)
+    // app.use(postSendEmail)
 
     //Control de Operarios
     app.use(RegistroTrabajo)
+  
 
     //
     app.use( Area)
@@ -416,7 +423,11 @@ app.use(express.json());
     app.use(LoginSAP)
     app.use(OrdenesSap)
     app.use(OtpSAP)
-    
+    app.use(ManoDeObra)
+
+    //Gestion mano de obra
+    app.use(GestionHorasLaborales)
+    app.use(GestionDiasLaborales)
     app.listen(process.env.PORT || 3002)
 
 
