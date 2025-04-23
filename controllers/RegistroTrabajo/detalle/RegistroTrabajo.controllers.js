@@ -94,22 +94,24 @@ try {
 export const PostGuardarMano = async (req, res) => {
   const datos = req.body;
   const id = datos.id;
+
+
   const hoy = formatFecha(new Date());
 
   console.log(datos)
   // console.log(hoy);
   console.log(id);
 
-  const consulta = `INSERT INTO ManoDeObra(id_operario, fecha) VALUES (?, ?)`;
+  const consulta = `INSERT INTO ManoDeObra(id_operario, fecha, horas_normales) VALUES (?, ?, ?)`;
 
   
   try {
 
     for (const op of datos){
-      console.log('oppid',op.id)
+ 
       const id_op= op.id
-
-      const [rows] = await pool.query(consulta, [id_op, hoy]);
+      const horasNormales= op.horas;
+      const [rows] = await pool.query(consulta, [id_op, hoy, horasNormales]);
     }
     
     console.log(rows);
