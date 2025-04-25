@@ -87,7 +87,8 @@ export const postSendEmail = async (registro) => {
       'smunoz@ecofiltro.com',
       'gestion@ecofiltro.com',
       'yriddle@ecofiltro.com',
-      'ngalicia@ecofiltro.com'
+      'ngalicia@ecofiltro.com',
+      'jparagon@ecofiltrogt.onmicrosoft.com'
     ],
     subject,
     text
