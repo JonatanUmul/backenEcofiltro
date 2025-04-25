@@ -446,7 +446,7 @@ setInterval(async () => {
         LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre = operariosFencargado.id
         LEFT JOIN user AS userEfirma ON userFEncargado.nombre = userEfirma.nombre
         LEFT JOIN MaxTemperaturas tm ON tm.id_turno = d.id_turno AND tm.id_modelo = d.id_modelo AND tm.id_horno = d.id_horno AND tm.fecha_real = d.fecha_creacion
-        WHERE dtcc.enviado = 2
+        WHERE dtcc.enviado = 0
     `);
 
     const rows = result[0];
