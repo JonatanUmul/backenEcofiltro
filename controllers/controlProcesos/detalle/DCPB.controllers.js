@@ -4,14 +4,14 @@ import { pool } from "../../../src/db.js";
 
 export const postDCPB = async(req, res)=>{
   const {
-    id_CPB, id_modelo, pulido,id_calificacion
+    id_CPB, id_modelo, pulido,id_calificacion, id_creador
     }= req.body
    
    
     try{
     
-       const consulta='INSERT INTO dcpb(id_CPB, id_modelo, pulido,id_calificacion)Values(?, ?,?,?)';
-        const [rows]= await pool.query(consulta,[id_CPB, id_modelo, pulido,id_calificacion])
+       const consulta='INSERT INTO dcpb(id_CPB, id_modelo, pulido,id_calificacion, id_creador)Values(?, ?,?,?,?)';
+        const [rows]= await pool.query(consulta,[id_CPB, id_modelo, pulido,id_calificacion,id_creador])
         res.send({rows});
         
         
