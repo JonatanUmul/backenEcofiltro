@@ -120,11 +120,13 @@ export const getTablaPorCodigos = async (req, res) => {
 
         if (fecha_creacion_inicio && fecha_creacion_inicio !== 'null') {
             if (fecha_creacion_fin && fecha_creacion_fin !== 'null') {
-                consulta += ' AND ufcrudos.fecha_produccion BETWEEN ? AND ?';
+                // consulta += ' AND ufcrudos.fecha_produccion BETWEEN ? AND ?';
+                consulta += ' AND codigosHornos.fecha_creacion BETWEEN ? AND ?';
                 params.push(fecha_creacion_inicio, fecha_creacion_fin);
             }
                 } else {
-                consulta += ' AND ufcrudos.fecha_produccion >= ?';
+                // consulta += ' AND ufcrudos.fecha_produccion >= ?';
+                consulta += ' AND codigosHornos.fecha_creacion >= ?'
                 params.push(fecha_creacion_inicio);
             }
         
