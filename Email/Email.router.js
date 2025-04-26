@@ -241,7 +241,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Función para analizar el reporte usando Gemini
 async function analizarConGemini(texto) {
-  const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googledapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
 
   const body = {
     contents: [
@@ -338,7 +338,8 @@ Este es un mensaje automático, por favor no responder.
             'gestion@ecofiltro.com',
             'yriddle@ecofiltro.com',
             'ngalicia@ecofiltro.com',
-            'jparagon@ecofiltrogt.onmicrosoft.com'
+            'jparagon@ecofiltrogt.onmicrosoft.com',
+            'sfelipe@ecofiltro.com'
           ],
     subject,
     text
