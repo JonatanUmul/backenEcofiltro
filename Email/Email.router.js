@@ -320,7 +320,7 @@ Resultados:
 - Porcentaje Aprobación: ${porcentaje}
 
 -----------------------------------------
-ANÁLISIS AUTOMÁTICO DEL REPORTE:
+ANÁLISIS AUTOMÁTICO DE GEMINI IA:
 ${analisisGemini}
 
 -----------------------------------------
