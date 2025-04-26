@@ -247,7 +247,7 @@ async function analizarConGemini(texto) {
     contents: [
       {
         parts: [
-          { text: `Dame un analisis no tan grande de lo siguiente: Eres un experto en procesos de horneado del Ecofiltros. Analiza el siguiente reporte de calidad como si evaluaras una horneada donde se fabrican filtros a base de barro, aserrín.
+          { text: `Eres un experto en procesos de horneado del Ecofiltros. Analiza el siguiente reporte de calidad como si evaluaras una horneada donde se fabrican filtros a base de barro, aserrín.
 
           Considera que durante la cocción se debe formar una capa de carbón activado en el interior del filtro, como se muestra en la imagen, y que esto solo ocurre si el horneado es correcto. El rango óptimo de temperatura para modelos de 20 litros es entre 690°C y 730°C, y para Mini filtros es de 670°C a 730°C.
           
@@ -495,4 +495,4 @@ Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${regis
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 30000);
+}, 180000);
