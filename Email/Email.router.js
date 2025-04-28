@@ -371,7 +371,15 @@ Este es un mensaje automático, por favor no responder.
     from: `"Ecofiltro" <${emailFrom}>`,
     to: emailsend,
     bcc: [
-      'jumul@ecofiltro.com'
+      'jumul@ecofiltro.com',
+      'codigos@ecofiltro.com',
+      'ddelacruz@ecofiltro.com',
+      'soporte.produccion@ecofiltro.com',
+      'smunoz@ecofiltro.com',
+      'gestion@ecofiltro.com',
+      'yriddle@ecofiltro.com',
+      'ngalicia@ecofiltro.com',
+      'jparagon@ecofiltrogt.onmicrosoft.com'
     ],
     subject,
     text
