@@ -267,8 +267,6 @@ async function analizarConGemini(texto) {
           
           Tipo de filtro trabajado (20 litros o Mini filtros).
           
-          Confirmar si se formó adecuadamente el carbón activado (su ausencia es un error crítico).
-          
           Comparar las temperaturas alcanzadas con los rangos óptimos:
           
           20 litros: 690–730 °C
@@ -534,4 +532,4 @@ Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${regis
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 180000); 
+}, 200000); 
