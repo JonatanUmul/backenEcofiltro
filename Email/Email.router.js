@@ -446,7 +446,7 @@ setInterval(async () => {
             FROM dth
             GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
         ) AS tm ON tm.id_turno = dthh.id_turno AND tm.id_modelo = dthh.id_modelo AND tm.id_horno = dthh.id_horno AND tm.fecha_real = dthh.fecha_creacion
-        WHERE dtcc.enviado = 2
+        WHERE dtcc.enviado = 0
     `);
 
     const rows = result[0];
@@ -509,4 +509,4 @@ Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${regis
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 180000); // 🔥 Mejor cada 30 segundos, no cada 500ms
+}, 180000); 
