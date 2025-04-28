@@ -220,7 +220,6 @@
 // }, 30000);
 
 
-
 console.log("Script iniciado");
 
 import dotenv from 'dotenv';
@@ -239,18 +238,64 @@ const emailFrom = 'no-reply@ecofiltro.com';
 // Configuración de Gemini
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY; 
 
-// Función para analizar el reporte usando Gemini
+// Transporter para nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: emailsend,
+    pass: passEmail
+  }
+});
+
 async function analizarConGemini(texto) {
-  const url = `https://generativelanguage.googledapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
   const body = {
     contents: [
       {
         parts: [
-          { text: `Eres experto en horneado de Ecofiltros. 
-          Evalúa el siguiente reporte de calidad como si analizaras una horneada de filtros de barro y aserrín. 
-          Considera que debe formarse carbón activado (si no, hubo error). Rango de temperatura: 20L (690–730°C), Mini (670–730°C). Revisa si temperaturas
-           y resultados (aprobados, rajados, crudos, Altos = filtran muy rápido, Bajos = filtran poco). Detecta fallos (temperatura, calor, carga) y da recomendaciones. Responde corto.:\n\n${texto}` }
+          { text: `Eres analista senior y experto en el proceso de horneado de Ecofiltros.
+          Evalúa el siguiente reporte como auditoría técnica de una horneada de filtros de barro y aserrín, considerando únicamente los datos registrados en las últimas 24 horas.
+          
+          Tu tarea es:
+          
+          Analizar de forma integral todos los datos del último día:
+          
+          Temperaturas registradas hora por hora.
+          
+          Resultados de calidad: porcentaje o cantidad de aprobados, rajados, crudos, Altos (filtran muy rápido), Bajos (filtran muy lento).
+          
+          Tipo de filtro trabajado (20 litros o Mini filtros).
+          
+          Confirmar si se formó adecuadamente el carbón activado (su ausencia es un error crítico).
+          
+          Comparar las temperaturas alcanzadas con los rangos óptimos:
+          
+          20 litros: 690–730 °C
+          
+          Mini filtros: 670–730 °C
+          
+          Detectar patrones en el comportamiento térmico durante el día:
+          
+          Variaciones, caídas, picos de temperatura.
+          
+          Momentos críticos relacionados con la aparición de defectos.
+          
+          Identificar problemas principales:
+          
+          Mala distribución del calor, errores en la carga del horno, descontrol de la curva térmica.
+          
+          Emitir un diagnóstico técnico global del horneado basado solo en la información del último día:
+          
+          ¿El proceso fue exitoso o fallido?
+          
+          ¿Cuáles fueron las causas principales de los resultados?
+          
+          Dar recomendaciones específicas para corregir errores y mejorar el próximo horneado.
+          
+          Responde como experto, con criterio técnico, de manera breve, profesional y enfocada en mejorar la operación.
+          
+          \n\n${texto}` }
         ]
       }
     ]
@@ -271,12 +316,10 @@ async function analizarConGemini(texto) {
 // Función para enviar correo
 export const postSendEmail = async (registro, analisisGemini) => {
   const {
-    operario, trabajoRealizado, fecha, interesados, tabla, id, id_modelo, id_turno, id_horno,
-    codigoInicio, id_OTHH, codigoFin, horneado, mermasCrudas, librasBarro, librasAserrin,
-    fechaHorneado, fechaCC, turnoHorneado, aserradero, tipocernido1, tipocernido2, librasAserrin2,
-    ModeloEco, formula, Horno, Hornero, aprobados, altos, bajos, rajadosCC, crudoCC, quemados,
-    ahumados, mermas_hornos, total, EncargadoCC, porcentaje, idjefe, idJefe, NobreJefe, firmaJefe,
-    idEncargado, NombreEncargado, CabezaIz, PieIZ, cabezaDr, PieDr, promedioTMP
+    ModeloEco, codigoInicio, codigoFin, turnoHorneado, Horno, Hornero,
+    horneado, cabezaDr, PieDr, CabezaIz, PieIZ, promedioTMP,
+    aprobados, rajadosCC, crudoCC, altos, bajos, quemados, ahumados,
+    mermas_hornos, total, EncargadoCC, porcentaje, fechaHorneado
   } = registro;
 
   if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
@@ -328,16 +371,8 @@ Este es un mensaje automático, por favor no responder.
     from: `"Ecofiltro" <${emailFrom}>`,
     to: emailsend,
     bcc: [
-            'codigos@ecofiltro.com',
-            'ddelacruz@ecofiltro.com',
-            'soporte.produccion@ecofiltro.com',
-            'smunoz@ecofiltro.com',
-            'gestion@ecofiltro.com',
-            'yriddle@ecofiltro.com',
-            'ngalicia@ecofiltro.com',
-            'jparagon@ecofiltrogt.onmicrosoft.com',
-            'sfelipe@ecofiltro.com'
-          ],
+      'jumul@ecofiltro.com'
+    ],
     subject,
     text
   };
@@ -345,21 +380,12 @@ Este es un mensaje automático, por favor no responder.
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log("Correo enviado exitosamente:", info.response);
-    return { success: true, id };
+    return { success: true };
   } catch (error) {
     console.error('Error al enviar correo:', error);
     return { success: false, error };
   }
 };
-
-// Configurar transporter de correo
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: emailsend,
-    pass: passEmail
-  }
-});
 
 // Monitoreo de la base de datos
 setInterval(async () => {
@@ -367,42 +393,21 @@ setInterval(async () => {
 
   try {
     const result = await pool.query(`
-        WITH MaxTemperaturas AS (
-            SELECT
-                dth.fecha_real,
-                dth.id_horno,
-                dth.id_modelo,
-                dth.id_turno,
-                MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
-                MAX(dth.tempPieIZ) AS max_tempPieIZ,
-                MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
-                MAX(dth.tempPieDR) AS max_tempPieDR
-            FROM dth
-            GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
-        )
         SELECT 
-            'dtcc' as tabla,
-            d.id,
-            dtcc.id_dthh,
-            d.id_modelo,
-            d.id_turno,
-            d.id_horno,
-            d.codigoInicio,
-            d.id_OTHH,
-            d.codigoFin,
-            d.horneado,
-            d.mermasCrudas,
-            d.librasBarro,
-            d.librasAserrin,
-            d.fecha_creacion AS fechaHorneado,
-            dtcc.fecha_creacion AS fechaCC,
+            dthh.id,
+            dthh.id_modelo,
+            dthh.id_turno,
+            dthh.id_horno,
+            dthh.codigoInicio,
+            dthh.id_OTHH,
+            dthh.codigoFin,
+            dthh.horneado,
+            dthh.mermasCrudas,
+            dthh.librasBarro,
+            dthh.librasAserrin,
+            dthh.fecha_creacion AS fechaHorneado,
             turno.turno AS turnoHorneado,
-            aserradero.nombre_aserradero AS aserradero,
-            tipocernido.tipoCernido AS tipocernido1,
-            tipocernido2.tipoCernido AS tipocernido2,
-            d.librasAserrin2,
             ufmodelo.nombre_modelo AS ModeloEco,
-            COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) AS formula,
             enc_maq.nombre_maq AS Horno,
             operarios.Nombre AS Hornero,
             dtcc.aprobados,
@@ -415,40 +420,36 @@ setInterval(async () => {
             dtcc.mermas_hornos,
             COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
             operarios1.Nombre AS EncargadoCC,
-            CONCAT(ROUND((dtcc.aprobados / d.horneado * 100), 0), '%') AS porcentaje,
-            othh.id_creador AS idjefe,
-            user.nombre AS idJefe,
-            operarios2.Nombre AS NobreJefe,
-            userFEncargado.nombre AS idEncargado,
-            operariosFencargado.Nombre AS NombreEncargado,
+            CONCAT(ROUND((dtcc.aprobados / dthh.horneado * 100), 0), '%') AS porcentaje,
             tm.max_tempCabezaIZ AS CabezaIz,
             tm.max_tempPieIZ AS PieIZ,
             tm.max_tempCabezaDR AS cabezaDr,
             tm.max_tempPieDR AS PieDr,
             ROUND((tm.max_tempCabezaIZ + tm.max_tempPieIZ + tm.max_tempCabezaDR + tm.max_tempPieDR) / 4) AS promedioTMP
-        FROM dthh d
-        LEFT JOIN turno ON d.id_turno = turno.id
-        LEFT JOIN aserradero ON d.id_aserradero = aserradero.id
-        LEFT JOIN tipocernido ON d.id_cernidodetalle = tipocernido.id
-        LEFT JOIN tipocernido AS tipocernido2 ON d.id_cernidodetalle2 = tipocernido2.id
-        LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
-        LEFT JOIN enc_maq ON d.id_horno = enc_maq.id_maq
-        LEFT JOIN operarios ON d.id_hornero = operarios.id
-        LEFT JOIN dtcc ON d.id = dtcc.id_dthh
+        FROM dthh
+        INNER JOIN dtcc ON dthh.id = dtcc.id_dthh
+        LEFT JOIN turno ON dthh.id_turno = turno.id
+        LEFT JOIN ufmodelo ON dthh.id_modelo = ufmodelo.id_mod
+        LEFT JOIN enc_maq ON dthh.id_horno = enc_maq.id_maq
+        LEFT JOIN operarios ON dthh.id_hornero = operarios.id
         LEFT JOIN operarios AS operarios1 ON dtcc.id_operarioCC = operarios1.id
-        LEFT JOIN othh ON d.id_OTHH = othh.id
-        LEFT JOIN user ON othh.id_creador = user.id
-        LEFT JOIN operarios AS operarios2 ON user.nombre = operarios2.id
-        LEFT JOIN user AS userFirma ON othh.id_creador = userFirma.id
-        LEFT JOIN user AS userFEncargado ON d.id_creador = userFEncargado.id
-        LEFT JOIN operarios AS operariosFencargado ON userFEncargado.nombre = operariosFencargado.id
-        LEFT JOIN user AS userEfirma ON userFEncargado.nombre = userEfirma.nombre
-        LEFT JOIN MaxTemperaturas tm ON tm.id_turno = d.id_turno AND tm.id_modelo = d.id_modelo AND tm.id_horno = d.id_horno AND tm.fecha_real = d.fecha_creacion
-        WHERE dtcc.enviado = 0
+        LEFT JOIN (
+            SELECT
+                dth.fecha_real,
+                dth.id_horno,
+                dth.id_modelo,
+                dth.id_turno,
+                MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
+                MAX(dth.tempPieIZ) AS max_tempPieIZ,
+                MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
+                MAX(dth.tempPieDR) AS max_tempPieDR
+            FROM dth
+            GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
+        ) AS tm ON tm.id_turno = dthh.id_turno AND tm.id_modelo = dthh.id_modelo AND tm.id_horno = dthh.id_horno AND tm.fecha_real = dthh.fecha_creacion
+        WHERE dtcc.enviado = 2
     `);
 
     const rows = result[0];
-
     console.log('Registros obtenidos:', rows.length);
 
     if (rows.length === 0) {
@@ -458,8 +459,13 @@ setInterval(async () => {
 
     for (const registro of rows) {
       try {
-        // Preparar texto del reporte para analizar
-        const textoReporte = `
+        // Marcar como en proceso
+        await pool.query('UPDATE dtcc SET enviado = 9 WHERE id_dthh = ?', [registro.id]);
+
+        let analisisGemini = registro.enviado;
+
+        if (!analisisGemini) {
+          const textoReporte = `
 Modelo: ${registro.ModeloEco}
 Turno: ${registro.turnoHorneado}
 Horno: ${registro.Horno}
@@ -476,21 +482,31 @@ Porcentaje Aprobación: ${registro.porcentaje}
 Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${registro.PieDr} / ${registro.CabezaIz} / ${registro.PieIZ}
 `;
 
-        // Analizar usando Gemini
-        const analisis = await analizarConGemini(textoReporte);
-        console.log('Análisis generado por Gemini:', analisis);
+          analisisGemini = await analizarConGemini(textoReporte);
+
+          // Guardar análisis generado
+          // await pool.query('UPDATE dtcc SET analisis_gemini = ? WHERE id_dthh = ?', [analisisGemini, registro.id]);
+          // console.log('Análisis guardado en base de datos.');
+        }
 
         // Enviar correo
-        const result = await postSendEmail(registro, analisis);
+        const result = await postSendEmail(registro, analisisGemini);
+
         if (result.success) {
           await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
-          console.log(`Registro con ID ${registro.id} marcado como enviado.`);
+          console.log(`Registro ID ${registro.id} enviado y marcado como enviado.`);
+        } else {
+          await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
+          console.error(`Error enviando correo para ID ${registro.id}. Registro listo para reintentar solo el envío.`);
         }
+
       } catch (error) {
-        console.error(`Error al enviar correo para el registro con ID ${registro.id}:`, error);
+        console.error(`Error procesando ID ${registro.id}:`, error);
+        await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
       }
     }
+
   } catch (error) {
     console.error('Error al monitorear la tabla de logs:', error);
   }
-}, 180000);
+}, 180000); // 🔥 Mejor cada 30 segundos, no cada 500ms
