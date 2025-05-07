@@ -110,7 +110,7 @@ import DCPFM from './src/routes/controlProcesos/detallados/DCFMP.routes.js'
     import CFMP from './src/routes/controlProcesos/encabezados/CFMP.routes.js'
     import CernidoDetalle from './src/routes/mantenimientos/CernidoDetalle/TipoCernido.routes.js'
   import GrupodeTrabajo from './src/routes/mantenimientos/grupodetrabajos/GrupodeTrabajo.js'
-import {postSendEmail} from './Email/Email.router.js'
+// import {postSendEmail} from './Email/Email.router.js'
   // import OTDMP from './src/routes/laboratorio/encabezado/OTDMP.routes.js'
   import TablaLab from './src/routes/tablaLab/TablaLab.js'
   import granulometria from './src/routes/mantenimientos/granulometria/Granulometria.routes.js'
@@ -127,11 +127,14 @@ import {postSendEmail} from './Email/Email.router.js'
   import TablaCLP from './src/routes/tablaCLP/TablaCLP.js'
   import Cliquido from './src/routes/controlLimiteLiquidoPlastico/detallados/cliquido.routes.js'
   import RegistroTrabajo from './src/routes/RegistroTrabajo/RegistroTrabajol.routes.js'
+  import ManoObraParaSap from './src/routes/RegistroTrabajo/RegistroTrabajol.routes.js'
   import Area from './src/routes/mantenimientos/areas/Areas.routes.js'
+  import Proceso from './src/routes/mantenimientos/areas/Areas.routes.js'
   import LoginSAP from './src/routes/SLsap/LoginSL.routes.js'
   import ManoDeObra from './src/routes/SLsap/LoginSL.routes.js'
   import OrdenesSap from './src/routes/SLsap/LoginSL.routes.js'
   import OtpSAP from './src/routes/SLsap/LoginSL.routes.js'
+  import ManoObraOrders from './src/routes/SLsap/LoginSL.routes.js'
   import indicesAtterberg from './src/routes/laboratorio/detallado/DOTDMPB.routes.js'
   import GestionHorasLaborales from './src/routes/mantenimientos/GestionHorasLaborales/GestionHorasLaborales.routes.js'
   import GestionDiasLaborales from './src/routes/mantenimientos/GestionHorasLaborales/GestionHorasLaborales.routes.js'
@@ -410,25 +413,27 @@ app.use(express.json());
     app.use(TablaCLP)
     app.use(CLP)
     app.use(Cliquido)
-    app.use(postSendEmail)
+    // app.use(postSendEmail)
 
     //Control de Operarios
     app.use(RegistroTrabajo)
-  
+    app.use(ManoObraParaSap)
 
     //
     app.use( Area)
+    app.use( Proceso)
 
     //Cconexion SAP
     app.use(LoginSAP)
     app.use(OrdenesSap)
     app.use(OtpSAP)
     app.use(ManoDeObra)
+    app.use(ManoObraOrders)
 
     //Gestion mano de obra
     app.use(GestionHorasLaborales)
     app.use(GestionDiasLaborales)
-    app.listen(process.env.PORT || 3002)
+    app.listen(process.env.PORT || 4004)
 
 
     console.log('puerto escuchando en el puerto 3002')

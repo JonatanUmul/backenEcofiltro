@@ -69,16 +69,16 @@ export const GetRegistroTrabajo = async(req, res)=>{
 try {
   const consulta= `
   SELECT 
-	op.id,
+  op.id,
   op.Nombre,
   etP.estado,
   op.id_area_sap,
-  ar.Area
+  ar.proceso,
+  op.U_empID
    FROM operarios op
    LEFT JOIN est_personal AS etP ON op.id_est_perNal=etP.id
-   JOIN area ar ON op.id_area_sap=ar.id
-   
-   WHERE op.id_area_sap IN (1,2,3,4,5,6,7,8,9,10) and id_est_perNal=1
+   JOIN procesos ar ON op.id_area_sap=ar.id
+   WHERE  id_est_perNal=1
   `
   const [rows]= await pool.query(consulta)
   res.status(200).json({ data: rows });
@@ -94,31 +94,52 @@ try {
 export const PostGuardarMano = async (req, res) => {
   const datos = req.body;
   const id = datos.id;
-
-
   const hoy = formatFecha(new Date());
-
-  console.log(datos)
-  // console.log(hoy);
-  console.log(id);
-
-  const consulta = `INSERT INTO ManoDeObra(id_operario, fecha, horas_normales) VALUES (?, ?, ?)`;
-
-  
+  const consulta = `INSERT INTO ManoDeObra(id_operario, fecha, horas_trabajadas, id_tipo_hora, id_area_sap, U_empID, precioHora) VALUES (?, ?, ?, ?,?, ?, ?)`;
   try {
-
     for (const op of datos){
- 
       const id_op= op.id
-      const horasNormales= op.horas;
-      const [rows] = await pool.query(consulta, [id_op, hoy, horasNormales]);
+      const horasNormales= op.horas
+      const ItemCode=op.id_area_sap
+      const U_empID=op.U_empID
+      const id_tipo_hora=op.tipoHora
+      const precioHora=op.precioHora
+      const [rows] = await pool.query(consulta, [id_op, hoy, horasNormales, id_tipo_hora, ItemCode, U_empID, precioHora]);
     }
-    
-    console.log(rows);
-
     res.status(200).json({ mensaje: 'Datos guardados con éxito' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: 'Error al guardar los datos', error });
   }
 };
+
+export const getManoObraParaSap=async(req, res)=>{
+  const fecha = req.query.fecha;
+  const ItemNo = req.query.ItemNo;
+  console.log(fecha,ItemNo)
+  const consulta=
+ `SELECT 
+mo.id_operario,
+op.Nombre,
+mo.fecha,
+mo.id_area_sap,
+p.ItemCode,
+mo.U_empID,
+mo.horas_trabajadas,
+mo.precioHora,
+mo.id_tipo_hora
+FROM ManoDeObra mo
+LEFT JOIN procesos p ON mo.id_area_sap=p.id
+LEFT JOIN operarios op ON mo.id_operario=op.id
+
+WHERE mo.fecha=? AND p.ItemCode=?`
+// WHERE mo.fecha='2025-04-30' AND p.ItemCode='PP500000'`
+try {
+  const [rows] = await pool.query(consulta,[fecha, ItemNo]);
+  res.status(200).json({ data: rows });
+console.log(rows)
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ mensaje: 'Error al guardar los datos', error });
+}
+}

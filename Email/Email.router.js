@@ -220,316 +220,316 @@
 // }, 30000);
 
 
-console.log("Script iniciado");
+// console.log("Script iniciado");
 
-import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
-import axios from 'axios';
-import { pool } from "../src/db.js";
-import { formatFecha } from './FormatearFecta.js';
+// import dotenv from 'dotenv';
+// import nodemailer from 'nodemailer';
+// import axios from 'axios';
+// import { pool } from "../src/db.js";
+// import { formatFecha } from './FormatearFecta.js';
 
-dotenv.config();
+// dotenv.config();
 
-// Configuración de correo
-const emailsend = 'jumul@ecofiltro.com';
-const passEmail = 'pytu vtny qjpk rcfv';
-const emailFrom = 'no-reply@ecofiltro.com';
+// // Configuración de correo
+// const emailsend = 'jumul@ecofiltro.com';
+// const passEmail = 'pytu vtny qjpk rcfv';
+// const emailFrom = 'no-reply@ecofiltro.com';
 
-// Configuración de Gemini
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY; 
+// // Configuración de Gemini
+// const GEMINI_API_KEY = process.env.GEMINI_API_KEY; 
 
-// Transporter para nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: emailsend,
-    pass: passEmail
-  }
-});
+// // Transporter para nodemailer
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: emailsend,
+//     pass: passEmail
+//   }
+// });
 
-async function analizarConGemini(texto) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+// async function analizarConGemini(texto) {
+//   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-  const body = {
-    contents: [
-      {
-        parts: [
-          { text: `Eres analista senior y experto en el proceso de horneado de Ecofiltros.
-          Evalúa el siguiente reporte como auditoría técnica de una horneada de filtros de barro y aserrín, considerando únicamente los datos registrados en las últimas 24 horas.
+//   const body = {
+//     contents: [
+//       {
+//         parts: [
+//           { text: `Eres analista senior y experto en el proceso de horneado de Ecofiltros.
+//           Evalúa el siguiente reporte como auditoría técnica de una horneada de filtros de barro y aserrín, considerando únicamente los datos registrados en las últimas 24 horas.
           
-          Tu tarea es:
+//           Tu tarea es:
           
-          Analizar de forma integral todos los datos del último día:
+//           Analizar de forma integral todos los datos del último día:
           
-          Temperaturas registradas hora por hora.
+//           Temperaturas registradas hora por hora.
           
-          Resultados de calidad: porcentaje o cantidad de aprobados, rajados, crudos, Altos (filtran muy rápido), Bajos (filtran muy lento).
+//           Resultados de calidad: porcentaje o cantidad de aprobados, rajados, crudos, Altos (filtran muy rápido), Bajos (filtran muy lento).
           
-          Tipo de filtro trabajado (20 litros o Mini filtros).
+//           Tipo de filtro trabajado (20 litros o Mini filtros).
           
-          Comparar las temperaturas alcanzadas con los rangos óptimos:
+//           Comparar las temperaturas alcanzadas con los rangos óptimos:
           
-          20 litros: 690–730 °C
+//           20 litros: 690–730 °C
           
-          Mini filtros: 670–730 °C
+//           Mini filtros: 670–730 °C
           
-          Detectar patrones en el comportamiento térmico durante el día:
+//           Detectar patrones en el comportamiento térmico durante el día:
           
-          Variaciones, caídas, picos de temperatura.
+//           Variaciones, caídas, picos de temperatura.
           
-          Momentos críticos relacionados con la aparición de defectos.
+//           Momentos críticos relacionados con la aparición de defectos.
           
-          Identificar problemas principales:
+//           Identificar problemas principales:
           
-          Mala distribución del calor, errores en la carga del horno, descontrol de la curva térmica.
+//           Mala distribución del calor, errores en la carga del horno, descontrol de la curva térmica.
           
-          Emitir un diagnóstico técnico global del horneado basado solo en la información del último día:
+//           Emitir un diagnóstico técnico global del horneado basado solo en la información del último día:
           
-          ¿El proceso fue exitoso o fallido?
+//           ¿El proceso fue exitoso o fallido?
           
-          ¿Cuáles fueron las causas principales de los resultados?
+//           ¿Cuáles fueron las causas principales de los resultados?
           
-          Dar recomendaciones específicas para corregir errores y mejorar el próximo horneado.
+//           Dar recomendaciones específicas para corregir errores y mejorar el próximo horneado.
           
-          Responde como experto, con criterio técnico, de manera breve, profesional y enfocada en mejorar la operación.
+//           Responde como experto, con criterio técnico, de manera breve, profesional y enfocada en mejorar la operación.
           
-          \n\n${texto}` }
-        ]
-      }
-    ]
-  };
+//           \n\n${texto}` }
+//         ]
+//       }
+//     ]
+//   };
 
-  try {
-    const response = await axios.post(url, body, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const output = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
-    return output || 'No se pudo generar análisis.';
-  } catch (error) {
-    console.error('Error al analizar con Gemini:', error.response?.data || error.message);
-    return 'Error al generar análisis.';
-  }
-}
+//   try {
+//     const response = await axios.post(url, body, {
+//       headers: { 'Content-Type': 'application/json' }
+//     });
+//     const output = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+//     return output || 'No se pudo generar análisis.';
+//   } catch (error) {
+//     console.error('Error al analizar con Gemini:', error.response?.data || error.message);
+//     return 'Error al generar análisis.';
+//   }
+// }
 
-// Función para enviar correo
-export const postSendEmail = async (registro, analisisGemini) => {
-  const {
-    ModeloEco, codigoInicio, codigoFin, turnoHorneado, Horno, Hornero,
-    horneado, cabezaDr, PieDr, CabezaIz, PieIZ, promedioTMP,
-    aprobados, rajadosCC, crudoCC, altos, bajos, quemados, ahumados,
-    mermas_hornos, total, EncargadoCC, porcentaje, fechaHorneado
-  } = registro;
+// // Función para enviar correo
+// export const postSendEmail = async (registro, analisisGemini) => {
+//   const {
+//     ModeloEco, codigoInicio, codigoFin, turnoHorneado, Horno, Hornero,
+//     horneado, cabezaDr, PieDr, CabezaIz, PieIZ, promedioTMP,
+//     aprobados, rajadosCC, crudoCC, altos, bajos, quemados, ahumados,
+//     mermas_hornos, total, EncargadoCC, porcentaje, fechaHorneado
+//   } = registro;
 
-  if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
-    return { success: false, error: 'Datos faltantes o nulos' };
-  }
+//   if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
+//     return { success: false, error: 'Datos faltantes o nulos' };
+//   }
 
-  const subject = `Reporte Control de Calidad ${porcentaje}: ${Horno} Fecha de Horneado: ${formatFecha(fechaHorneado)}`;
-  const text = `
-Reporte de Control de Calidad
------------------------------------------
+//   const subject = `Reporte Control de Calidad ${porcentaje}: ${Horno} Fecha de Horneado: ${formatFecha(fechaHorneado)}`;
+//   const text = `
+// Reporte de Control de Calidad
+// -----------------------------------------
 
-Modelo: ${ModeloEco}
-Código Inicio: ${codigoInicio}
-Código Fin: ${codigoFin}
-Turno: ${turnoHorneado}
-Horno: ${Horno}
-Hornero: ${Hornero}
-Horneado: ${horneado}
+// Modelo: ${ModeloEco}
+// Código Inicio: ${codigoInicio}
+// Código Fin: ${codigoFin}
+// Turno: ${turnoHorneado}
+// Horno: ${Horno}
+// Hornero: ${Hornero}
+// Horneado: ${horneado}
 
-Temperaturas:
-- Cabeza Derecha: ${cabezaDr}
-- Pie Derecho: ${PieDr}
-- Cabeza Izquierda: ${CabezaIz}
-- Pie Izquierda: ${PieIZ}
-- Promedio Temperatura: ${promedioTMP}
+// Temperaturas:
+// - Cabeza Derecha: ${cabezaDr}
+// - Pie Derecho: ${PieDr}
+// - Cabeza Izquierda: ${CabezaIz}
+// - Pie Izquierda: ${PieIZ}
+// - Promedio Temperatura: ${promedioTMP}
 
-Resultados:
-- Aprobados: ${aprobados}
-- Rajados CC: ${rajadosCC}
-- Crudos CC: ${crudoCC}
-- Altos: ${altos}
-- Bajos: ${bajos}
-- Quemados: ${quemados}
-- Ahumados: ${ahumados}
-- Mermas Hornos: ${mermas_hornos}
-- Total: ${total}
-- Encargado CC: ${EncargadoCC}
-- Porcentaje Aprobación: ${porcentaje}
+// Resultados:
+// - Aprobados: ${aprobados}
+// - Rajados CC: ${rajadosCC}
+// - Crudos CC: ${crudoCC}
+// - Altos: ${altos}
+// - Bajos: ${bajos}
+// - Quemados: ${quemados}
+// - Ahumados: ${ahumados}
+// - Mermas Hornos: ${mermas_hornos}
+// - Total: ${total}
+// - Encargado CC: ${EncargadoCC}
+// - Porcentaje Aprobación: ${porcentaje}
 
------------------------------------------
-ANÁLISIS AUTOMÁTICO DE GEMINI IA:
-${analisisGemini}
+// -----------------------------------------
+// ANÁLISIS AUTOMÁTICO DE GEMINI IA:
+// ${analisisGemini}
 
------------------------------------------
-Este es un mensaje automático, por favor no responder.
-`;
+// -----------------------------------------
+// Este es un mensaje automático, por favor no responder.
+// `;
 
-  // const mailOptions = {
-  //   from: `"Ecofiltro" <${emailFrom}>`,
-  //   to: emailsend,
-  //   bcc: [
-  //     'jumul@ecofiltro.com',
-  //     'codigos@ecofiltro.com',
-  //     'ddelacruz@ecofiltro.com',
-  //     'soporte.produccion@ecofiltro.com',
-  //     'smunoz@ecofiltro.com',
-  //     'gestion@ecofiltro.com',
-  //     'yriddle@ecofiltro.com',
-  //     'ngalicia@ecofiltro.com',
-  //     'jparagon@ecofiltrogt.onmicrosoft.com'
-  //   ],
-  //   subject,
-  //   text
-  // };
+//   // const mailOptions = {
+//   //   from: `"Ecofiltro" <${emailFrom}>`,
+//   //   to: emailsend,
+//   //   bcc: [
+//   //     'jumul@ecofiltro.com',
+//   //     'codigos@ecofiltro.com',
+//   //     'ddelacruz@ecofiltro.com',
+//   //     'soporte.produccion@ecofiltro.com',
+//   //     'smunoz@ecofiltro.com',
+//   //     'gestion@ecofiltro.com',
+//   //     'yriddle@ecofiltro.com',
+//   //     'ngalicia@ecofiltro.com',
+//   //     'jparagon@ecofiltrogt.onmicrosoft.com'
+//   //   ],
+//   //   subject,
+//   //   text
+//   // };
 
-    const mailOptions = {
-    from: `"Ecofiltro" <${emailFrom}>`,
-    to: emailsend,
-    bcc: [
-      'codigos@ecofiltro.com',
-      'ddelacruz@ecofiltro.com',
-      'soporte.produccion@ecofiltro.com',
-      'smunoz@ecofiltro.com',
-      'gestion@ecofiltro.com',
-      'yriddle@ecofiltro.com',
-      'ngalicia@ecofiltro.com',
-      'jparagon@ecofiltrogt.onmicrosoft.com'
-    ],
-    subject,
-    text
-  };
+//     const mailOptions = {
+//     from: `"Ecofiltro" <${emailFrom}>`,
+//     to: emailsend,
+//     bcc: [
+//       'codigos@ecofiltro.com',
+//       'ddelacruz@ecofiltro.com',
+//       'soporte.produccion@ecofiltro.com',
+//       'smunoz@ecofiltro.com',
+//       'gestion@ecofiltro.com',
+//       'yriddle@ecofiltro.com',
+//       'ngalicia@ecofiltro.com',
+//       'jparagon@ecofiltrogt.onmicrosoft.com'
+//     ],
+//     subject,
+//     text
+//   };
 
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente:", info.response);
-    return { success: true };
-  } catch (error) {
-    console.error('Error al enviar correo:', error);
-    return { success: false, error };
-  }
-};
+//   try {
+//     const info = await transporter.sendMail(mailOptions);
+//     console.log("Correo enviado exitosamente:", info.response);
+//     return { success: true };
+//   } catch (error) {
+//     console.error('Error al enviar correo:', error);
+//     return { success: false, error };
+//   }
+// };
 
-// Monitoreo de la base de datos
-setInterval(async () => {
-  console.log('Ejecutando el cronómetro...');
+// // Monitoreo de la base de datos
+// setInterval(async () => {
+//   console.log('Ejecutando el cronómetro...');
 
-  try {
-    const result = await pool.query(`
-        SELECT 
-            dthh.id,
-            dthh.id_modelo,
-            dthh.id_turno,
-            dthh.id_horno,
-            dthh.codigoInicio,
-            dthh.id_OTHH,
-            dthh.codigoFin,
-            dthh.horneado,
-            dthh.mermasCrudas,
-            dthh.librasBarro,
-            dthh.librasAserrin,
-            dthh.fecha_creacion AS fechaHorneado,
-            turno.turno AS turnoHorneado,
-            ufmodelo.nombre_modelo AS ModeloEco,
-            enc_maq.nombre_maq AS Horno,
-            operarios.Nombre AS Hornero,
-            dtcc.aprobados,
-            dtcc.altos,
-            dtcc.bajos,
-            dtcc.rajadosCC,
-            dtcc.crudoCC,
-            dtcc.quemados,
-            dtcc.ahumados,
-            dtcc.mermas_hornos,
-            COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
-            operarios1.Nombre AS EncargadoCC,
-            CONCAT(ROUND((dtcc.aprobados / dthh.horneado * 100), 0), '%') AS porcentaje,
-            tm.max_tempCabezaIZ AS CabezaIz,
-            tm.max_tempPieIZ AS PieIZ,
-            tm.max_tempCabezaDR AS cabezaDr,
-            tm.max_tempPieDR AS PieDr,
-            ROUND((tm.max_tempCabezaIZ + tm.max_tempPieIZ + tm.max_tempCabezaDR + tm.max_tempPieDR) / 4) AS promedioTMP
-        FROM dthh
-        INNER JOIN dtcc ON dthh.id = dtcc.id_dthh
-        LEFT JOIN turno ON dthh.id_turno = turno.id
-        LEFT JOIN ufmodelo ON dthh.id_modelo = ufmodelo.id_mod
-        LEFT JOIN enc_maq ON dthh.id_horno = enc_maq.id_maq
-        LEFT JOIN operarios ON dthh.id_hornero = operarios.id
-        LEFT JOIN operarios AS operarios1 ON dtcc.id_operarioCC = operarios1.id
-        LEFT JOIN (
-            SELECT
-                dth.fecha_real,
-                dth.id_horno,
-                dth.id_modelo,
-                dth.id_turno,
-                MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
-                MAX(dth.tempPieIZ) AS max_tempPieIZ,
-                MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
-                MAX(dth.tempPieDR) AS max_tempPieDR
-            FROM dth
-            GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
-        ) AS tm ON tm.id_turno = dthh.id_turno AND tm.id_modelo = dthh.id_modelo AND tm.id_horno = dthh.id_horno AND tm.fecha_real = dthh.fecha_creacion
-        WHERE dtcc.enviado = 0
-    `);
+//   try {
+//     const result = await pool.query(`
+//         SELECT 
+//             dthh.id,
+//             dthh.id_modelo,
+//             dthh.id_turno,
+//             dthh.id_horno,
+//             dthh.codigoInicio,
+//             dthh.id_OTHH,
+//             dthh.codigoFin,
+//             dthh.horneado,
+//             dthh.mermasCrudas,
+//             dthh.librasBarro,
+//             dthh.librasAserrin,
+//             dthh.fecha_creacion AS fechaHorneado,
+//             turno.turno AS turnoHorneado,
+//             ufmodelo.nombre_modelo AS ModeloEco,
+//             enc_maq.nombre_maq AS Horno,
+//             operarios.Nombre AS Hornero,
+//             dtcc.aprobados,
+//             dtcc.altos,
+//             dtcc.bajos,
+//             dtcc.rajadosCC,
+//             dtcc.crudoCC,
+//             dtcc.quemados,
+//             dtcc.ahumados,
+//             dtcc.mermas_hornos,
+//             COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
+//             operarios1.Nombre AS EncargadoCC,
+//             CONCAT(ROUND((dtcc.aprobados / dthh.horneado * 100), 0), '%') AS porcentaje,
+//             tm.max_tempCabezaIZ AS CabezaIz,
+//             tm.max_tempPieIZ AS PieIZ,
+//             tm.max_tempCabezaDR AS cabezaDr,
+//             tm.max_tempPieDR AS PieDr,
+//             ROUND((tm.max_tempCabezaIZ + tm.max_tempPieIZ + tm.max_tempCabezaDR + tm.max_tempPieDR) / 4) AS promedioTMP
+//         FROM dthh
+//         INNER JOIN dtcc ON dthh.id = dtcc.id_dthh
+//         LEFT JOIN turno ON dthh.id_turno = turno.id
+//         LEFT JOIN ufmodelo ON dthh.id_modelo = ufmodelo.id_mod
+//         LEFT JOIN enc_maq ON dthh.id_horno = enc_maq.id_maq
+//         LEFT JOIN operarios ON dthh.id_hornero = operarios.id
+//         LEFT JOIN operarios AS operarios1 ON dtcc.id_operarioCC = operarios1.id
+//         LEFT JOIN (
+//             SELECT
+//                 dth.fecha_real,
+//                 dth.id_horno,
+//                 dth.id_modelo,
+//                 dth.id_turno,
+//                 MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
+//                 MAX(dth.tempPieIZ) AS max_tempPieIZ,
+//                 MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
+//                 MAX(dth.tempPieDR) AS max_tempPieDR
+//             FROM dth
+//             GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
+//         ) AS tm ON tm.id_turno = dthh.id_turno AND tm.id_modelo = dthh.id_modelo AND tm.id_horno = dthh.id_horno AND tm.fecha_real = dthh.fecha_creacion
+//         WHERE dtcc.enviado = 0
+//     `);
 
-    const rows = result[0];
-    console.log('Registros obtenidos:', rows.length);
+//     const rows = result[0];
+//     console.log('Registros obtenidos:', rows.length);
 
-    if (rows.length === 0) {
-      console.log('No hay registros nuevos para procesar.');
-      return;
-    }
+//     if (rows.length === 0) {
+//       console.log('No hay registros nuevos para procesar.');
+//       return;
+//     }
 
-    for (const registro of rows) {
-      try {
-        // Marcar como en proceso
-        await pool.query('UPDATE dtcc SET enviado = 9 WHERE id_dthh = ?', [registro.id]);
+//     for (const registro of rows) {
+//       try {
+//         // Marcar como en proceso
+//         await pool.query('UPDATE dtcc SET enviado = 9 WHERE id_dthh = ?', [registro.id]);
 
-        let analisisGemini = registro.enviado;
+//         let analisisGemini = registro.enviado;
 
-        if (!analisisGemini) {
-          const textoReporte = `
-Modelo: ${registro.ModeloEco}
-Turno: ${registro.turnoHorneado}
-Horno: ${registro.Horno}
-Hornero: ${registro.Hornero}
-Aprobados: ${registro.aprobados}
-Rajados CC: ${registro.rajadosCC}
-Crudos CC: ${registro.crudoCC}
-Altos: ${registro.altos}
-Bajos: ${registro.bajos}
-Quemados: ${registro.quemados}
-Ahumados: ${registro.ahumados}
-Mermas Hornos: ${registro.mermas_hornos}
-Porcentaje Aprobación: ${registro.porcentaje}
-Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${registro.PieDr} / ${registro.CabezaIz} / ${registro.PieIZ}
-`;
+//         if (!analisisGemini) {
+//           const textoReporte = `
+// Modelo: ${registro.ModeloEco}
+// Turno: ${registro.turnoHorneado}
+// Horno: ${registro.Horno}
+// Hornero: ${registro.Hornero}
+// Aprobados: ${registro.aprobados}
+// Rajados CC: ${registro.rajadosCC}
+// Crudos CC: ${registro.crudoCC}
+// Altos: ${registro.altos}
+// Bajos: ${registro.bajos}
+// Quemados: ${registro.quemados}
+// Ahumados: ${registro.ahumados}
+// Mermas Hornos: ${registro.mermas_hornos}
+// Porcentaje Aprobación: ${registro.porcentaje}
+// Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${registro.PieDr} / ${registro.CabezaIz} / ${registro.PieIZ}
+// `;
 
-          analisisGemini = await analizarConGemini(textoReporte);
+//           analisisGemini = await analizarConGemini(textoReporte);
 
-          // Guardar análisis generado
-          // await pool.query('UPDATE dtcc SET analisis_gemini = ? WHERE id_dthh = ?', [analisisGemini, registro.id]);
-          // console.log('Análisis guardado en base de datos.');
-        }
+//           // Guardar análisis generado
+//           // await pool.query('UPDATE dtcc SET analisis_gemini = ? WHERE id_dthh = ?', [analisisGemini, registro.id]);
+//           // console.log('Análisis guardado en base de datos.');
+//         }
 
-        // Enviar correo
-        const result = await postSendEmail(registro, analisisGemini);
+//         // Enviar correo
+//         const result = await postSendEmail(registro, analisisGemini);
 
-        if (result.success) {
-          await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
-          console.log(`Registro ID ${registro.id} enviado y marcado como enviado.`);
-        } else {
-          await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
-          console.error(`Error enviando correo para ID ${registro.id}. Registro listo para reintentar solo el envío.`);
-        }
+//         if (result.success) {
+//           await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
+//           console.log(`Registro ID ${registro.id} enviado y marcado como enviado.`);
+//         } else {
+//           await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
+//           console.error(`Error enviando correo para ID ${registro.id}. Registro listo para reintentar solo el envío.`);
+//         }
 
-      } catch (error) {
-        console.error(`Error procesando ID ${registro.id}:`, error);
-        await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
-      }
-    }
+//       } catch (error) {
+//         console.error(`Error procesando ID ${registro.id}:`, error);
+//         await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
+//       }
+//     }
 
-  } catch (error) {
-    console.error('Error al monitorear la tabla de logs:', error);
-  }
-}, 200000); 
+//   } catch (error) {
+//     console.error('Error al monitorear la tabla de logs:', error);
+//   }
+// }, 200000); 
