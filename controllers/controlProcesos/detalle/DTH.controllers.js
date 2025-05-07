@@ -4,7 +4,7 @@ import { pool } from "../../../src/db.js";
 
 export const postDTH = async (req, res) => {
   const { id_cth, fecha_real,id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR  } = req.body;
-  
+  console.log(id_cth, fecha_real,id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR )
   try {
     const consulta = 'INSERT INTO dth (id_cth,fecha_real, id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?, ?,?)';
     const [rows] = await pool.query(consulta, [id_cth,fecha_real, id_turno ,id_modelo,id_modelo2, id_horno,id_creador, tempCabezaIZ, tempCentroIZ,tempPieIZ, tempCabezaDR,tempCentroDR,tempPieDR  ]);
