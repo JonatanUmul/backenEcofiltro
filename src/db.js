@@ -13,7 +13,7 @@ export const pool= createPool({
     password: 'Controldedatos12',
     port:3306,
     // database:'produccioneco',
-    database:'ecoproduccion',
+    database:'produccioneco',
 })
 
 
