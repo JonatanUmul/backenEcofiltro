@@ -125,30 +125,37 @@ console.log('Datos en el back',fecha_creacion_inicio, fecha_creacion_fin, id_ufm
   try {
       let consulta = `
       select 
-    d.id,
-    d.id_otip,
-    d.codigoInicio,
-    d.codigoFinal,
-    d.impregnados,
-    d.mermas,
-    d.fechaCreacion,
-    d.horaCreacion,
-    insumos.insumo as TipoPlata,
-    ufmodelo.nombre_modelo as modelo,
-    d.id_creador,
-    user.nombre AS id_encargado,
-    operarios.Nombre AS Encargado
-FROM 
-    dtip d
-
-LEFT JOIN 
-    ufmodelo ON d.id_modelo = ufmodelo.id_mod
-LEFT JOIN 
-    insumos ON d.TipoPlata = insumos.id
- LEFT JOIN 
-   user ON d.id_creador= user.id
-   LEFT JOIN 
-   operarios ON  user.nombre = operarios.id
+      d.id,
+      d.id_otip,
+      d.codigoInicio,
+      d.codigoFinal,
+      d.impregnados,
+      d.mermas,
+      d.fechaCreacion,
+      d.horaCreacion,
+      insumos.insumo as TipoPlata,
+      ufmodelo.nombre_modelo as modelo,
+      d.id_creador,
+      user.nombre AS id_encargado,
+      user.firmaUsr AS encargado,
+      operarios.Nombre AS Encargado,
+      otip.id_creador,
+      us2.nombre,
+      op2.Nombre,
+      us2.firmaUsr AS jefe
+  
+     
+  FROM 
+      dtip d
+  
+     LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
+     LEFT JOIN insumos ON d.TipoPlata = insumos.id
+     LEFT JOIN user ON d.id_creador= user.id
+   
+     LEFT JOIN operarios ON  user.nombre = operarios.id
+     LEFT JOIN otip ON otip.id=d.id_otip
+     LEFT JOIN user us2 ON us2.id=otip.id_creador
+     LEFT JOIN operarios AS op2 ON op2.id=us2.nombre
           WHERE 1 = 1`;
 
       const params = [];

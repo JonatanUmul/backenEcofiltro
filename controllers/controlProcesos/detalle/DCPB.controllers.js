@@ -72,32 +72,46 @@ export const getDCPBB = async (req, res) => {
 
   try {
       let consulta = `
-          SELECT 
-              d.id,
-              d.pulido,
-              d.fecha_creacion,
-              d.hora_creacion,
-              d.fechaProduccion,
-              cpb.id AS id_cpb,
-              ufmodelo.nombre_modelo AS modelo,
-              operarios.Nombre AS pulidor,
-              enc_maq.nombre_maq AS prensa,
-              modulostarimas.modulo AS modulo,
-              calificaciones.calificacion AS calificacion
-          FROM 
-              dcpb d
-          LEFT JOIN 
-              cpb ON d.id_cpb = cpb.id
-          LEFT JOIN 
-              ufmodelo ON d.id_modelo = ufmodelo.id_mod
-          LEFT JOIN 
-              operarios ON d.id_pulidor = operarios.id
-          LEFT JOIN 
-              enc_maq ON d.id_prensa = enc_maq.id_maq
-          LEFT JOIN 
-              modulostarimas ON d.id_modulo = modulostarimas.id
-          LEFT JOIN 
-              calificaciones ON d.id_calificacion = calificaciones.id
+      SELECT 
+      d.id,
+      d.pulido,
+      d.fecha_creacion,
+      d.hora_creacion,
+      d.fechaProduccion,
+      cpb.id AS id_cpb,
+      ufmodelo.nombre_modelo AS modelo,
+      operarios.Nombre AS pulidor,
+      enc_maq.nombre_maq AS prensa,
+      modulostarimas.modulo AS modulo,
+      calificaciones.calificacion AS calificacion,
+      cpb.id_creador,
+      user.nombre,
+      user.firmaUsr AS firmaJefe,
+      op.Nombre AS NameJefe,
+      d.id_creador,
+      us2.nombre,
+      us2.firmaUsr AS firmaEncargado,
+      op1.Nombre
+      
+  FROM 
+      dcpb d
+  LEFT JOIN 
+      cpb ON d.id_cpb = cpb.id
+  LEFT JOIN 
+      ufmodelo ON d.id_modelo = ufmodelo.id_mod
+  LEFT JOIN 
+      operarios ON d.id_pulidor = operarios.id
+  LEFT JOIN 
+      enc_maq ON d.id_prensa = enc_maq.id_maq
+  LEFT JOIN 
+      modulostarimas ON d.id_modulo = modulostarimas.id
+  LEFT JOIN 
+      calificaciones ON d.id_calificacion = calificaciones.id
+  LEFT JOIN user ON user.id=cpb.id_creador
+  LEFT JOIN operarios AS op ON op.id=user.nombre
+  LEFT JOIN user us2 ON us2.id=d.id_creador
+  LEFT JOIN operarios op1 ON op1.id=us2.nombre
+
           WHERE 1=1`; // Coloca la cláusula WHERE justo después de tus cláusulas JOIN
 
       const params = [];
