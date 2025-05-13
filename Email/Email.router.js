@@ -387,7 +387,7 @@ Este es un mensaje automático, por favor no responder.
     from: `"Hornos-Ecofiltro" <${emailFrom}>`,
     to: emailsend,
     bcc: [
-      'jonatanumul@gmail.com'
+      'jonatanumul@gmail.com',
       'codigos@ecofiltro.com',
       'ddelacruz@ecofiltro.com',
       'soporte.produccion@ecofiltro.com',
