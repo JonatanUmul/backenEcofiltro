@@ -226,253 +226,253 @@
 
 
 
-// import dotenv from 'dotenv';
-// import nodemailer from 'nodemailer';
-// import axios from 'axios';
-// import cron from 'node-cron';
-// import { pool } from "../src/db.js";
-// import { formatFecha } from './FormatearFecta.js';
+import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
+import axios from 'axios';
+import cron from 'node-cron';
+import { pool } from "../src/db.js";
+import { formatFecha } from './FormatearFecta.js';
 
-// dotenv.config();
+dotenv.config();
 
-// const emailsend = 'jumul@ecofiltro.com';
-// const passEmail = 'pytu vtny qjpk rcfv';
-// const emailFrom = 'no-reply@ecofiltro.com';
-// const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-// const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const emailsend = 'jumul@ecofiltro.com';
+const passEmail = 'pytu vtny qjpk rcfv';
+const emailFrom = 'no-reply@ecofiltro.com';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-// const transporter = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: emailsend,
-//     pass: passEmail
-//   }
-// });
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: emailsend,
+    pass: passEmail
+  }
+});
 
-// async function analizarConGemini(texto) {
-//   const body = {
-//     contents: [
-//       {
-//         parts: [
-//           { text: `Eres analista senior y experto en el proceso de horneado de Ecofiltros...
-// \n\n${texto}` }
-//         ]
-//       }
-//     ]
-//   };
+async function analizarConGemini(texto) {
+  const body = {
+    contents: [
+      {
+        parts: [
+          { text: `Eres analista senior y experto en el proceso de horneado de Ecofiltros...
+\n\n${texto}` }
+        ]
+      }
+    ]
+  };
 
-//   try {
-//     const response = await axios.post(url, body, {
-//       headers: { 'Content-Type': 'application/json' }
-//     });
-//     const output = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
-//     return output || 'No se pudo generar análisis.';
-//   } catch (error) {
-//     console.error('Error al analizar con Gemini:', error.response?.data || error.message);
-//     return 'Error al generar análisis.';
-//   }
-// }
+  try {
+    const response = await axios.post(url, body, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const output = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+    return output || 'No se pudo generar análisis.';
+  } catch (error) {
+    console.error('Error al analizar con Gemini:', error.response?.data || error.message);
+    return 'Error al generar análisis.';
+  }
+}
 
-// export const postSendEmail = async (registro, analisisGemini) => {
-//   const {
-//     ModeloEco, codigoInicio, codigoFin, turnoHorneado, Horno, Hornero,
-//     horneado, cabezaDr, PieDr, CabezaIz, PieIZ, promedioTMP,
-//     aprobados, rajadosCC, crudoCC, altos, bajos, quemados, ahumados,
-//     mermas_hornos, total, EncargadoCC, porcentaje, fechaHorneado
-//   } = registro;
+export const postSendEmail = async (registro, analisisGemini) => {
+  const {
+    ModeloEco, codigoInicio, codigoFin, turnoHorneado, Horno, Hornero,
+    horneado, cabezaDr, PieDr, CabezaIz, PieIZ, promedioTMP,
+    aprobados, rajadosCC, crudoCC, altos, bajos, quemados, ahumados,
+    mermas_hornos, total, EncargadoCC, porcentaje, fechaHorneado
+  } = registro;
 
-//   if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
-//     return { success: false, error: 'Datos faltantes o nulos' };
-//   }
+  if (!ModeloEco || !Horno || !Hornero || !horneado || !aprobados || !EncargadoCC) {
+    return { success: false, error: 'Datos faltantes o nulos' };
+  }
 
-//   const subject = `Reporte Control de Calidad ${porcentaje}: ${Horno} Fecha de Horneado: ${formatFecha(fechaHorneado)}`;
-//   const text = `
-// Reporte de Control de Calidad
-// -----------------------------------------
+  const subject = `Reporte Control de Calidad ${porcentaje}: ${Horno} Fecha de Horneado: ${formatFecha(fechaHorneado)}`;
+  const text = `
+Reporte de Control de Calidad
+-----------------------------------------
 
-// Modelo: ${ModeloEco}
-// Código Inicio: ${codigoInicio}
-// Código Fin: ${codigoFin}
-// Turno: ${turnoHorneado}
-// Horno: ${Horno}
-// Hornero: ${Hornero}
-// Horneado: ${horneado}
+Modelo: ${ModeloEco}
+Código Inicio: ${codigoInicio}
+Código Fin: ${codigoFin}
+Turno: ${turnoHorneado}
+Horno: ${Horno}
+Hornero: ${Hornero}
+Horneado: ${horneado}
 
-// Temperaturas:
-// - Cabeza Derecha: ${cabezaDr}
-// - Pie Derecho: ${PieDr}
-// - Cabeza Izquierda: ${CabezaIz}
-// - Pie Izquierda: ${PieIZ}
-// - Promedio Temperatura: ${promedioTMP}
+Temperaturas:
+- Cabeza Derecha: ${cabezaDr}
+- Pie Derecho: ${PieDr}
+- Cabeza Izquierda: ${CabezaIz}
+- Pie Izquierda: ${PieIZ}
+- Promedio Temperatura: ${promedioTMP}
 
-// Resultados:
-// - Aprobados: ${aprobados}
-// - Rajados CC: ${rajadosCC}
-// - Crudos CC: ${crudoCC}
-// - Altos: ${altos}
-// - Bajos: ${bajos}
-// - Quemados: ${quemados}
-// - Ahumados: ${ahumados}
-// - Mermas Hornos: ${mermas_hornos}
-// - Total: ${total}
-// - Encargado CC: ${EncargadoCC}
-// - Porcentaje Aprobación: ${porcentaje}
+Resultados:
+- Aprobados: ${aprobados}
+- Rajados CC: ${rajadosCC}
+- Crudos CC: ${crudoCC}
+- Altos: ${altos}
+- Bajos: ${bajos}
+- Quemados: ${quemados}
+- Ahumados: ${ahumados}
+- Mermas Hornos: ${mermas_hornos}
+- Total: ${total}
+- Encargado CC: ${EncargadoCC}
+- Porcentaje Aprobación: ${porcentaje}
 
-// -----------------------------------------
-// ANÁLISIS AUTOMÁTICO DE GEMINI IA:
-// ${analisisGemini}
+-----------------------------------------
+ANÁLISIS AUTOMÁTICO DE GEMINI IA:
+${analisisGemini}
 
-// -----------------------------------------
-// Este es un mensaje automático, por favor no responder.
-// `;
+-----------------------------------------
+Este es un mensaje automático, por favor no responder.
+`;
 
-//   const mailOptions = {
-//     from: `"Hornos-Ecofiltro" <${emailFrom}>`,
-//     to: emailsend,
-//     bcc: [
-//       'jonatanumul@gmail.com',
-//       'codigos@ecofiltro.com',
-//       'ddelacruz@ecofiltro.com',
-//       'soporte.produccion@ecofiltro.com',
-//       'smunoz@ecofiltro.com',
-//       'gestion@ecofiltro.com',
-//       'yriddle@ecofiltro.com',
-//       'ngalicia@ecofiltro.com',
-//       'jparagon@ecofiltrogt.onmicrosoft.com'
-//     ],
-//     subject,
-//     text
-//   };
+  const mailOptions = {
+    from: `"Hornos-Ecofiltro" <${emailFrom}>`,
+    to: emailsend,
+    bcc: [
+      'jonatanumul@gmail.com',
+      'codigos@ecofiltro.com',
+      'ddelacruz@ecofiltro.com',
+      'soporte.produccion@ecofiltro.com',
+      'smunoz@ecofiltro.com',
+      'gestion@ecofiltro.com',
+      'yriddle@ecofiltro.com',
+      'ngalicia@ecofiltro.com',
+      'jparagon@ecofiltrogt.onmicrosoft.com'
+    ],
+    subject,
+    text
+  };
 
-//   try {
-//     const info = await transporter.sendMail(mailOptions);
-//     console.log("Correo enviado exitosamente:", info.response);
-//     return { success: true };
-//   } catch (error) {
-//     console.error('Error al enviar correo:', error);
-//     return { success: false, error };
-//   }
-// };
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Correo enviado exitosamente:", info.response);
+    return { success: true };
+  } catch (error) {
+    console.error('Error al enviar correo:', error);
+    return { success: false, error };
+  }
+};
 
-// // CRON JOB - 2:00 AM y 6:00 PM
-// cron.schedule('0 2,18 * * *', async () => {
-//   console.log('Ejecutando análisis programado...');
+// CRON JOB - 2:00 AM y 6:00 PM
+cron.schedule('0 2,18 * * *', async () => {
+  console.log('Ejecutando análisis programado...');
 
-//   try {
-//     const result = await pool.query(`
-//       SELECT 
-//         dthh.id,
-//         dthh.id_modelo,
-//         dthh.id_turno,
-//         dthh.id_horno,
-//         dthh.codigoInicio,
-//         dthh.id_OTHH,
-//         dthh.codigoFin,
-//         dthh.horneado,
-//         dthh.mermasCrudas,
-//         dthh.librasBarro,
-//         dthh.librasAserrin,
-//         dthh.fecha_creacion AS fechaHorneado,
-//         turno.turno AS turnoHorneado,
-//         ufmodelo.nombre_modelo AS ModeloEco,
-//         enc_maq.nombre_maq AS Horno,
-//         operarios.Nombre AS Hornero,
-//         dtcc.aprobados,
-//         dtcc.altos,
-//         dtcc.bajos,
-//         dtcc.rajadosCC,
-//         dtcc.crudoCC,
-//         dtcc.quemados,
-//         dtcc.ahumados,
-//         dtcc.mermas_hornos,
-//         COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
-//         operarios1.Nombre AS EncargadoCC,
-//         CONCAT(ROUND((dtcc.aprobados / dthh.horneado * 100), 0), '%') AS porcentaje,
-//         tm.max_tempCabezaIZ AS CabezaIz,
-//         tm.max_tempPieIZ AS PieIZ,
-//         tm.max_tempCabezaDR AS cabezaDr,
-//         tm.max_tempPieDR AS PieDr,
-//         ROUND((tm.max_tempCabezaIZ + tm.max_tempPieIZ + tm.max_tempCabezaDR + tm.max_tempPieDR) / 4) AS promedioTMP
-//       FROM dthh
-//       INNER JOIN dtcc ON dthh.id = dtcc.id_dthh
-//       LEFT JOIN turno ON dthh.id_turno = turno.id
-//       LEFT JOIN ufmodelo ON dthh.id_modelo = ufmodelo.id_mod
-//       LEFT JOIN enc_maq ON dthh.id_horno = enc_maq.id_maq
-//       LEFT JOIN operarios ON dthh.id_hornero = operarios.id
-//       LEFT JOIN operarios AS operarios1 ON dtcc.id_operarioCC = operarios1.id
-//       LEFT JOIN (
-//         SELECT
-//           dth.fecha_real,
-//           dth.id_horno,
-//           dth.id_modelo,
-//           dth.id_turno,
-//           MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
-//           MAX(dth.tempPieIZ) AS max_tempPieIZ,
-//           MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
-//           MAX(dth.tempPieDR) AS max_tempPieDR
-//         FROM dth
-//         GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
-//       ) AS tm ON tm.id_turno = dthh.id_turno AND tm.id_modelo = dthh.id_modelo AND tm.id_horno = dthh.id_horno AND tm.fecha_real = dthh.fecha_creacion
-//       WHERE dtcc.enviado = 0
-//     `);
+  try {
+    const result = await pool.query(`
+      SELECT 
+        dthh.id,
+        dthh.id_modelo,
+        dthh.id_turno,
+        dthh.id_horno,
+        dthh.codigoInicio,
+        dthh.id_OTHH,
+        dthh.codigoFin,
+        dthh.horneado,
+        dthh.mermasCrudas,
+        dthh.librasBarro,
+        dthh.librasAserrin,
+        dthh.fecha_creacion AS fechaHorneado,
+        turno.turno AS turnoHorneado,
+        ufmodelo.nombre_modelo AS ModeloEco,
+        enc_maq.nombre_maq AS Horno,
+        operarios.Nombre AS Hornero,
+        dtcc.aprobados,
+        dtcc.altos,
+        dtcc.bajos,
+        dtcc.rajadosCC,
+        dtcc.crudoCC,
+        dtcc.quemados,
+        dtcc.ahumados,
+        dtcc.mermas_hornos,
+        COALESCE(dtcc.aprobados+dtcc.altos+dtcc.bajos+dtcc.rajadosCC+dtcc.crudoCC+dtcc.quemados+dtcc.ahumados+dtcc.mermas_hornos) AS total,
+        operarios1.Nombre AS EncargadoCC,
+        CONCAT(ROUND((dtcc.aprobados / dthh.horneado * 100), 0), '%') AS porcentaje,
+        tm.max_tempCabezaIZ AS CabezaIz,
+        tm.max_tempPieIZ AS PieIZ,
+        tm.max_tempCabezaDR AS cabezaDr,
+        tm.max_tempPieDR AS PieDr,
+        ROUND((tm.max_tempCabezaIZ + tm.max_tempPieIZ + tm.max_tempCabezaDR + tm.max_tempPieDR) / 4) AS promedioTMP
+      FROM dthh
+      INNER JOIN dtcc ON dthh.id = dtcc.id_dthh
+      LEFT JOIN turno ON dthh.id_turno = turno.id
+      LEFT JOIN ufmodelo ON dthh.id_modelo = ufmodelo.id_mod
+      LEFT JOIN enc_maq ON dthh.id_horno = enc_maq.id_maq
+      LEFT JOIN operarios ON dthh.id_hornero = operarios.id
+      LEFT JOIN operarios AS operarios1 ON dtcc.id_operarioCC = operarios1.id
+      LEFT JOIN (
+        SELECT
+          dth.fecha_real,
+          dth.id_horno,
+          dth.id_modelo,
+          dth.id_turno,
+          MAX(dth.tempCabezaIZ) AS max_tempCabezaIZ,
+          MAX(dth.tempPieIZ) AS max_tempPieIZ,
+          MAX(dth.tempCabezaDR) AS max_tempCabezaDR,
+          MAX(dth.tempPieDR) AS max_tempPieDR
+        FROM dth
+        GROUP BY dth.fecha_real, dth.id_horno, dth.id_modelo, dth.id_turno
+      ) AS tm ON tm.id_turno = dthh.id_turno AND tm.id_modelo = dthh.id_modelo AND tm.id_horno = dthh.id_horno AND tm.fecha_real = dthh.fecha_creacion
+      WHERE dtcc.enviado = 0
+    `);
 
-//     const rows = result[0];
-//     console.log('Registros obtenidos:', rows.length);
+    const rows = result[0];
+    console.log('Registros obtenidos:', rows.length);
 
-//     if (rows.length === 0) {
-//       console.log('No hay registros nuevos para procesar.');
-//       return;
-//     }
+    if (rows.length === 0) {
+      console.log('No hay registros nuevos para procesar.');
+      return;
+    }
 
-//     for (const registro of rows) {
-//       try {
-//         await pool.query('UPDATE dtcc SET enviado = 9 WHERE id_dthh = ?', [registro.id]);
+    for (const registro of rows) {
+      try {
+        await pool.query('UPDATE dtcc SET enviado = 9 WHERE id_dthh = ?', [registro.id]);
 
-//         const textoReporte = `
-// Modelo: ${registro.ModeloEco}
-// Turno: ${registro.turnoHorneado}
-// Horno: ${registro.Horno}
-// Hornero: ${registro.Hornero}
-// Aprobados: ${registro.aprobados}
-// Rajados CC: ${registro.rajadosCC}
-// Crudos CC: ${registro.crudoCC}
-// Altos: ${registro.altos}
-// Bajos: ${registro.bajos}
-// Quemados: ${registro.quemados}
-// Ahumados: ${registro.ahumados}
-// Mermas Hornos: ${registro.mermas_hornos}
-// Porcentaje Aprobación: ${registro.porcentaje}
-// Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${registro.PieDr} / ${registro.CabezaIz} / ${registro.PieIZ}
-// `;
+        const textoReporte = `
+Modelo: ${registro.ModeloEco}
+Turno: ${registro.turnoHorneado}
+Horno: ${registro.Horno}
+Hornero: ${registro.Hornero}
+Aprobados: ${registro.aprobados}
+Rajados CC: ${registro.rajadosCC}
+Crudos CC: ${registro.crudoCC}
+Altos: ${registro.altos}
+Bajos: ${registro.bajos}
+Quemados: ${registro.quemados}
+Ahumados: ${registro.ahumados}
+Mermas Hornos: ${registro.mermas_hornos}
+Porcentaje Aprobación: ${registro.porcentaje}
+Temperaturas (Cabeza DR/PIE DR/Cabeza IZ/PIE IZ): ${registro.cabezaDr} / ${registro.PieDr} / ${registro.CabezaIz} / ${registro.PieIZ}
+`;
 
-//         const fechaHorneado = registro.fechaHorneado;
-//         const horno = registro.id_horno;
-//         const turno = registro.id_turno;
+        const fechaHorneado = registro.fechaHorneado;
+        const horno = registro.id_horno;
+        const turno = registro.id_turno;
 
-//         const TempHornos = await pool.query(
-//           `SELECT * FROM temphornossolantec WHERE fecha_creacion=? AND id_horno=? AND id_turno=?`,
-//           [fechaHorneado, horno, turno]
-//         );
-//         const temperaturas = TempHornos[0] || [];
+        const TempHornos = await pool.query(
+          `SELECT * FROM temphornossolantec WHERE fecha_creacion=? AND id_horno=? AND id_turno=?`,
+          [fechaHorneado, horno, turno]
+        );
+        const temperaturas = TempHornos[0] || [];
 
-//         const analisisGemini = await analizarConGemini(textoReporte, temperaturas);
-//         const resultCorreo = await postSendEmail(registro, analisisGemini);
+        const analisisGemini = await analizarConGemini(textoReporte, temperaturas);
+        const resultCorreo = await postSendEmail(registro, analisisGemini);
 
-//         if (resultCorreo.success) {
-//           await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
-//           console.log(` Registro ID ${registro.id} enviado.`);
-//         } else {
-//           await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
-//           console.error(`Error enviando correo para ID ${registro.id}.`);
-//         }
+        if (resultCorreo.success) {
+          await pool.query('UPDATE dtcc SET enviado = 1 WHERE id_dthh = ?', [registro.id]);
+          console.log(` Registro ID ${registro.id} enviado.`);
+        } else {
+          await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
+          console.error(`Error enviando correo para ID ${registro.id}.`);
+        }
 
-//       } catch (error) {
-//         console.error(`Error procesando ID ${registro.id}:`, error);
-//         await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
-//       }
-//     }
+      } catch (error) {
+        console.error(`Error procesando ID ${registro.id}:`, error);
+        await pool.query('UPDATE dtcc SET enviado = 2 WHERE id_dthh = ?', [registro.id]);
+      }
+    }
 
-//   } catch (error) {
-//     console.error('Error general en el cron job:', error);
-//   }
-// });
+  } catch (error) {
+    console.error('Error general en el cron job:', error);
+  }
+});
