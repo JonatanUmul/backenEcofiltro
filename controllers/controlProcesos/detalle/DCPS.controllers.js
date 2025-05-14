@@ -84,7 +84,15 @@ export const getDCPSS = async (req, res) => {
       ufmodelo.nombre_modelo AS modeloUF,
       calificaciones.calificacion AS calificacion,
       d.id_auditor,
-      operarios2.Nombre AS auditor
+      operarios2.Nombre AS auditor,
+      cps.id_creador,
+      user.nombre,
+      user.firmaUsr AS firmaJefe,
+      op.Nombre AS Jefe,
+      d.id_creador,
+      us.nombre,
+      us.firmaUsr AS firmaEncargaro,
+      op1.Nombre
   FROM 
       dcps d
   LEFT JOIN 
@@ -97,6 +105,16 @@ export const getDCPSS = async (req, res) => {
       calificaciones ON d.id_calificacion = calificaciones.id
   LEFT JOIN 
       operarios AS operarios2 ON d.id_auditor = operarios2.id
+  LEFT JOIN 
+  		cps ON cps.id=d.id_DCPS
+	LEFT JOIN 
+		user ON user.id=cps.id_creador
+  	LEFT JOIN 
+  		operarios op ON op.id=user.nombre
+  	LEFT JOIN 
+  		user AS us ON us.id=d.id_creador
+  	LEFT JOIN 
+  		operarios op1 ON op1.id=us.nombre
   WHERE 1=1`;
       const params = [];
 

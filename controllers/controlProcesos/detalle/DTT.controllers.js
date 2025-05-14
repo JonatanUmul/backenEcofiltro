@@ -188,7 +188,14 @@ export const getDTTT = async (req, res) => {
     ufmodelo.nombre_modelo AS modelo1,
     ufmodelo2.nombre_modelo AS modelo2,
     enc_maq.nombre_maq AS tunel,
-    estadouf.estado AS estadouf
+    estadouf.estado AS estadouf,
+    user.firmaUsr AS firmaJefe,
+    operarios.Nombre,
+    d.id_creador,
+    us.nombre,
+    us.firmaUsr AS Encargado,
+    op.Nombre
+    
 FROM (
     SELECT 
         d.*,
@@ -211,7 +218,11 @@ LEFT JOIN ufmodelo ON d.id_modelo = ufmodelo.id_mod
 LEFT JOIN ufmodelo AS ufmodelo2 ON d.id_modelo2 = ufmodelo2.id_mod
 LEFT JOIN enc_maq ON d.id_tunel = enc_maq.id_maq
 LEFT JOIN estadouf ON d.id_estadouf = estadouf.id
-
+LEFT JOIN ctt ON d.id_CTT=ctt.id
+LEFT JOIN user ON user.id=ctt.id_creador
+LEFT JOIN operarios ON operarios.id=user.nombre
+LEFT JOIN user AS us ON us.id=d.id_creador
+LEFT JOIN operarios op ON op.id=us.nombre
 
       WHERE 1 = 1`;
 

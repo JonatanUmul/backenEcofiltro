@@ -47,7 +47,7 @@ export const getCTT = async (req, res) => {
     console.log(fecha_creacion_inicio, fecha_creacion_fin);
     try {
         let consulta = `
-        select 
+            select 
         'ctt' AS tabla,
         d.id,
         d.fecha_creacion,
@@ -70,13 +70,17 @@ export const getCTT = async (req, res) => {
         d.codigoInicio,
         d.codigoFinal,
         d.cantidad,
-        est_proc.estado AS estadoOrden
-        
+        est_proc.estado AS estadoOrden,
+      	user.firmaUsr AS firmaJefe,
+         op.Nombre AS NameJefe
+            
         FROM ctt d
         
         LEFT JOIN est_proc ON d.id_est =est_proc.id_est
-        
-        
+           LEFT JOIN user ON user.id=d.id_creador
+          LEFT JOIN operarios AS op ON op.id=user.nombre
+          LEFT JOIN user us2 ON us2.id=d.id_creador
+          LEFT JOIN operarios op1 ON op1.id=us2.nombre
         WHERE 1=1`;
 
         const params = [];
