@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 
 export const pool= createPool({
     host: BD,
-    user:'admin',
+    user:'AppProduccion',
     password: 'Controldedatos12',
     port:3306,
     // database:'produccioneco',
