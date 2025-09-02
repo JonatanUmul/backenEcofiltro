@@ -63,6 +63,12 @@ export const getTablaMaquinaria = async (req, res) => {
          SELECT 'ckpm' AS encabezado, 'Prensa Hidraulica Manual' AS EncName, id, fecha_creacion, id_creador, id_maquina
          FROM ckpm 
           WHERE id_estado = 2
+
+          UNION all
+
+        SELECT 'ckscrubber' AS encabezado, 'SCRUBBER' AS EncName, id, fecha_creacion, id_creador, id_maquina
+         FROM ckscrubber 
+          WHERE id_estado = 2
         `;
 
         const [rows] = await pool.query(consulta);

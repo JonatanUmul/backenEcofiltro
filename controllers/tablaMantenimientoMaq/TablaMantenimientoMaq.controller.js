@@ -63,6 +63,9 @@ export const getMantenimientoMaq = async (req, res) => {
          SELECT 'mpm' AS encabezado, 'Prensa Hidraulica Manual' AS EncName, id, fechaCreacion, id_creador, id_maquina
          FROM mpm 
           WHERE id_estado = 2
+
+        
+
         `;
 
         const [rows] = await pool.query(consulta);

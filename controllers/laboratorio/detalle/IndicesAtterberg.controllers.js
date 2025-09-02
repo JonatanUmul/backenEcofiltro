@@ -1,9 +1,11 @@
 import { pool } from "../../../src/db.js";
 
 export const IndicesAtterberg = async (req, res) => {
-  const datos= req.body.values;
-  const codigoLote= req.body.codigoLote
 
+  const datos= req.body.params.values;
+
+  const codigoLote= req.body.params.codigoLote
+  console.log('datos del fronr wn limites',datos)
   try {
     const consulta = `INSERT INTO Limites_Atterberg_Barro(
         codigo_lote,
@@ -25,11 +27,15 @@ export const IndicesAtterberg = async (req, res) => {
       datos.arena,
       datos.limo,
     ]);
-    res.send({ rows });
+
+    res.status(200).json({respuesta:'Datos guardados con exito', rows})
   } catch (err) {
     console.log("Error al guardar los datos", err);
   }
 };
+
+
+
 
 export const GetIndicesAtterberg = async (req, res) => {
   const fecha = req.params.fecha;

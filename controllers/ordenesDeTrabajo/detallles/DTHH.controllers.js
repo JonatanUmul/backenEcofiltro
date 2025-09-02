@@ -1,38 +1,56 @@
 import { pool } from "../../../src/db.js";
 
+export const postDTHH = async (req, res) => {
+  const {
+    id_OTHH,
+    id_turno,
+    id_modelo,
+    id_horno,
+    id_hornero,
+    horneado,
+    mermasCrudas,
+    codigoInicio,
+    codigoFin,
+    librasBarro,
+    id_creador,
+    id_est,
+  } = req.body;
 
+  try {
+    const consulta =
+      "INSERT INTO dthh(id_OTHH, id_turno, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, id_creador, id_est)Values(?, ?,?,?, ?,?, ?,?, ?,?, ?,?)";
 
-export const postDTHH = async(req, res)=>{
-    
-    const {
-        id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2,id_creador, id_est
-     } = req.body;
-    
+    const [rows] = await pool.query(consulta, [
+      id_OTHH,
+      id_turno,
+      //id_aserradero,
+      // id_cernidodetalle,
+      //id_cernidodetalle2,
+      id_modelo,
+      id_horno,
+      id_hornero,
+      horneado,
+      mermasCrudas,
+      codigoInicio,
+      codigoFin,
+      librasBarro,
+      //librasAserrin,
+      //librasAserrin2,
+      //id_aserradero2,
+      id_creador,
+      id_est,
+    ]);
+    res.send({ rows });
+  } catch (err) {
+    console.log(err);
+    res.send({ err });
+  }
+};
 
-    try{
-      if (!id_OTHH || !id_turno || !id_aserradero || !id_cernidodetalle || !id_modelo || !id_horno || !id_hornero || !horneado || !mermasCrudas || !codigoInicio || !codigoFin || !librasBarro || !librasAserrin) {
-        return res.status(400).json({
-            errors: {
-                form: "Todos los campos son obligatorios"
-            }
-        });
-    }
-            const consulta='INSERT INTO dthh(id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador, id_est)Values(?, ?,?,?, ?,?, ?,?, ?,?, ?,?, ?,?,?,?,?,?)';
-        const [rows]= await pool.query(consulta,[  id_OTHH, id_turno, id_aserradero, id_cernidodetalle, id_cernidodetalle2, id_modelo, id_horno, id_hornero, horneado, mermasCrudas, codigoInicio, codigoFin, librasBarro, librasAserrin, librasAserrin2, id_aserradero2, id_creador, id_est])
-        res.send({rows});
-        
-        
-    }catch(err){
-        console.log('Error al guardar los datos', err)
-    }
-}
-
-export const getDTHH = async(req, res)=>{
-
-    const id= req.params.id
-    try {
-    const consulta = 
-    `WITH MaxTemperaturas AS (
+export const getDTHH = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const consulta = `WITH MaxTemperaturas AS (
     SELECT
         dth.fecha_real,
         dth.id_horno,
@@ -118,24 +136,30 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
         AND d.id_modelo= mt.id_modelo
         AND d.id_turno= mt.id_turno
 
-    where d.id_OTHH = ?`
-    const [rows]= await pool.query(consulta, [id])
+    where d.id_OTHH = ?`;
+    const [rows] = await pool.query(consulta, [id]);
     // Enviar los datos obtenidos al cliente
     res.status(200).json({ data: rows });
+  } catch (error) {
+    console.error("Error al obtener los datos de la tabla dtp:", error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener los datos de la tabla dtp" });
+  }
+};
 
-    } catch (error) {
-        console.error("Error al obtener los datos de la tabla dtp:", error);
-      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
-    }
-    
-}
-
-export const getSSDTH = async(req, res)=>{
-
-    const {fecha_creacion_inicio,fecha_creacion_fin,modeloUF,turn,horno,id_est, fecha_CC}= req.params
-    try {
-    let consulta = 
-    ` WITH MaxTemperaturas AS (
+export const getSSDTH = async (req, res) => {
+  const {
+    fecha_creacion_inicio,
+    fecha_creacion_fin,
+    modeloUF,
+    turn,
+    horno,
+    id_est,
+    fecha_CC,
+  } = req.params;
+  try {
+    let consulta = ` WITH MaxTemperaturas AS (
     SELECT
         dth.fecha_real,
         dth.id_horno,
@@ -222,77 +246,122 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
         AND d.id_turno= mt.id_turno
 
     WHERE 1= 1 `;
-    
-    const params=[]
 
- 
-    if (modeloUF !== 'null') {
-        consulta += ' AND (d.id_modelo IS NULL OR d.id_modelo = ?)';
-        params.push(modeloUF)}
-    
-    if (horno !== 'null') {
-      consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
-      params.push(horno)}
-    
-    if (turn !== 'null') {
-      consulta += ' AND (d.id_turno IS NULL OR d.id_turno = ?)';
+    const params = [];
+
+    if (modeloUF !== "null") {
+      consulta += " AND (d.id_modelo IS NULL OR d.id_modelo = ?)";
+      params.push(modeloUF);
+    }
+
+    if (horno !== "null") {
+      consulta += " AND (d.id_horno IS NULL OR d.id_horno = ?)";
+      params.push(horno);
+    }
+
+    if (turn !== "null") {
+      consulta += " AND (d.id_turno IS NULL OR d.id_turno = ?)";
       params.push(turn);
     }
 
-    if (id_est !== 'null') {
-      consulta += 'AND d.id_est=?';
+    if (id_est !== "null") {
+      consulta += "AND d.id_est=?";
       params.push(id_est);
-  }
-  
-        
-     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-          consulta += ' AND (d.fecha_creacion BETWEEN ? AND ?)';
-          params.push(fecha_creacion_inicio, fecha_creacion_fin);
-        } else if (fecha_creacion_inicio !== 'null') {
-          consulta += ' AND d.fecha_creacion >= ?';
-          params.push(fecha_creacion_inicio);
-        } else if (fecha_creacion_fin !== 'null') {
-          consulta += ' AND d.fecha_creacion <= ?';
-          params.push(fecha_creacion_fin);
-        }
+    }
 
-        if (fecha_CC !== 'null' && fecha_CC !== 'null') {
-          consulta += ' AND (dtcc.fecha_creacion BETWEEN ? AND ?)';
-          params.push(fecha_CC, fecha_CC);
-        } else if (fecha_CC !== 'null') {
-          consulta += ' AND dtcc.fecha_creacion >= ?';
-          params.push(fecha_CC);
-        } else if (fecha_CC !== 'null') {
-          consulta += ' AND dtcc.fecha_creacion <= ?';
-          params.push(fecha_CC);
-        }
-     consulta+=' ORDER BY d.id ASC'
+    if (fecha_creacion_inicio !== "null" && fecha_creacion_fin !== "null") {
+      consulta += " AND (d.fecha_creacion BETWEEN ? AND ?)";
+      params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    } else if (fecha_creacion_inicio !== "null") {
+      consulta += " AND d.fecha_creacion >= ?";
+      params.push(fecha_creacion_inicio);
+    } else if (fecha_creacion_fin !== "null") {
+      consulta += " AND d.fecha_creacion <= ?";
+      params.push(fecha_creacion_fin);
+    }
 
-    const [rows]= await pool.query(consulta, params)
+    if (fecha_CC !== "null" && fecha_CC !== "null") {
+      consulta += " AND (dtcc.fecha_creacion BETWEEN ? AND ?)";
+      params.push(fecha_CC, fecha_CC);
+    } else if (fecha_CC !== "null") {
+      consulta += " AND dtcc.fecha_creacion >= ?";
+      params.push(fecha_CC);
+    } else if (fecha_CC !== "null") {
+      consulta += " AND dtcc.fecha_creacion <= ?";
+      params.push(fecha_CC);
+    }
+    consulta += " ORDER BY d.id ASC";
+
+    const [rows] = await pool.query(consulta, params);
     // Enviar los datos obtenidos al cliente
     res.status(200).json({ data: rows });
+  } catch (error) {
+    console.error("Error al obtener los datos de la tabla dtp:", error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener los datos de la tabla dtp" });
+  }
+};
 
-    } catch (error) {
-        console.error("Error al obtener los datos de la tabla dtp:", error);
-      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
-    }
-    
-}
+export const putDTHH = async (req, res) => {
+  const id = req.body.id;
+  const id_est = req.body.id_est;
 
+  try {
+    const consulta = `UPDATE dthh SET id_est = ? WHERE id = ?`;
 
+    const [rows] = await pool.query(consulta, [id_est, id]);
+    res.status(200).json({ data: rows });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtene los datoe de la tabla DTHH" });
+  }
+};
 
-export const putDTHH = async(req, res)=>{
-    const id =req.body.id;
-    const id_est=req.body.id_est;
-    
-    try {
-        const consulta =`UPDATE dthh SET id_est = ? WHERE id = ?`
+export const DTHH_CodigosParaHornos = async (req, res) => {
+  const modelo = req.query.modeloSeleccionado;
+  const id_proceso = req.query.id_proceso;
 
-        const [rows]= await pool.query(consulta,[id_est, id])
-        res.status(200).json({data:rows})
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({error:'Error al obtene los datoe de la tabla DTHH'})
-    }
+  console.log(modelo);
+  const consulta = `
+SELECT 
+ CASE 
+    WHEN id_proceso = 4 THEN SUBSTRING(serie, 1, 8)
+    WHEN id_proceso = 5 THEN SUBSTRING(serie, 1, 7)
+    WHEN id_proceso = 6 THEN SUBSTRING(serie, 1, 7)
+    WHEN id_proceso = 12 THEN SUBSTRING(serie, 1, 8)
+  END AS serie1,
+serie, 
+estado, 
+disponibilidad 
+FROM seriesecofiltro 
+WHERE id_proceso = ? AND disponibilidad='disponible' AND id_ufmodelo=?
+`;
 
-}
+  try {
+    const [rows] = await pool.query(consulta, [id_proceso,modelo]);
+
+    res.send({ rows });
+  } catch (error) {
+    res.send({ mensaje: "Error al obtener los datos", error });
+    console.log(error);
+  }
+};
+
+export const Ultimo_id_DTHH = async (req, res) => {
+  console.log('consulta de tabla',req)
+  const tabla =req.query.tabla
+  const consulta = `
+  SELECT 
+  MAX(id) as ultimoId
+ FROM ${tabla}
+  `;
+  try {
+    const [rows] = await pool.query(consulta);
+    res.send({ rows });
+  } catch (error) {
+    res.send(error);
+  }
+};

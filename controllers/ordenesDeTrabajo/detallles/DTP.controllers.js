@@ -5,49 +5,238 @@ export const updateDTP=async(req,res)=>{
 
 }
 
-export const postDTP = async (req, res) => {
-   const id_est=2;
-  const {
-    id_OTP,fecha_real, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion, id_creador,id_mezcladora} = req.body;
+// export const postDTP = async (req, res) => {
+//    const id_est=2;
+//   const {
+//     id_OTP,fecha_real,id_camionada, id_grupoproduccion, id_turno,id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, librasAserrin2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, observacion, id_creador,id_mezcladora} = req.body;
 
 
-console.log(id_grupoproduccion)
-  try {
-    if(id_OTP===''|| id_turno===''|| id_grupoproduccion===''|| id_Aserradero===''|| id_ufmodelo===''|| producido===''|| codigoInicio===''|| codigoFinal===''|| librasBarro===''|| librasAserrin==='' || id_creador==='')
-    { console.log('Uno o varios datos están vacíos');
-    return res.status(400).json({ error: 'Uno o varios datos están vacíos' });
-  }else{
-      const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador, id_est, id_mezcladora) VALUES (?, ?, ?, ?,?,?,?, ?, ?,?, ?,?,?,?,?,?,?,?,?)";
-      const [rows] = await pool.query(consulta, [
-        id_OTP,
-        fecha_real,
-        id_grupoproduccion,
+// console.log(id_grupoproduccion)
+//   try {
+//     if(id_OTP===''|| id_turno===''|| id_grupoproduccion===''|| id_Aserradero===''|| id_ufmodelo===''|| producido===''|| codigoInicio===''|| codigoFinal===''|| librasBarro===''|| librasAserrin==='' || id_creador==='')
+//     { console.log('Uno o varios datos están vacíos');
+//     return res.status(400).json({ error: 'Uno o varios datos están vacíos' });
+//   }else{
+//       const consulta ="INSERT INTO dtp( id_OTP, fecha_real,id_grupoproduccion, id_turno, id_cernidodetalle,id_cernidodetalle2, id_Aserradero, id_Aserradero2, id_ufmodelo, producido, codigoInicio, codigoFinal, librasBarro, librasAserrin, librasAserrin2, observacion, id_creador, id_est, id_mezcladora) VALUES (?, ?, ?, ?,?,?,?, ?, ?,?, ?,?,?,?,?,?,?,?,?)";
+//       const [rows] = await pool.query(consulta, [
+//         id_OTP,
+//         fecha_real,
+//         id_grupoproduccion,
+//     id_turno,
+//     id_cernidodetalle,
+//     id_cernidodetalle2,
+//     id_Aserradero,
+//     id_Aserradero2,
+//     id_ufmodelo,
+//     producido,
+//     codigoInicio,
+//     codigoFinal,
+//     librasBarro,
+//     librasAserrin,
+//     librasAserrin2,
+//     observacion, 
+//     id_creador,
+//     id_est,
+//     id_mezcladora
+//       ]);
+//       res.send({ rows });
+//     }
+//     }
+      
+//    catch (err) {
+//     console.log("Error al guardar los datos", err);
+//     res.status(500).json({ error: "Error al guardar los datos" }); // Enviar un mensaje de error al frontend
+//   }
+// };
+
+
+export const postDTP=async(req, res)=>{
+  const {id_OTP,formData,fecha_creacion, id_creador, CodigoInicioNumber, CodigoFinalNumber}=req.body
+  const total_lb_barro= formData.formulas_usadas*formData.librasBarro
+  const total_lb_aserrin= formData.formulas_usadas*formData.librasAserrin
+
+  const id_est=2
+  
+  const consulta=
+  `insert into dtp(
+    id_OTP,
+    id_lote_camionada,
     id_turno,
-    id_cernidodetalle,
-    id_cernidodetalle2,
     id_Aserradero,
-    id_Aserradero2,
     id_ufmodelo,
+    id_creador,
     producido,
+    letra_inicio,
     codigoInicio,
     codigoFinal,
+    letra_fin,
     librasBarro,
+    total_lb_barro,
     librasAserrin,
+    total_lb_aserrin,
+    observacion,
+    fecha_real,
+    id_Aserradero2,
     librasAserrin2,
-    observacion, 
-    id_creador,
+    id_cernidodetalle,
+    id_cernidodetalle2,
+    id_grupoproduccion,
     id_est,
-    id_mezcladora
-      ]);
-      res.send({ rows });
+    id_mezcladora)
+    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `
+
+    try {
+      await pool.query(consulta,
+        [id_OTP,
+          formData.id_camionada,
+          formData.id_turno,
+          formData.id_Aserradero,
+          formData.id_ufmodelo,
+          id_creador,
+          formData.producido,
+          formData.identificador,
+          CodigoInicioNumber,
+          CodigoFinalNumber,
+          formData.identificador,
+          formData.librasBarro,
+          total_lb_barro,
+          formData.librasAserrin,
+          total_lb_aserrin,
+          formData.observacion,
+          fecha_creacion,
+          formData.id_Aserradero2,
+          formData.librasAserrin2,
+          formData.id_cernidodetalle,
+          formData.id_cernidodetalle2,
+          formData.id_grupoproduccion,
+          formData.id_grupoproduccion,
+          formData.id_grupoproduccion,
+          id_est,
+          formData.id_mezcladora        
+        ])
+        res.status(200).json({mensaje:'Datos Guardados con Exito'})
+
+    } catch (error) {
+      res.status(501).json({mensaje:'Error del servidor', error})
+
     }
-    }
-      
-   catch (err) {
-    console.log("Error al guardar los datos", err);
-    res.status(500).json({ error: "Error al guardar los datos" }); // Enviar un mensaje de error al frontend
+
+}
+
+
+export const DTP_CodigosProduccion = async (req, res) => {
+
+
+  const series = req.body.serialProduccion;
+  const id_dtp = req.body.id_dtp;
+  const id_proceso=req.body.id_proceso
+  const id_modelo= req.body.id_modelo
+  const estado = 'OK';
+
+  console.log('datos en el post para guardar codigos nuevos',req.body)
+  // Armar array de valores: [ [id_dtp, codigo1, estado], [id_dtp, codigo2, estado], ... ]
+  const valores = series.map(codigo => [id_dtp, id_proceso, id_modelo, codigo, estado, 'disponible']);
+
+  const consulta = 'INSERT INTO seriesEcofiltro (id_dtp, id_proceso, id_ufmodelo, serie, estado, disponibilidad) VALUES ?';
+
+  try {
+    await pool.query(consulta, [valores]); 
+    res.status(200).json({ mensaje: 'Datos guardados exitosamente' });
+  } catch (error) {
+    console.error('Error del servidor:', error); 
+  res.status(500).json({ mensaje: 'Error del servidor', error });
   }
 };
+
+export const UPDATE_DTP_CodigosProduccion = async (req, res) => {
+  const datos = req.body.NuevoEstadoSerir;
+  const fechaUpdate= new Date()
+
+  const serie = datos[0]; 
+  const id_proceso = datos[1];
+  const estado = datos[2];
+
+  const consulta = `
+    UPDATE seriesecofiltro
+    SET estado = ?, fecha_actualizacion = ?
+    WHERE id_proceso = ? AND serie = ?;
+  `;
+
+
+  try {
+    const response = await pool.query(consulta, [estado,fechaUpdate, id_proceso, serie]);
+   
+    res.status(200).json({
+      mensaje: `Número de serie: ${serie} actualizado correctamente a: ${estado}`
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error del servidor: ' + error });
+  }
+};
+
+export const Update_SerieEcofiltroTasa = async (req, res) => {
+  const datos = req.body.NuevoEstadoSerirTasa;
+  const fechaUpdate= new Date()
+  const serie = datos[0]; 
+  const id_proceso = datos[1];
+  const tasa = datos[2];
+  
+  console.log(serie,id_proceso,tasa)
+  const consulta = `
+  UPDATE seriesecofiltro
+  SET tasa = ?, fecha_actualizacion = ?
+  WHERE id_proceso = ? AND serie = ?
+`;
+
+  try {
+   
+                     await pool.query(consulta, [tasa, fechaUpdate, id_proceso, serie]);
+    res.status(200).json({
+      mensaje: `Número de serie: ${serie} actualizado correctamente a: ${tasa}`
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: 'Error del servidor: ' + error });
+  }
+};
+
+export const UPDATE_CodigosProduccion = async (req, res) => {
+  const {serialProduccion,  id_modelo, id_proceso, disponibilidad } = req.body;
+  const fechaUpdate= new Date()
+  console.log('Series para actualizar',serialProduccion, id_modelo, id_proceso, disponibilidad);
+
+  const consulta = `
+    UPDATE seriesecofiltro
+    SET disponibilidad = ?, fecha_actualizacion = ?
+    WHERE id_proceso = ? AND serie = ? AND id_ufmodelo = ?
+  `;
+
+  try {
+    // Ejecutar todas las actualizaciones en paralelo
+//     const updates = serialProduccion.map((serie) =>
+
+//       pool.query(consulta, [disponibilidad, id_proceso, serie, id_modelo])
+//     );
+// console.log('actualizacion',updates)
+for(let a=0; a<serialProduccion.length; a++){
+  console.log('Datos para actualizar en el for',serialProduccion[a])
+  await pool.query(consulta,[disponibilidad, fechaUpdate, id_proceso, serialProduccion[a], id_modelo])
+}
+    // const resultados = await Promise.all(updates);
+
+
+    return res.status(200).json({
+      message: `${serialProduccion.length} series actualizadas correctamente`,
+    });
+
+  } catch (error) {
+    console.error("Error al actualizar series:", error);
+    return res.status(500).json({ error: "Error al actualizar series" });
+  }
+};
+
 
 
 
@@ -58,7 +247,9 @@ export const getDTP = async (req, res) => {
     const consulta = `
       SELECT 
         d.id,
+        d.id_ufmodelo,
         d.producido,
+        d.letra_fin,
         d.codigoInicio,
         d.codigoFinal,
         d.librasBarro,
@@ -140,6 +331,8 @@ export const getDTPPS = async (req, res) => {
       SELECT 
         d.id,
         d.producido,
+        d.id_ufmodelo,
+        d.letra_fin,
         d.codigoInicio,
         d.codigoFinal,
         d.librasBarro,
@@ -162,7 +355,9 @@ export const getDTPPS = async (req, res) => {
         user.firmaUsr AS firmaJefe,
         operarios.Nombre AS NombreJefe,
         operarios1.Nombre AS NombreEncargadoP,
-        user1.firmaUsr AS firmaEncargado
+        user1.firmaUsr AS firmaEncargado,
+         COUNT(se.id) AS existencias
+
       FROM 
         dtp d
       LEFT JOIN 
@@ -191,7 +386,12 @@ export const getDTPPS = async (req, res) => {
         operarios AS operarios1 ON user2.nombre = operarios1.id
       LEFT JOIN 
         user AS user1 ON d.id_creador = user1.id
+          LEFT JOIN 
+      	seriesEcofiltro AS se ON d.id= se.id_dtp
+
       WHERE 1 = 1
+         	
+     
     `;
 
     let params = [];
@@ -212,7 +412,7 @@ export const getDTPPS = async (req, res) => {
       params.push(id_ufmodelo);
     }
 
-    consulta += 'AND otp.id_est=3 OR otp.id_est=2' ;
+
    
 
 
@@ -220,6 +420,8 @@ export const getDTPPS = async (req, res) => {
       consulta += ' AND d.id_grupoproduccion = ?';
       params.push(id_grupoproduccion);
     }
+
+      consulta += ' GROUP BY d.id'
 
     const [rows] = await pool.query(consulta, params);
 
@@ -232,3 +434,135 @@ export const getDTPPS = async (req, res) => {
 };
 
 
+
+export const DtpUltimoCodigo=async(req, res)=>{
+  const id_ufmodelo=req.params.modelo
+  console.log(id_ufmodelo)
+const consulta= `
+  SELECT
+  dtp.id,
+  dtp.codigoInicio,
+  sum(dtp.codigoFinal+1) AS codigoFinal
+  FROM dtp
+  WHERE id = (
+    SELECT MAX(id)
+    FROM dtp
+  WHERE dtp.id_ufmodelo=?
+  );`
+
+try {
+  const [response]= await pool.query(consulta,[id_ufmodelo] )
+  res.send({response})
+} catch (error) {
+  res.status(500).json({mensaje:'Error en el Servidor', error})
+  console.log(error)
+}
+
+}
+
+export const DTP_CodigosProduccion_id_dtp=async(req, res)=>{
+
+const id_dtp=parseInt(req.params.id_dtp)
+const id_proceso=parseInt(req.params.id_proceso)
+
+const consulta= 
+`SELECT 
+seriesecofiltro.id,
+seriesecofiltro.id_proceso,
+seriesecofiltro.serie,
+seriesecofiltro.tasa,
+seriesecofiltro.estado,
+seriesecofiltro.fecha_creacion
+ FROM seriesecofiltro
+WHERE id_dtp=? AND id_proceso=?
+`
+ try {
+  const [response]=await pool.query(consulta, [id_dtp, id_proceso])
+  console.log(response)
+  res.send({response})
+ } catch (error) {
+  res.status(201).json({mensaje: 'Error del servidor', error})
+ }
+ }
+
+
+ 
+ export const DTP_CodigosAprobados=async(req, res)=>{
+
+  const id_modelo=req.params.id_modelo
+  const id_proceso=req.params.id_proceso
+  
+  const consulta= 
+  `SELECT 
+  seriesecofiltro.id,
+  seriesecofiltro.id_proceso,
+  seriesecofiltro.serie,
+  seriesecofiltro.tasa,
+  seriesecofiltro.estado,
+  seriesecofiltro.fecha_creacion
+   FROM seriesecofiltro
+  WHERE id_ufmodelo=? AND id_proceso=? AND disponibilidad='disponible'
+  `
+   try {
+    const [response]=await pool.query(consulta, [id_modelo, id_proceso])
+    console.log(response)
+    res.send({response})
+   } catch (error) {
+    res.status(201).json({mensaje: 'Error del servidor', error})
+   }
+   }
+
+   export const DTP_MermasProduccion = async (req, res) => {
+
+    const { fecha_inicio, fecha_fin, id_modelo, id_proceso } = req.query;
+    console.log('Params recibidos:', fecha_inicio, fecha_fin, id_modelo, id_proceso );
+    try {
+      let consulta = `
+        SELECT 
+          d.id_dtp,
+          d.id_proceso, 
+          d.serie, 
+          d.estado, 
+          d.fecha_creacion, 
+          d.fecha_actualizacion, 
+          d.disponibilidad
+        FROM seriesecofiltro d
+        WHERE 1 = 1
+      `;
+  
+      const params = [];
+  
+      if (fecha_inicio !== 'null' && fecha_fin !== 'null') {
+        consulta += ' AND d.fecha_actualizacion BETWEEN ? AND ?';
+        params.push(fecha_inicio, fecha_fin);
+      } else if (fecha_inicio !== 'null') {
+        consulta += ' AND d.fecha_actualizacion >= ?';
+        params.push(fecha_inicio);
+      } else if (fecha_fin !== 'null') {
+        consulta += ' AND d.fecha_actualizacion <= ?';
+        params.push(fecha_fin);
+      }
+  
+      if (id_modelo !== 'null') {
+        consulta += ' AND d.id_ufmodelo = ?';
+        params.push(id_modelo);
+      }
+  
+      if (id_proceso !== 'null') {
+        consulta += ' AND d.id_proceso = ?';
+        params.push(id_proceso);
+      }
+  
+      consulta += ' ORDER BY d.fecha_actualizacion DESC';
+  
+      const [rows] = await pool.query(consulta, params);
+      console.log(rows)
+      res.status(200).json(rows);
+  
+     
+    } catch (error) {
+      console.error('Error al obtener los datos de seriesecofiltro:', error);
+      res.status(500).json({ error: 'Error al obtener los datos de seriesecofiltro' });
+    }
+  };
+  
