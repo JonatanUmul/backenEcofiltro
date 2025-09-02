@@ -161,40 +161,40 @@ import BarroInventario from "./src/routes/materiasPrimas/Homogenización.routes.
 dotenv.config();
 
 // const Origen =  process.env.ALLOWED_ORIGIN;
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://www.eco-aplicaciones.com",
-  // "https://107.20.171.166:50013"
-];
-// const Origen = process.env.ALLOWED_ORIGIN;
+// const allowedOrigins = [
+//   "http://localhost:3000",
+//   "https://www.eco-aplicaciones.com",
+//   // "https://107.20.171.166:50013"
+// ];
+const Origen = process.env.ALLOWED_ORIGIN;
 
 const app = express();
 
 // app.use(cors);
 
-// app.use(cors({
-
-//   origin: Origen, // Utiliza la variable de entorno correcta
-//   methods: ['GET', 'POST', 'PUT'], // Métodos permitidos
-//   allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
-// }));
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", Origen);
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-//   res.header("Access-Control-Allow-Credentials", "true"); // Si necesitas enviar cookies
-//   next();
-// });
-
 app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: false,
-  allowedHeaders: ['Content-Type', 'Authorization']
+
+  origin: Origen, // Utiliza la variable de entorno correcta
+  methods: ['GET', 'POST', 'PUT'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
 }));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", Origen);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Credentials", "true"); // Si necesitas enviar cookies
+  next();
+});
+
+// app.use(cors({
+//   origin: allowedOrigins,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   credentials: false,
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
 
 // Middleware para manejar OPTIONS pre-flight request
 // app.options("*", cors());
