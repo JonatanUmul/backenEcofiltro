@@ -164,7 +164,7 @@ dotenv.config();
 const allowedOrigins = [
   "http://localhost:3000",
   "https://www.eco-aplicaciones.com",
-  "https://107.20.171.166:50013"
+  // "https://107.20.171.166:50013"
 ];
 // const Origen = process.env.ALLOWED_ORIGIN;
 
