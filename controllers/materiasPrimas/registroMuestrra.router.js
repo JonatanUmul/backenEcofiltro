@@ -6,15 +6,16 @@ export const postregistroMuestra=async(req, res)=>{
     const lote= datos.codigo_lote;
     const est= datos.estado;
     const ob= datos.observacion
-    console.log(datos)
+    const enc_matprima=datos.enc_matprima
+
 
    
 
     try {
-        const consulta =`INSERT INTO muestras(codigo_lote,estado,observaciones)VALUES(?,?,?)`
+        const consulta =`INSERT INTO muestras(codigo_lote,estado,observaciones, id_materia_prima)VALUES(?,?,?, ?)`
 
     const estado= datos.estado;
-        const [rows]= await pool.query(consulta,[lote, est, ob])
+        const [rows]= await pool.query(consulta,[lote, est, ob, enc_matprima])
 
         res.send({rows})
     } catch (error) {
