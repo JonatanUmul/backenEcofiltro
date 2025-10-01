@@ -135,6 +135,7 @@ export const putOT_mezclado_aserrin = async (req, res) => {
   }
 };
 
+
 export const putEstadoProcesoMezclaAserrin = async (req, res) => {
   const estado = String( req.body.id_est);
   const id = req.body.id;
