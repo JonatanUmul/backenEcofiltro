@@ -37,10 +37,14 @@ export const getEtapas_barro = async (req, res) => {
   const id_fase_aprobacion = req.query.id_fase_aprobacion;
   const estado_proceso = req.query.estado_proceso;
 
+  console.log('fases de aprobacion',id_fase_aprobacion,estado_proceso)
   const consulta = `
   SELECT 
   hm.id,
+  m.id as ID_muestra,
   hm.muestra_id,
+  sum(pv.cantidad) as cant_sacos,
+  sum(pv.peso_total_libras) as cant_lib,
 	hm.fecha AS fechaHomogenizacion,
 	m.codigo_lote,
   m.fecha,
@@ -53,7 +57,8 @@ export const getEtapas_barro = async (req, res) => {
  FROM etapas_barro hm
  LEFT JOIN muestras m ON m.id=hm.muestra_id
  LEFT JOIN limites_atterberg_barro lm ON lm.codigo_lote=m.codigo_lote
- WHERE hm.id_fase_aprobacion= ? AND id_estado=?
+ LEFT JOIN dtpv pv on hm.id=pv.id_camionada
+ WHERE hm.id_fase_aprobacion= ? AND hm.id_estado=? AND m.estado=2
  group by hm.muestra_id, hm.id, hm.fecha, m.codigo_lote, m.fecha
  `;
   try {
@@ -69,7 +74,9 @@ export const getEtapas_barro = async (req, res) => {
 
 
 export const getEtapas_barro_lote = async (req, res) => {
-  const consulta = `
+  const id_fase_aprobacion= req.query.id_fase_aprobacion
+  console.log(req)
+  /*const consulta = `
   SELECT 
   hm.id,
   hm.muestra_id,
@@ -87,9 +94,28 @@ export const getEtapas_barro_lote = async (req, res) => {
  LEFT JOIN limites_atterberg_barro lm ON lm.codigo_lote=m.codigo_lote
 	WHERE hm.id_fase_aprobacion=4
  group by hm.muestra_id, hm.id, hm.fecha, m.codigo_lote, m.fecha
- `;
+ `;*/
+ const consulta= `
+  SELECT 
+  hm.id,
+  hm.muestra_id,
+	hm.fecha AS fechaHomogenizacion,
+	m.codigo_lote,
+  m.fecha,
+	lm.limite_liquido,
+	lm.limite_plastico,
+	lm.indice_plastico,
+	lm.arcilla,
+	lm.arena,
+	lm.limo
+ FROM etapas_barro hm
+ LEFT JOIN muestras m ON m.id=hm.muestra_id
+ LEFT JOIN limites_atterberg_barro lm ON lm.codigo_lote=m.codigo_lote
+	WHERE hm.id_fase_aprobacion=? and m.estado=2
+ group by hm.muestra_id, hm.id, hm.fecha, m.codigo_lote, m.fecha`
+
   try {
-    const [rows] = await pool.query(consulta);
+    const [rows] = await pool.query(consulta, [id_fase_aprobacion]);
     res.send({ rows });
   } catch (error) {
     res.status(500).send("Error del servidor", error);
@@ -106,18 +132,54 @@ console.log(loteSelect)
   eb.id,
   eb.id_fase_aprobacion,
   m.codigo_lote,
-  dtpv.peso_total_libras - COALESCE(SUM(dtp.total_lb_barro), 0) AS peso_total_libras
-  FROM etapas_barro eb
-  LEFT JOIN muestras m ON eb.muestra_id=m.id
-  LEFT JOIN dtpv ON dtpv.id_camionada=eb.id
-  LEFT JOIN dtp ON dtpv.id_camionada=dtp.id_lote_camionada
-  where eb.id_fase_aprobacion=4 AND m.codigo_lote=?
-  
-  GROUP BY 
-    eb.id,
-    eb.id_fase_aprobacion,
-    m.codigo_lote,
-    dtpv.peso_total_libras;
+  COALESCE(SUM(dtpv.peso_total_libras),0) - COALESCE(SUM(dtp.total_lb_barro), 0) AS peso_total_libras
+FROM etapas_barro eb
+LEFT JOIN muestras m 
+  ON eb.muestra_id = m.id
+LEFT JOIN dtpv 
+  ON dtpv.id_camionada = eb.id
+LEFT JOIN dtp 
+  ON dtp.id_lote_camionada = eb.id
+WHERE eb.id_fase_aprobacion = 4 
+  AND m.codigo_lote = ?
+GROUP BY 
+  eb.id,
+  eb.id_fase_aprobacion,
+  m.codigo_lote;
+
+
+ `;
+  try {
+    const [rows] = await pool.query(consulta, [loteSelect]);
+    res.send({ rows });
+  } catch (error) {
+    res.status(500).send("Error del servidor", error);
+  }
+};
+
+
+export const getAserrinInventario = async (req, res) => {
+const loteSelect=parseInt(req.params.idSelect) 
+console.log('loteSelect',loteSelect)
+  const consulta = `
+select 
+m.id,
+m.codigo_lote,
+m.fecha,
+m.id_materia_prima,
+m.sacos as sacosMuestras,
+ma.sacos as sacosDtmezclaAserrin,
+m.sacos-COALESCE(SUM(ma.sacos), 0) as SacosDisponibles
+
+ from muestras m
+ left join DT_mezclado_aserrin ma on m.id=ma.id_camionada_aserrin 
+ where m.id=? and m.estado=2
+
+ group by
+ m.id,
+ m.codigo_lote,
+ m.fecha,
+ m.id_materia_prima
 
  `;
   try {

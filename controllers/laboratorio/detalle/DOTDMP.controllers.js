@@ -4,7 +4,7 @@ import { pool } from "../../../src/db.js";
 
 
 export const postDOTDMP = async(req, res)=>{
-  console.log(req)
+  console.log('DOTDMP',req)
   const {
     id_dtp,
     id_creador,
@@ -25,7 +25,7 @@ export const postDOTDMP = async(req, res)=>{
     try{
     
        const consulta=`INSERT INTO dotdmp(
-       id_muestra,
+    id_ot_mezclado_aserrin,
     id_creador,
     id_aserradero,
     id_aserradero2,

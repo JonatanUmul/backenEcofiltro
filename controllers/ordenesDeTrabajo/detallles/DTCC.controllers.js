@@ -5,8 +5,8 @@ export const postDTCC = async (req, res) => {
   const enviado = 0;
   const {
     id_dthh,
-    horneado,
     fecha_real,
+    horneado,
     codigoInicio,
     codigoFin,
     id_operarioCC,
@@ -19,24 +19,49 @@ export const postDTCC = async (req, res) => {
     aprobados,
     altos,
     bajos,
-    mermas_hornos,
     rajadosCC,
     crudoCC,
     quemados,
     ahumados,
+    rajados_horno,
+    desportillado,
+    desportillado_horno,
+    ovalado,
+    quemados_horno,
+    ahumados_horno,
+    reasignado,
     id_creador,
   } = req.body;
-console.log('horneado', horneado)
+  console.log(req.body);
+
   try {
     // Verifica que todos los campos necesarios existan y sean números válidos.
-    let sumaNumeros = [aprobados, altos, bajos, mermas_hornos, rajadosCC, crudoCC, quemados, ahumados].map(Number);
+    let sumaNumeros = [
+      aprobados,
+      altos,
+      bajos,
+      rajadosCC,
+      crudoCC,
+      quemados,
+      ahumados,
+      rajados_horno,
+      desportillado,
+      desportillado_horno,
+      ovalado,
+      quemados_horno,
+      ahumados_horno,
+      reasignado,
+    ].map(Number);
 
     if (sumaNumeros.some(isNaN)) {
       return res.status(400).json({ error: "Datos inválidos o faltantes" });
     }
 
     // Sumar los valores
-    let suma = sumaNumeros.reduce((acumulador, valorActual) => acumulador + valorActual, 0);
+    let suma = sumaNumeros.reduce(
+      (acumulador, valorActual) => acumulador + valorActual,
+      0
+    );
     console.log(`Suma de los valores: ${suma}`);
 
     // Validación: La suma debe ser igual a 'horneado'
@@ -48,10 +73,17 @@ console.log('horneado', horneado)
         INSERT INTO dtcc (
           id_dthh, fecha_real, codigoInicio, codigoFin, id_operarioCC, 
           id_auditor, modelo, id_horno, turnoCC, fechaHorneado, turnoHorneado, 
-          aprobados, altos, bajos, mermas_hornos, rajadosCC, crudoCC, quemados, 
-          ahumados, id_creador, enviado
+          aprobados, altos, bajos, rajadosCC, crudoCC, quemados, 
+          ahumados, id_creador, enviado, rajados_horno,
+        desportillado,
+        desportillado_horno,
+        ovalado,
+        quemados_horno,
+        ahumados_horno,
+        reasignado,
+        horneados
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)
       `;
       const [rows] = await pool.query(consulta, [
         id_dthh,
@@ -68,31 +100,37 @@ console.log('horneado', horneado)
         aprobados,
         altos,
         bajos,
-        mermas_hornos,
         rajadosCC,
         crudoCC,
         quemados,
         ahumados,
         id_creador,
         enviado,
+        rajados_horno,
+        desportillado,
+        desportillado_horno,
+        ovalado,
+        quemados_horno,
+        ahumados_horno,
+        reasignado,
+        horneado,
+        
       ]);
 
       res.send({ rows });
     }
-  } catch (err) {
-    console.log("Error al guardar los datos", err);
+    
+  } catch (error) {
+    console.log("Error al guardar los datos", error);
     res.status(500).json({ error: "Error en el servidor" });
   }
 };
 
-
-export const getDTCC = async(req, res)=>{
-
-    const id= req.params.id
-    console.log('id recibido', id)
-    try {
-    const consulta = 
-    `SELECT
+export const getDTCC = async (req, res) => {
+  const id = req.params.id;
+  console.log("id recibido", id);
+  try {
+    const consulta = `SELECT
     d.id_OTCC,
     d.id,
     d.fecha_real,
@@ -121,27 +159,38 @@ LEFT JOIN ufmodelo ON d.modelo = ufmodelo.id_mod
 LEFT JOIN turno AS turnoCC ON d.turnoCC = turnoCC.id  
 LEFT JOIN turno AS turnoHorneado ON d.turnoHorneado = turnoHorneado.id
 
-where d.id_dthh = ?`
-    const [rows]= await pool.query(consulta, [id])
+where d.id_dthh = ?`;
+    const [rows] = await pool.query(consulta, [id]);
     // Enviar los datos obtenidos al cliente
     res.status(200).json({ data: rows });
+  } catch (error) {
+    console.error("Error al obtener los datos de la tabla dtp:", error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener los datos de la tabla dtp" });
+  }
+};
 
-    } catch (error) {
-        console.error("Error al obtener los datos de la tabla dtp:", error);
-      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
-    }
-    
-}
-
-
-
-export const getsDTCCC = async(req, res)=>{
-
-    const {fecha_creacion_inicio, fecha_creacion_fin, turnoHorno, horno, modelo, id_dthh}= req.params
-    console.log('datos backend',fecha_creacion_inicio, fecha_creacion_fin, turnoHorno, horno, modelo, id_dthh)
-    try {
-    let consulta = 
-    `SELECT
+export const getsDTCCC = async (req, res) => {
+  const {
+    fecha_creacion_inicio,
+    fecha_creacion_fin,
+    turnoHorno,
+    horno,
+    modelo,
+    id_dthh,
+  } = req.params;
+  console.log(
+    "datos backend",
+    fecha_creacion_inicio,
+    fecha_creacion_fin,
+    turnoHorno,
+    horno,
+    modelo,
+    id_dthh
+  );
+  try {
+    let consulta = `SELECT
     d.id_OTCC,
     d.id,
     d.fecha_real,
@@ -176,47 +225,45 @@ LEFT JOIN ufmodelo ON d.modelo = ufmodelo.id_mod
 LEFT JOIN turno AS turnoCC ON d.turnoCC = turnoCC.id  
 LEFT JOIN turno AS turnoHorneado ON d.turnoHorneado = turnoHorneado.id
 LEFT JOIN dthh ON  dthh.fecha_creacion = d.fechaHorneado AND dthh.id_turno=d.turnoHorneado AND dthh.id_horno=d.id_horno AND dthh.id_modelo=d.modelo
-where 1= 1`
+where 1= 1`;
 
-const params=[]
+    const params = [];
 
-
-    
-    if (turnoHorno !== 'null') {
-      consulta += ' AND (d.turnoHorneado IS NULL OR d.turnoHorneado = ?)';
+    if (turnoHorno !== "null") {
+      consulta += " AND (d.turnoHorneado IS NULL OR d.turnoHorneado = ?)";
       params.push(turnoHorno);
     }
-    if (horno !== 'null') {
-        consulta += ' AND (d.id_horno IS NULL OR d.id_horno = ?)';
-        params.push(horno);
-      }
-      if (modelo !== 'null') {
-        consulta += ' AND (d.modelo IS NULL OR d.modelo = ?)';
-        params.push(modelo);
-      }
-      if (id_dthh !== 'null') {
-        consulta += ' AND (d.id_dthh IS NULL OR d.id_dthh = ?)';
-        params.push(id_dthh);
-      }
-    
-     if (fecha_creacion_inicio !== 'null' && fecha_creacion_fin !== 'null') {
-          consulta += ' AND (d.fechaHorneado BETWEEN ? AND ?)';
-          params.push(fecha_creacion_inicio, fecha_creacion_fin);
-        } else if (fecha_creacion_inicio !== 'null') {
-          consulta += ' AND d.fechaHorneado >= ?';
-          params.push(fecha_creacion_inicio);
-        } else if (fecha_creacion_fin !== 'null') {
-          consulta += ' AND d.fechaHorneado <= ?';
-          params.push(fecha_creacion_fin);
-        }
-    
-    const [rows]= await pool.query(consulta, params)
+    if (horno !== "null") {
+      consulta += " AND (d.id_horno IS NULL OR d.id_horno = ?)";
+      params.push(horno);
+    }
+    if (modelo !== "null") {
+      consulta += " AND (d.modelo IS NULL OR d.modelo = ?)";
+      params.push(modelo);
+    }
+    if (id_dthh !== "null") {
+      consulta += " AND (d.id_dthh IS NULL OR d.id_dthh = ?)";
+      params.push(id_dthh);
+    }
+
+    if (fecha_creacion_inicio !== "null" && fecha_creacion_fin !== "null") {
+      consulta += " AND (d.fechaHorneado BETWEEN ? AND ?)";
+      params.push(fecha_creacion_inicio, fecha_creacion_fin);
+    } else if (fecha_creacion_inicio !== "null") {
+      consulta += " AND d.fechaHorneado >= ?";
+      params.push(fecha_creacion_inicio);
+    } else if (fecha_creacion_fin !== "null") {
+      consulta += " AND d.fechaHorneado <= ?";
+      params.push(fecha_creacion_fin);
+    }
+
+    const [rows] = await pool.query(consulta, params);
     // Enviar los datos obtenidos al cliente
     res.status(200).json({ data: rows });
-
-    } catch (error) {
-        console.error("Error al obtener los datos de la tabla dtp:", error);
-      res.status(500).json({ error: "Error al obtener los datos de la tabla dtp" });
-    }
-    
-}
+  } catch (error) {
+    console.error("Error al obtener los datos de la tabla dtp:", error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener los datos de la tabla dtp" });
+  }
+};

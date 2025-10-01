@@ -17,6 +17,7 @@ export const postDTIP = async (req, res) => {
 
 
 export const getDTIP = async (req, res) => {
+
     const id= req.params.id;
     try {
       // Consulta SQL para obtener todos los registros de la tabla dtp
@@ -53,8 +54,10 @@ export const getDTIP = async (req, res) => {
   `;
       const [rows] = await pool.query(consulta,[id]);
   
+      console.log(rows)
       // Enviar los datos obtenidos al cliente
       res.status(200).json({ data: rows });
+  
     } catch (error) {
       // Manejar errores de manera adecuada
       console.error("Error al obtener los datos de la tabla dtp:", error);

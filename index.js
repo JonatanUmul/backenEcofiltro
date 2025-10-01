@@ -19,6 +19,7 @@ import OTSA from "./src/routes/ordenesDeTrabajo/encabezados/OTSMP.routes.js";
 import OTCA1 from "./src/routes/ordenesDeTrabajo/encabezados/OTCA1.routes.js";
 import OTPV from "./src/routes/ordenesDeTrabajo/encabezados/OTPV.routes.js";
 import OTFM from "./src/routes/ordenesDeTrabajo/encabezados/OTFM.routes.js";
+import otfm_estado_para_produccion from "./src/routes/ordenesDeTrabajo/encabezados/OTFM.routes.js";
 import ModelosUF from "./src/routes/mantenimientos/modelosUF/Modelos.routes.js";
 import OTP from "./src/routes/ordenesDeTrabajo/encabezados/OTP.routes.js";
 import DTHP from "./src/routes/ordenesDeTrabajo/detallados/DTHP.routes.js";
@@ -31,9 +32,12 @@ import OTCA2 from "./src/routes/ordenesDeTrabajo/encabezados/OTCA2.routes.js";
 import DTCA2 from "./src/routes/ordenesDeTrabajo/detallados/DTCA2.routes.js";
 import DTPV from "./src/routes/ordenesDeTrabajo/detallados/DTPV.routes.js";
 import DTFM from "./src/routes/ordenesDeTrabajo/detallados/DTFM.routes.js";
+import DTFM_ABIERTOS from "./src/routes/ordenesDeTrabajo/detallados/DTFM.routes.js";
+import LotesAserrinMezcladosAprobados from "./src/routes/ordenesDeTrabajo/detallados/DTFM.routes.js";
 import Turnos from "./src/routes/mantenimientos/turnos/Turnos.routes.js";
 import DTP from "./src/routes/ordenesDeTrabajo/detallados/DTP.routes.js";
 import OT_mezclado_aserrin from "./src/routes/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.routes.js";
+import EstadoProcesoMezclaAserrin from "./src/routes/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.routes.js";
 import DT_mezclado_aserrin from "./src/routes/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.routes.js";
 import Get_OT_mezclado_aserrin from "./src/routes/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.routes.js";
 import Get_DT_mezclado_aserrin from "./src/routes/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.routes.js";
@@ -42,6 +46,7 @@ import DTP_MermasProduccion from "./src/routes/ordenesDeTrabajo/detallados/DTP.r
 import DTP_CodigosAprobados from "./src/routes/ordenesDeTrabajo/detallados/DTP.routes.js";
 import UPDATE_CodigosProduccion from "./src/routes/ordenesDeTrabajo/detallados/DTP.routes.js";
 import Update_SerieEcofiltroTasa from "./src/routes/ordenesDeTrabajo/detallados/DTP.routes.js";
+import Update_SerieEcofiltroTasaPunto from "./src/routes/ordenesDeTrabajo/detallados/DTP.routes.js";
 import DTPUltimoCodigo from "./src/routes/ordenesDeTrabajo/detallados/DTP.routes.js";
 import DTIP from "./src/routes/ordenesDeTrabajo/detallados/DTIP.routes.js";
 import OTHH from "./src/routes/ordenesDeTrabajo/encabezados/OTHH.routes.js";
@@ -155,12 +160,14 @@ import IndicesAtterbergAprobados from "./src/routes/laboratorio/detallado/DOTDMP
 import GestionHorasLaborales from "./src/routes/mantenimientos/GestionHorasLaborales/GestionHorasLaborales.routes.js";
 import GestionDiasLaborales from "./src/routes/mantenimientos/GestionHorasLaborales/GestionHorasLaborales.routes.js";
 import MateriaPriaBarro from "./src/routes/materiasPrimas/MateriaPriaBarro.routes.js";
+import get_Max_id_ot_mezclado_aserrin from "./src/routes/materiasPrimas/MateriaPriaBarro.routes.js";
 import CorrelativoMuestraBarro from "./src/routes/materiasPrimas/CorrelativoMuestraBarro.routes.js";
 import LoteRegistroDeCamionadas from "./src/routes/materiasPrimas/CorrelativoMuestraBarro.routes.js";
 import registroMuestra from "./src/routes/materiasPrimas/registroMuestra.routes.js";
 import etapas_barro from "./src/routes/materiasPrimas/Homogenización.routes.js";
 import etapas_barro_aprobados from "./src/routes/materiasPrimas/Homogenización.routes.js";
 import BarroInventario from "./src/routes/materiasPrimas/Homogenización.routes.js";
+import AserrinInventario from "./src/routes/materiasPrimas/Homogenización.routes.js";
 // Carga las variables de entorno desde el archivo .env
 dotenv.config();
 
@@ -326,7 +333,10 @@ app.use(DTPV);
 
 //OT Formulacion
 app.use(OTFM);
+app.use(otfm_estado_para_produccion);
 app.use(DTFM);
+app.use(DTFM_ABIERTOS);
+app.use(LotesAserrinMezcladosAprobados);
 
 //OT Producción
 app.use(OTP);
@@ -339,6 +349,7 @@ app.use(DTP_MermasProduccion);
 app.use(DTP_CodigosAprobados);
 app.use(UPDATE_CodigosProduccion);
 app.use(Update_SerieEcofiltroTasa);
+app.use(Update_SerieEcofiltroTasaPunto);
 app.use(DTPUltimoCodigo);
 
 //Detalle Toma de Humedad Y OT Humedad en Patios
@@ -477,6 +488,7 @@ app.use(GestionDiasLaborales);
 
 //Materias Primas
 app.use(MateriaPriaBarro);
+app.use(get_Max_id_ot_mezclado_aserrin);
 app.use(CorrelativoMuestraBarro);
 app.use(registroMuestra);
 app.use(LoteRegistroDeCamionadas);

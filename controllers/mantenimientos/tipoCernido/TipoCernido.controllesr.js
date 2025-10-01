@@ -2,23 +2,30 @@ import { pool } from "../../../src/db.js";
 
 export const getTipoCernido = async (req, res) => {
     try {
-        // Consulta SQL para seleccionar el usuario por nombre y contraseña
-        const [rows] = await pool.query("select * from tipocernido");
-
-        // Verifica si se encontró algún dato
-        if (rows.length === 0) {
-            console.log("No se encontraron datos");
-            return res.status(404).send("Datos no encontrados");
-        }
-
-        // Envía los datos al cliente
-        res.send({ rows });
-        console.log('Datos obtenidos correctamente');
+      const [rows] = await pool.query("SELECT * FROM tipocernido");
+  
+      if (rows.length === 0) {
+        console.log("No se encontraron datos");
+        return res.status(404).json({ error: "Datos no encontrados" });
+      }
+  
+      console.log("✅ Datos obtenidos correctamente");
+      res.json(rows);
+  
     } catch (error) {
-        console.error("Error al ejecutar la consulta:", error);
-        res.status(500).send("Error del servidor");
+      console.error(" Error al ejecutar la consulta:", error);
+  
+      res.status(500).json({
+        error: "Error en el backend",
+        message: error.message,
+        code: error.code,
+        errno: error.errno,
+        sqlState: error.sqlState,
+        sqlMessage: error.sqlMessage
+      });
     }
-};
+  };
+  
 
 export const PostTipoCernido= async(req, res)=>{
 

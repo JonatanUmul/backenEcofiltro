@@ -26,9 +26,9 @@ export const putCorrelativoMuestraBarro= async (req, res)=>{
   const estado= parseInt(req.body.id_est)
   const muestra_id= datosApi.id
   const id_creador= req.body.id_creador
-  const id_fase_aprobacion=datosApi.materiaPrima=='Barro' ? 2 : 6
+  const id_fase_aprobacion=req.body.materiaPrima=='Barro' ? 2 : 6
   const id_estado= 2
-
+console.log('id_fase_aprobacion', req.body.materiaPrima)
 
   try {
 

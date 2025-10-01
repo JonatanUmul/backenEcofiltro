@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {  postOT_mezclado_aserrin, putOT_mezclado_aserrin,Get_OT_mezclado_aserrin,Get_DT_mezclado_aserrin, postDT_mezclado_aserrin } from "../../../../controllers/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.controllers.js";
+import {  postOT_mezclado_aserrin, putOT_mezclado_aserrin,Get_OT_mezclado_aserrin,Get_DT_mezclado_aserrin, postDT_mezclado_aserrin, putEstadoProcesoMezclaAserrin } from "../../../../controllers/ordenesDeTrabajo/encabezados/OT_mezclado_aserrin.controllers.js";
 
 
 
@@ -11,5 +11,6 @@ router.post('/DT_mezclado_aserrin', postDT_mezclado_aserrin);
 router.get('/Get_OT_mezclado_aserrin', Get_OT_mezclado_aserrin);
 router.get('/Get_DT_mezclado_aserrin', Get_DT_mezclado_aserrin);
 router.put('/OT_mezclado_aserrin', putOT_mezclado_aserrin);
+router.put('/EstadoProcesoMezclaAserrin', putEstadoProcesoMezclaAserrin);
 
 export default router;

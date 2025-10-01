@@ -54,63 +54,52 @@ export const postDTP=async(req, res)=>{
   const {id_OTP,formData,fecha_creacion, id_creador, CodigoInicioNumber, CodigoFinalNumber}=req.body
   const total_lb_barro= formData.formulas_usadas*formData.librasBarro
   const total_lb_aserrin= formData.formulas_usadas*formData.librasAserrin
-
+console.log(id_OTP,formData,fecha_creacion, id_creador, CodigoInicioNumber, CodigoFinalNumber)
   const id_est=2
   
   const consulta=
   `insert into dtp(
     id_OTP,
     id_lote_camionada,
+    id_otfm,
     id_turno,
-    id_Aserradero,
     id_ufmodelo,
     id_creador,
     producido,
+    formulas_usadas,
     letra_inicio,
     codigoInicio,
     codigoFinal,
     letra_fin,
     librasBarro,
     total_lb_barro,
-    librasAserrin,
-    total_lb_aserrin,
     observacion,
     fecha_real,
-    id_Aserradero2,
-    librasAserrin2,
-    id_cernidodetalle,
-    id_cernidodetalle2,
     id_grupoproduccion,
     id_est,
     id_mezcladora)
-    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `
 
     try {
-      await pool.query(consulta,
+     await pool.query(consulta,
         [id_OTP,
-          formData.id_camionada,
+          formData.id_camionada_barro,
+          formData.otfm_correlativo,
           formData.id_turno,
-          formData.id_Aserradero,
           formData.id_ufmodelo,
           id_creador,
           formData.producido,
-          formData.identificador,
+          formData.formulas_usadas,
+          formData.identificador.toUpperCase(),
           CodigoInicioNumber,
           CodigoFinalNumber,
-          formData.identificador,
+          formData.identificador.toUpperCase(),
           formData.librasBarro,
           total_lb_barro,
-          formData.librasAserrin,
-          total_lb_aserrin,
+          
           formData.observacion,
           fecha_creacion,
-          formData.id_Aserradero2,
-          formData.librasAserrin2,
-          formData.id_cernidodetalle,
-          formData.id_cernidodetalle2,
-          formData.id_grupoproduccion,
-          formData.id_grupoproduccion,
           formData.id_grupoproduccion,
           id_est,
           formData.id_mezcladora        
@@ -118,6 +107,7 @@ export const postDTP=async(req, res)=>{
         res.status(200).json({mensaje:'Datos Guardados con Exito'})
 
     } catch (error) {
+      console.log(error)
       res.status(501).json({mensaje:'Error del servidor', error})
 
     }
@@ -143,6 +133,7 @@ export const DTP_CodigosProduccion = async (req, res) => {
   try {
     await pool.query(consulta, [valores]); 
     res.status(200).json({ mensaje: 'Datos guardados exitosamente' });
+    console.log('Guardado exitosamente')
   } catch (error) {
     console.error('Error del servidor:', error); 
   res.status(500).json({ mensaje: 'Error del servidor', error });
@@ -150,7 +141,9 @@ export const DTP_CodigosProduccion = async (req, res) => {
 };
 
 export const UPDATE_DTP_CodigosProduccion = async (req, res) => {
+
   const datos = req.body.NuevoEstadoSerir;
+  console.log('estados serie',datos)
   const fechaUpdate= new Date()
 
   const serie = datos[0]; 
@@ -178,23 +171,86 @@ export const UPDATE_DTP_CodigosProduccion = async (req, res) => {
 
 export const Update_SerieEcofiltroTasa = async (req, res) => {
   const datos = req.body.NuevoEstadoSerirTasa;
-  const fechaUpdate= new Date()
+  const fechaUpdate = new Date();
   const serie = datos[0]; 
   const id_proceso = datos[1];
-  const tasa = datos[2];
+  const tasa = Number(datos[2]); // <- asegúrate de que sea número
+
+  console.log(serie, id_proceso, tasa);
+
+  const consulta = `
+    UPDATE seriesecofiltro
+    SET tasa = ?, fecha_actualizacion = ?
+    WHERE id_proceso = ? AND serie = ?
+  `;
+
+  try {
+    await pool.query(consulta, [tasa, fechaUpdate, id_proceso, serie]);
+
+    res.status(200).json({
+      mensaje: `Número de serie: ${serie} actualizado correctamente a: ${tasa}`
+    });
+
+    if (tasa <= 0) {
+      const estadoSerie = "Bajo";
+      await pool.query(
+        `UPDATE seriesecofiltro
+         SET estado = ?, fecha_actualizacion = ?
+         WHERE id_proceso = ? AND serie = ?`,
+        [estadoSerie, fechaUpdate, id_proceso, serie]
+      );
+    } else if (tasa <= 7) {
+      const estadoSerie = "Bajo";
+      await pool.query(
+        `UPDATE seriesecofiltro
+         SET estado = ?, fecha_actualizacion = ?
+         WHERE id_proceso = ? AND serie = ?`,
+        [estadoSerie, fechaUpdate, id_proceso, serie]
+      );
+    } else if (tasa >= 17) {
+      const estadoSerie = "Alto";
+      await pool.query(
+        `UPDATE seriesecofiltro
+         SET estado = ?, fecha_actualizacion = ?
+         WHERE id_proceso = ? AND serie = ?`,
+        [estadoSerie, fechaUpdate, id_proceso, serie]
+      );
+    }else{
+      const estadoSerie = "OK";
+      await pool.query(
+        `UPDATE seriesecofiltro
+         SET estado = ?, fecha_actualizacion = ?
+         WHERE id_proceso = ? AND serie = ?`,
+        [estadoSerie, fechaUpdate, id_proceso, serie]
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ mensaje: "Error del servidor: " + error });
+  }
+};
+
+
+
+export const Update_SerieEcofiltroTasaPunto = async (req, res) => {
+  const datos = req.body.estadosPorSeriePunto;
+
+  const serie = datos[0]; 
+  const id_proceso = datos[1];
+  const estado_punto = datos[2];
   
-  console.log(serie,id_proceso,tasa)
+  console.log(serie,id_proceso,estado_punto)
   const consulta = `
   UPDATE seriesecofiltro
-  SET tasa = ?, fecha_actualizacion = ?
+  SET estado_punto = ?
   WHERE id_proceso = ? AND serie = ?
 `;
 
   try {
    
-                     await pool.query(consulta, [tasa, fechaUpdate, id_proceso, serie]);
+                     await pool.query(consulta, [ estado_punto, id_proceso, serie]);
     res.status(200).json({
-      mensaje: `Número de serie: ${serie} actualizado correctamente a: ${tasa}`
+      mensaje: `Número de serie: ${serie} actualizado correctamente a: ${estado_punto}`
     });
   } catch (error) {
     console.error(error);
@@ -245,17 +301,18 @@ export const getDTP = async (req, res) => {
   try {
     // Consulta SQL para obtener todos los registros de la tabla dtp
     const consulta = `
-      SELECT 
+       SELECT 
         d.id,
         d.id_ufmodelo,
+        otfm.id,
+        otfm.correlativo,
+        dtfm.peso,
         d.producido,
+        d.letra_inicio,
         d.letra_fin,
         d.codigoInicio,
         d.codigoFinal,
         d.librasBarro,
-        d.librasAserrin,
-        d.librasAserrin2,
-        COALESCE(d.librasAserrin, 0) + COALESCE(d.librasAserrin2, 0) as pesototal,
         ROUND(d.producido / 6) AS formulas,
         CASE 
     WHEN d.id_cernidodetalle = 1 AND d.id_cernidodetalle2 = 1 THEN 'B'
@@ -269,11 +326,7 @@ END AS formulaTipo,
         turno.turno AS nombre_turno,
         grupodetrabajo.grupos AS grupoProd,
         ufmodelo.nombre_modelo AS nombre_ufmodelo,
-        aserradero.nombre_aserradero AS aserradero1,
-        aserradero2.nombre_aserradero AS aserradero2,
         d.observacion,
-        cernidodetalle.detalle AS cernidodetalle,
-        cernidodetalle2.detalle AS cernidodetalle2,
         user.firmaUsr AS firmaJefe,
         operarios.Nombre AS NombreJefe,
         operarios1.Nombre AS NombreEncargadoP,
@@ -284,18 +337,10 @@ END AS formulaTipo,
         otp ON d.id_OTP = otp.id
       LEFT JOIN 
         turno ON d.id_turno = turno.id
-      LEFT JOIN 
-        aserradero ON d.id_Aserradero = aserradero.id
-      LEFT JOIN 
-        aserradero AS aserradero2 ON d.id_Aserradero2 = aserradero2.id
       LEFT JOIN
         grupodetrabajo ON d.id_grupoproduccion = grupodetrabajo.id
       LEFT JOIN 
         ufmodelo ON d.id_ufmodelo = ufmodelo.id_mod
-      LEFT JOIN
-        cernidodetalle ON d.id_cernidodetalle = cernidodetalle.id
-      LEFT JOIN
-        cernidodetalle AS cernidodetalle2 ON d.id_cernidodetalle2 = cernidodetalle2.id
       LEFT JOIN 
         user ON otp.id_creador = user.id
       LEFT JOIN 
@@ -306,6 +351,10 @@ END AS formulaTipo,
         operarios AS operarios1 ON user2.nombre = operarios1.id
       LEFT JOIN 
         user AS user1 ON d.id_creador = user1.id
+	LEFT JOIN
+		otfm on d.id_otfm=otfm.id
+	left JOIN
+		dtfm on dtfm.id_OTFM=d.id_otfm
 
     where otp.id=?
 
@@ -471,6 +520,7 @@ seriesecofiltro.id,
 seriesecofiltro.id_proceso,
 seriesecofiltro.serie,
 seriesecofiltro.tasa,
+seriesecofiltro.estado_punto,
 seriesecofiltro.estado,
 seriesecofiltro.fecha_creacion
  FROM seriesecofiltro
@@ -552,7 +602,7 @@ WHERE id_dtp=? AND id_proceso=?
         consulta += ' AND d.id_proceso = ?';
         params.push(id_proceso);
       }
-  
+      consulta += "AND d.estado != 'OK'";
       consulta += ' ORDER BY d.fecha_actualizacion DESC';
   
       const [rows] = await pool.query(consulta, params);

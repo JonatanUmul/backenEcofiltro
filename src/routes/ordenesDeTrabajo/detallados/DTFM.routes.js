@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {  postDTFM, getDTFM, getDTFMM } from "../../../../controllers/ordenesDeTrabajo/detallles/DTFM.controllers.js"
+import {  postDTFM, getDTFM, getDTFMM, getLotesAserrinMezcladosAprobados, getDTFM_ABIERTOS } from "../../../../controllers/ordenesDeTrabajo/detallles/DTFM.controllers.js"
 
 
 
@@ -8,7 +8,9 @@ const router = Router();
 
 router.post('/DTFM', postDTFM);
 router.get("/DTFM/:id", getDTFM);
+router.get("/DTFM_ABIERTOS", getDTFM_ABIERTOS);
 router.get("/DTFM/:fecha_creacion_inicio/:fecha_creacion_fin", getDTFMM);
+router.get("/LotesAserrinMezcladosAprobados", getLotesAserrinMezcladosAprobados);
 
 
 export default router;

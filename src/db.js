@@ -2,13 +2,13 @@
 import { createPool } from "mysql2/promise";
 import dotenv from 'dotenv';
 
-// Carga las variables de entorno desde el archivo .env
+// Cargar las variables de entorno desde el archivo .env
    dotenv.config();
    const BD =  process.env.DB_URL;
 
 
 export const pool= createPool({
-    host: BD,
+    host: "200.12.37.59",
     user:'AppProduccion',
     password: 'Controldedatos12',
     port:3306,

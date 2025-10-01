@@ -2,15 +2,16 @@ import { pool } from "../../../src/db.js";
 
 export const postDTFM = async (req, res) => {
 
-    const { id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim} = req.body;
-    console.log(id_modelo)
+    const { id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim, correlativo, cantidadLibras} = req.body;
+    console.log(req)
 
     try {
         if (id_OTFM === '' || id_Aserradero === '' || cantidad === '' || peso === '' || humedad === '') {
             console.log('Uno o varios datos están vacíos');
         } else {
-            const consulta = 'INSERT INTO dtfm(id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?,?,?,?)';
-            const [rows] = await pool.query(consulta, [id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim]);
+    const { id_OTFM,id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso2, humedad , humedad2, id_creador, id_matPrim, correlativo, cantidadLibras} = req.body;
+            const consulta = 'INSERT INTO dtfm(id_OTFM,correlativo, id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, peso_libras, peso2, humedad , humedad2, id_creador, id_matPrim) VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?,?,?,?,?,?)';
+            const [rows] = await pool.query(consulta, [id_OTFM, correlativo, id_modelo, id_Aserradero, id_cernidodetalle, id_cernidodetalle2, id_Aserradero2, cantidad, peso, cantidadLibras, peso2, humedad , humedad2, id_creador, id_matPrim]);
             res.send({ rows });
         }
     } catch (err) {
@@ -29,10 +30,12 @@ export const getDTFM = async (req, res) => {
       SELECT 
         d.id,
         d.fecha_creacion,
+         d.correlativo,
         d.hora_creacion,
         d.cantidad,
         d.peso, 
          d.peso2,
+         d.peso_libras,
          COALESCE(d.peso, 0) + COALESCE(d.peso2, 0) AS pesoTotal, 
         d.humedad,
         d.humedad2,
@@ -181,6 +184,53 @@ export const getDTFMM = async (req, res) => {
         const [rows] = await pool.query(consulta, params);
   
         res.status(200).json(rows);
+    } catch (error) {
+        console.error("Error al obtener los datos de la tabla dthp:", error);
+        res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
+    }
+  };
+
+export const getLotesAserrinMezcladosAprobados = async (req, res) => {
+  
+    try {
+        let consulta = `
+       select 
+om.id,
+om.correlativo,
+om.aprobado,
+dm.id_ot_mezclado_aserrin,
+dm.sacos,
+dm.libras_aserrin
+ from ot_mezclado_aserrin om
+ left join dt_mezclado_aserrin dm on dm.id_ot_mezclado_aserrin=om.id
+ where om.aprobado='Aprobado'
+  group by om.id, om.correlativo, om.correlativo
+        `;
+
+        const [rows] = await pool.query(consulta);
+        res.send({ rows })
+        //res.status(200).json(rows);
+    } catch (error) {
+        console.error("Error al obtener los datos de la tabla dthp:", error);
+        res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });
+    }
+  };
+
+
+  export const getDTFM_ABIERTOS = async (req, res) => {
+  
+    try {
+        let consulta = `
+ select 
+id,
+correlativo
+from otfm
+where estado_para_produccion=2 and id_est=3
+        `;
+
+        const [rows] = await pool.query(consulta);
+        res.send({ rows })
+        //res.status(200).json(rows);
     } catch (error) {
         console.error("Error al obtener los datos de la tabla dthp:", error);
         res.status(500).json({ error: "Error al obtener los datos de la tabla dthp" });

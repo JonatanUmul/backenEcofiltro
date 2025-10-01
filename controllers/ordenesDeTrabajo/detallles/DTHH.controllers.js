@@ -290,6 +290,7 @@ LEFT JOIN user AS userEfirma ON userFEncargado.nombre= userEfirma.nombre
       consulta += " AND dtcc.fecha_creacion <= ?";
       params.push(fecha_CC);
     }
+    consulta += " GROUP BY d.id";
     consulta += " ORDER BY d.id ASC";
 
     const [rows] = await pool.query(consulta, params);
