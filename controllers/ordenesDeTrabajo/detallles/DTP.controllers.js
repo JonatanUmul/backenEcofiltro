@@ -175,10 +175,9 @@ export const Update_SerieEcofiltroTasa = async (req, res) => {
   const fechaUpdate = new Date();
   const serie = datos[0]; 
   const id_proceso = datos[1];
-  const tasa = Number(datos[2]); // <- asegúrate de que sea número
-
-  console.log(serie, id_proceso, tasa);
-
+  const tasa = Number(datos[2]); 
+  const id_ufmodelo=Number(datos[3]);
+console.log(id_ufmodelo)
   const consulta = `
     UPDATE seriesecofiltro
     SET tasa = ?, fecha_actualizacion = ?
@@ -192,8 +191,10 @@ export const Update_SerieEcofiltroTasa = async (req, res) => {
       mensaje: `Número de serie: ${serie} actualizado correctamente a: ${tasa}`
     });
 
-    if (tasa <= 0) {
-      const estadoSerie = "Bajo";
+    switch(id_ufmodelo){
+      case 1: 
+      if (tasa <= 0) {
+      const estadoSerie = "Sin Tasa";
       await pool.query(
         `UPDATE seriesecofiltro
          SET estado = ?, fecha_actualizacion = ?
@@ -225,6 +226,48 @@ export const Update_SerieEcofiltroTasa = async (req, res) => {
         [estadoSerie, fechaUpdate, id_proceso, serie]
       );
     }
+    break
+  case 3: 
+  if (tasa <= 0) {
+  const estadoSerie = "Sin Tasa";
+  await pool.query(
+    `UPDATE seriesecofiltro
+     SET estado = ?, fecha_actualizacion = ?
+     WHERE id_proceso = ? AND serie = ?`,
+    [estadoSerie, fechaUpdate, id_proceso, serie]
+  );
+}
+ else if (tasa <=20) {
+  const estadoSerie = "Bajo";
+  await pool.query(
+    `UPDATE seriesecofiltro
+     SET estado = ?, fecha_actualizacion = ?
+     WHERE id_proceso = ? AND serie = ?`,
+    [estadoSerie, fechaUpdate, id_proceso, serie]
+  )}
+  else if (tasa>65) {
+    const estadoSerie = "Alto";
+    await pool.query(
+      `UPDATE seriesecofiltro
+       SET estado = ?, fecha_actualizacion = ?
+       WHERE id_proceso = ? AND serie = ?`,
+      [estadoSerie, fechaUpdate, id_proceso, serie]
+    );
+  }
+else{
+  const estadoSerie = "OK";
+  await pool.query(
+    `UPDATE seriesecofiltro
+     SET estado = ?, fecha_actualizacion = ?
+     WHERE id_proceso = ? AND serie = ?`,
+    [estadoSerie, fechaUpdate, id_proceso, serie]
+  );
+}
+
+
+  }
+
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ mensaje: "Error del servidor: " + error });
@@ -518,6 +561,7 @@ const id_proceso=parseInt(req.params.id_proceso)
 const consulta= 
 `SELECT 
 seriesecofiltro.id,
+seriesecofiltro.id_ufmodelo,
 seriesecofiltro.id_proceso,
 seriesecofiltro.serie,
 seriesecofiltro.tasa,
