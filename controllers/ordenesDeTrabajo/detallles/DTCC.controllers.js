@@ -17,6 +17,7 @@ export const postDTCC = async (req, res) => {
     fechaHorneado,
     turnoHorneado,
     aprobados,
+    sin_tasa,
     altos,
     bajos,
     rajadosCC,
@@ -43,6 +44,7 @@ export const postDTCC = async (req, res) => {
       rajadosCC,
       crudoCC,
       quemados,
+      sin_tasa,
       ahumados,
       rajados_horno,
       desportillado,
@@ -73,7 +75,7 @@ export const postDTCC = async (req, res) => {
         INSERT INTO dtcc (
           id_dthh, fecha_real, codigoInicio, codigoFin, id_operarioCC, 
           id_auditor, modelo, id_horno, turnoCC, fechaHorneado, turnoHorneado, 
-          aprobados, altos, bajos, rajadosCC, crudoCC, quemados, 
+          aprobados, sin_tasa, altos, bajos, rajadosCC, crudoCC, quemados, 
           ahumados, id_creador, enviado, rajados_horno,
         desportillado,
         desportillado_horno,
@@ -83,7 +85,7 @@ export const postDTCC = async (req, res) => {
         reasignado,
         horneados
         ) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)
+        VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)
       `;
       const [rows] = await pool.query(consulta, [
         id_dthh,
@@ -98,6 +100,7 @@ export const postDTCC = async (req, res) => {
         fechaHorneado,
         turnoHorneado,
         aprobados,
+        sin_tasa,
         altos,
         bajos,
         rajadosCC,
@@ -119,7 +122,7 @@ export const postDTCC = async (req, res) => {
 
       res.send({ rows });
     }
-    
+   
   } catch (error) {
     console.log("Error al guardar los datos", error);
     res.status(500).json({ error: "Error en el servidor" });
@@ -130,7 +133,7 @@ export const getDTCC = async (req, res) => {
   const id = req.params.id;
   console.log("id recibido", id);
   try {
-    const consulta = `SELECT
+    const consulta = `SELECT 
     d.id_OTCC,
     d.id,
     d.fecha_real,
@@ -139,6 +142,8 @@ export const getDTCC = async (req, res) => {
     d.codigoFin,
     d.fechaHorneado,
     d.aprobados,
+    d.sin_tasa,
+    d.reasignado,
     d.altos,
     d.bajos,
     d.id_horno,
@@ -146,12 +151,34 @@ export const getDTCC = async (req, res) => {
     d.crudoCC,
     d.quemados,
     d.ahumados,
+    d.rajados_horno,
+    d.desportillado,
+    d.desportillado_horno,
+    d.ovalado,
+    d.quemados_horno,
+    d.ahumados_horno,
+    d.horneados,
     d.id_dthh,
     operario_encargado.Nombre AS encargadoCC,
     operario_auditor.Nombre AS Aditor,
     ufmodelo.nombre_modelo AS modeloUF,
     turnoCC.turno AS turnoCC, 
-    turnoHorneado.turno AS turnoHorneado  
+    turnoHorneado.turno AS turnoHorneado,
+
+    -- % Aprobados + Reasignados
+    CASE 
+      WHEN d.horneados > 0 
+      THEN ROUND(((d.aprobados + d.reasignado) * 100.0) / d.horneados, 2) 
+      ELSE 0 
+    END AS porcentaje_aprobados_con_reasignados,
+
+    -- % Solo Aprobados (sin reasignados)
+    CASE 
+      WHEN d.horneados > 0 
+      THEN ROUND((d.aprobados * 100.0) / d.horneados, 2) 
+      ELSE 0 
+    END AS porcentaje_aprobados_sin_reasignados
+
 FROM dtcc d
 LEFT JOIN operarios AS operario_encargado ON d.id_operarioCC = operario_encargado.id
 LEFT JOIN operarios AS operario_auditor ON d.id_auditor = operario_auditor.id

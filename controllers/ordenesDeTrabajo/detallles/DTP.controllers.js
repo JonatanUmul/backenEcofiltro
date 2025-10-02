@@ -85,8 +85,7 @@ console.log(id_OTP,formData,fecha_creacion, id_creador, CodigoInicioNumber, Codi
      await pool.query(consulta,
         [id_OTP,
           formData.id_camionada_barro,
-          // formData.otfm_correlativo,
-          1,
+          formData.otfm_correlativo,
           formData.id_turno,
           formData.id_ufmodelo,
           id_creador,
@@ -194,7 +193,7 @@ console.log(id_ufmodelo)
     switch(id_ufmodelo){
       case 1: 
       if (tasa <= 0) {
-      const estadoSerie = "Sin Tasa";
+      const estadoSerie = "sin_tasa";
       await pool.query(
         `UPDATE seriesecofiltro
          SET estado = ?, fecha_actualizacion = ?
@@ -229,7 +228,7 @@ console.log(id_ufmodelo)
     break
   case 3: 
   if (tasa <= 0) {
-  const estadoSerie = "Sin Tasa";
+  const estadoSerie = "sin_tasa";
   await pool.query(
     `UPDATE seriesecofiltro
      SET estado = ?, fecha_actualizacion = ?
