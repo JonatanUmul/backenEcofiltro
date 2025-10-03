@@ -560,6 +560,8 @@ const id_proceso=parseInt(req.params.id_proceso)
 const consulta= 
 `SELECT 
 seriesecofiltro.id,
+d.id_horno,
+m.nombre_maq as horno,
 seriesecofiltro.id_ufmodelo,
 seriesecofiltro.id_proceso,
 seriesecofiltro.serie,
@@ -567,7 +569,10 @@ seriesecofiltro.tasa,
 seriesecofiltro.estado_punto,
 seriesecofiltro.estado,
 seriesecofiltro.fecha_creacion
+
  FROM seriesecofiltro
+ left join dthh d on seriesecofiltro.id_dtp= d.id
+ left join enc_maq m on d.id_horno=m.id_maq
 WHERE id_dtp=? AND id_proceso=?
 `
  try {

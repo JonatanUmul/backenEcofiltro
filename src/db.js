@@ -11,7 +11,7 @@ export const pool= createPool({
     host: "200.12.37.59",
     user:'AppProduccion',
     password: 'Controldedatos12',
-    port:3306,
+    port:3306,  
     // database:'produccioneco',
     database:'produccioneco',
 })

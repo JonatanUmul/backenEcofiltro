@@ -158,6 +158,13 @@ export const getSSDTH = async (req, res) => {
     id_est,
     fecha_CC,
   } = req.params;
+  console.log( fecha_creacion_inicio,
+    fecha_creacion_fin,
+    modeloUF,
+    turn,
+    horno,
+    id_est,
+    fecha_CC,)
   try {
     let consulta = ` WITH MaxTemperaturas AS (
     SELECT
