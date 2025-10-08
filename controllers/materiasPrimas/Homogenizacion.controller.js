@@ -127,7 +127,7 @@ export const getEtapas_barro_lote = async (req, res) => {
 export const getBarro_inventario = async (req, res) => {
 const loteSelect=req.params.idSelect
 console.log(loteSelect)
-  const consulta = `
+  /*const consulta = `
   SELECT 
   eb.id,
   eb.id_fase_aprobacion,
@@ -145,9 +145,33 @@ WHERE eb.id_fase_aprobacion = 4
 GROUP BY 
   eb.id,
   eb.id_fase_aprobacion,
-  m.codigo_lote;
-
-
+  m.codigo_lote;*/
+  const consulta=
+  `
+  SELECT 
+  eb.id,
+  eb.id_fase_aprobacion,
+  m.codigo_lote,
+  COALESCE(dtpv_suma.total_peso_v, 0) AS total_peso_v,
+  COALESCE(dtp_suma.total_peso_t, 0) AS total_peso_t,
+  COALESCE(dtpv_suma.total_peso_v, 0) - COALESCE(dtp_suma.total_peso_t, 0) AS peso_total_libras
+FROM etapas_barro eb
+LEFT JOIN muestras m 
+  ON eb.muestra_id = m.id
+LEFT JOIN (
+  SELECT id_camionada, SUM(peso_total_libras) AS total_peso_v
+  FROM dtpv
+  GROUP BY id_camionada
+) dtpv_suma 
+  ON dtpv_suma.id_camionada = eb.id
+LEFT JOIN (
+  SELECT id_lote_camionada, SUM(total_lb_barro) AS total_peso_t
+  FROM dtp
+  GROUP BY id_lote_camionada
+) dtp_suma 
+  ON dtp_suma.id_lote_camionada = eb.id
+WHERE eb.id_fase_aprobacion = 4 
+  AND m.codigo_lote = ?
  `;
   try {
     const [rows] = await pool.query(consulta, [loteSelect]);
