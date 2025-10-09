@@ -164,10 +164,10 @@ import get_Max_id_ot_mezclado_aserrin from "./src/routes/materiasPrimas/MateriaP
 import CorrelativoMuestraBarro from "./src/routes/materiasPrimas/CorrelativoMuestraBarro.routes.js";
 import LoteRegistroDeCamionadas from "./src/routes/materiasPrimas/CorrelativoMuestraBarro.routes.js";
 import registroMuestra from "./src/routes/materiasPrimas/registroMuestra.routes.js";
-import etapas_barro from "./src/routes/materiasPrimas/Homogenización.routes.js";
-import etapas_barro_aprobados from "./src/routes/materiasPrimas/Homogenización.routes.js";
-import BarroInventario from "./src/routes/materiasPrimas/Homogenización.routes.js";
-import AserrinInventario from "./src/routes/materiasPrimas/Homogenización.routes.js";
+import etapas_barro from "./src/routes/materiasPrimas/Homogenizacion.routes.js";
+import etapas_barro_aprobados from "./src/routes/materiasPrimas/Homogenizacion.routes.js";
+import BarroInventario from "./src/routes/materiasPrimas/Homogenizacion.routes.js";
+import AserrinInventario from "./src/routes/materiasPrimas/Homogenizacion.routes.js";
 // Carga las variables de entorno desde el archivo .env
 dotenv.config();
 

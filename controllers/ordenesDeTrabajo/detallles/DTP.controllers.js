@@ -77,8 +77,9 @@ console.log(id_OTP,formData,fecha_creacion, id_creador, CodigoInicioNumber, Codi
     fecha_real,
     id_grupoproduccion,
     id_est,
-    id_mezcladora)
-    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    id_mezcladora,
+    total_lb_aserrin)
+    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `
 
     try {
@@ -102,7 +103,8 @@ console.log(id_OTP,formData,fecha_creacion, id_creador, CodigoInicioNumber, Codi
           fecha_creacion,
           formData.id_grupoproduccion,
           id_est,
-          formData.id_mezcladora        
+          formData.id_mezcladora,
+          total_lb_aserrin      
         ])
         res.status(200).json({mensaje:'Datos Guardados con Exito'})
 

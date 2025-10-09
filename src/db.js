@@ -8,12 +8,12 @@ import dotenv from 'dotenv';
 
 
 export const pool= createPool({
-    host: "200.12.37.59",
+    host: "ecofiltro.net",
     user:'AppProduccion',
     password: 'Controldedatos12',
     port:3306,  
-    // database:'produccioneco',
-    database:'produccioneco',
+database:'produccioneco',
+    //database: DB,
 })
 
 
